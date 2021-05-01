@@ -38,6 +38,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { API_URL } from '../../utils/constants'
 
 export default {
     name: 'login',
@@ -53,6 +54,7 @@ export default {
     methods: {
         ...mapActions('authentication', ['userLogin']),
         async login () {
+            console.log(API_URL)
             await this.userLogin({
                 username: this.username,
                 password: this.password

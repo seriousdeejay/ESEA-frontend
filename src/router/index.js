@@ -34,9 +34,10 @@ const routes = [
   {
     path: '/register',
     name: 'register',
-    components: {
-      a: () => import('../views/user/Register.vue')
-    }
+    component: () => import('../views/user/Register.vue')
+      // {
+      // a: () => import('../views/user/Register.vue')
+      // }
   },
   {
     path: '/login',

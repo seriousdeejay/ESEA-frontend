@@ -1,5 +1,5 @@
 import { AxiosInstance } from '../../plugins/axios'
-import { STATUS } from '../../utils/constants'
+// import { STATUS } from '../../utils/constants'
 import UserService from '../../services/UserService'
 import router from '../../router'
 
@@ -11,7 +11,7 @@ export default {
         authenticatedUser: null,
         currentuser: 'Username here',
         password: null,
-        status: ''
+        error: undefined
     },
     mutations: {
         updateStorage (state, { access, refresh }) {
@@ -31,9 +31,12 @@ export default {
         saveAuthenticatedUserDetails (state, { data }) {
           state.authenticatedUser = data[0]
         },
-        error (state) {
-            state.status = STATUS.ERROR
+        setError (state, { error }) {
+          state.error = error
         }
+        // error (state) {
+        //     state.status = STATUS.ERROR
+        // }
     },
     getters: {
         loggedIn (state) {
@@ -45,6 +48,15 @@ export default {
       },
 
     actions: {
+        async userRegister ({ commit }, newuser) {
+          const { response, error } = await AxiosInstance.post('/account/register/', { data: newuser })
+          if (error) {
+            commit('setError', { error })
+            return
+          }
+          console.log(response)
+          router.push({ name: 'login' })
+        },
         userLogout ({ commit, getters }) {
             if (getters.loggedIn) {
                 commit('destroyToken')
