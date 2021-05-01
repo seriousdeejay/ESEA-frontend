@@ -44,12 +44,11 @@ export default {
     data () {
         return {
             username: 'admin', // Filled in for easy login, should be removed before deployment!
-            password: 'admin',
+            password: 'scriptie',
             incorrectAuth: false
         }
     },
     created () {
-        this.login()
     },
     methods: {
         ...mapActions('authentication', ['userLogin']),
