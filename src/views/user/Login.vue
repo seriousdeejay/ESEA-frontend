@@ -1,35 +1,34 @@
 <template>
 
-<div style="width: 30rem; border-radius:0.25rem;" class="p-d-block p-mx-auto p-p-5 p-shadow-10">
-            <h1>Open ESEA - Login Page</h1>
-        <p v-if="incorrectAuth">Incorrect username or password entered - please try again!</p>
-        <form v-on:submit.prevent="login">
-            <div class="p-field p-grid">
-                <label for="username" class="p-col">Username</label>
-                <div class="p-col">
-                    <InputText type="text" id="username" v-model="username" />
-                </div>
+<div style="width: 500px; border-radius: 2px;" class="p-shadow-10 p-py-5">
+    <h1 class="p-mx-5" style="border-bottom: 1px solid green;">Open ESEA - Login Page</h1>
+        <form v-on:submit.prevent="login" class="p-grid p-fluid p-m-5">
+            <div class="p-col-12 p-field">
+                <span class="p-float-label">
+                     <InputText type="text" id="username" v-model="username" />
+                    <label for="username">Username</label>
+                </span>
             </div>
-            <div class="p-field p-grid">
-                <label for="password" class="p-col" >Password</label>
-                <div class="p-col">
+            <div class="p-col-12 p-field">
+                <span class="p-float-label">
                     <Password id="password" v-model="password" :feedback="false" />
-                </div>
+                    <label for="password">Password</label>
+                </span>
             </div>
-
-            <div style="text-align:right">
-                <Button type="submit" value="submit">Login</Button>
+            <h4 v-if="incorrectAuth" class="p-col p-text-italic p-mx-5" style="border-bottom: 1px solid red">Authentication failed - please try again!</h4>
+            <div class="p-col-12 p-d-flex p-jc-between">
+            <Button type="submit" value="submit" class="p-jc-center p-button-success">Login</Button>
+            <Button @click="$router.push('register')" class="p-button-text p-flex-row-reverse">Forgot Password?</Button>
             </div>
         </form>
-        <br>
         <hr>
-        <div class="p-d-flex p-jc-between p-ai-center">
+        <div class="p-d-flex p-jc-center p-ai-center">
             <h4>No Account yet?</h4>
             <div>
-            <Button @click="$router.push('register')" class="p-button-secondary">Create Account</Button>
+            <Button @click="$router.push('register')" class="p-button-text">Create Account</Button>
         </div>
         </div>
-        <div class="p-text-left">
+        <div class="p-text-left p-px-5">
             <small>Add assessments, get peer reviews, share and find out what your organisations
                 needs now and in the future!</small>
         </div>

@@ -11,7 +11,7 @@ export default {
         authenticatedUser: null,
         currentuser: 'Username here',
         password: null,
-        error: undefined
+        errors: {}
     },
     mutations: {
         updateStorage (state, { access, refresh }) {
@@ -31,8 +31,13 @@ export default {
         saveAuthenticatedUserDetails (state, { data }) {
           state.authenticatedUser = data[0]
         },
-        setError (state, { error }) {
-          state.error = error
+        setErrors (state, { errors }) {
+          console.log(errors)
+          state.errors = errors
+        },
+        clearErrors (state) {
+          console.log('clear errors')
+          state.errors = {}
         }
         // error (state) {
         //     state.status = STATUS.ERROR
@@ -48,14 +53,11 @@ export default {
       },
 
     actions: {
-        async userRegister ({ commit }, newuser) {
-          const { response, error } = await AxiosInstance.post('/account/register/', { data: newuser })
-          if (error) {
-            commit('setError', { error })
-            return
-          }
-          console.log(response)
-          router.push({ name: 'login' })
+        async userRegister ({ commit, state }, newuser) {
+          state.errors = {}
+          await AxiosInstance.post('/account/register/', newuser)
+          .then((response) => { router.push({ name: 'login' }) })
+          .catch((error) => { commit('setErrors', { errors: error.response.data }) })
         },
         userLogout ({ commit, getters }) {
             if (getters.loggedIn) {

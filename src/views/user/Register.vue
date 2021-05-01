@@ -1,13 +1,13 @@
 <template>
-    <div style="width: 30rem; border-radius:0.25rem" class="p-d-block p-mx-auto p-p-5 p-shadow-10 p-input-filled">
-        <h1>Create An Account</h1>
-        <form v-on:submit.prevent="register" class="p-grid p-fluid p-text-left">
+    <div style="width: 500px; border-radius: 2px" class="p-shadow-10 p-input-filled p-py-5">
+        <h1 class="p-mx-5" style="border-bottom: 1px solid green;">Create An Account</h1>
+        <form v-on:submit.prevent="register" class="p-grid p-fluid p-m-5 p-text-left">
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="text" id="username" v-model="customuser.username" :class="{'borderless': usernameErrors.length && submitted}" />
                         <label for="username">Username</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in usernameErrors" :key="error"><small>{{error}}</small></div>
+                    <div class="p-error p-text-italic" v-for="error in usernameErrors" :key="error"><small v-if="error === 'This field must be unique.'">Username is already taken.</small><small v-else>{{ error }}</small></div>
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
@@ -18,38 +18,20 @@
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
-                        <InputText type="text" id="password" v-model="customuser.password" :class="{'borderless': passwordErrors.length && submitted}" />
+                        <InputText type="password" id="password" v-model="customuser.password" :class="{'borderless': passwordErrors.length && submitted}" />
                         <label for="password">Password</label>
                     </span>
                     <div class="p-error p-text-italic" v-for="error in passwordErrors" :key="error"><small>{{error}}</small></div>
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
-                        <InputText type="text" id="password2" v-model="customuser.password2" :class="{'borderless': password2Errors.length && submitted}" />
+                        <InputText type="password" id="password2" v-model="customuser.password2" :class="{'borderless': password2Errors.length && submitted}" />
                         <label for="password2">Confirm Password</label>
                     </span>
                     <div class="p-error p-text-italic" v-for="error in password2Errors" :key="error"><small>{{error}}</small></div>
             </div>
-            <!-- <div class="p-field p-grid">
-                <label for="email" class="p-col">Email</label>
-                <div class="p-col">
-                    <InputText type="text" id="email" v-model="customuser.email" :class="{'borderless': v$.customuser.email.$error && submitted}" />
-                </div>
-            </div>
-            <div class="p-field p-grid">
-                <label for="password" class="p-col" >Password</label>
-                <div class="p-col">
-                    <Password id="password" v-model="customuser.password" :feedback="false" :class="{'borderless': v$.customuser.password.$error && submitted}" />
-                </div>
-            </div>
 
-            <div class="p-field p-grid">
-                <label for="password2" class="p-col" >Confirm Password</label>
-                <div class="p-col">
-                    <Password id="password2" v-model="customuser.password2" :feedback="false" :class="{'borderless': v$.customuser.password2.$error && submitted}" />
-                </div>
-            </div> -->
-            <h4 class="p-col-12">Optional fields <small>(to be pushed to account settings page)</small></h4>
+            <h4 class="p-col-12 p-text-center" style="border-bottom: 1px solid green">Optional fields <small>(to be pushed to account settings page)</small></h4>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="text" id="firstname" v-model="customuser.first_name" :class="{'borderless': firstnameErrors.length && submitted}" />
@@ -72,27 +54,6 @@
                     <div class="p-error p-text-italic" v-for="error in lastnameErrors" :key="error"><small>{{error}}</small></div>
             </div>
 
-            <!-- <div class="p-field p-grid">
-                <label for="firstname" class="p-col">First Name</label>
-                <div class="p-col">
-                    <InputText type="text" id="firstname" v-model="customuser.first_name" :class="{'borderless': v$.customuser.first_name.$error && submitted}" />
-                </div>
-            </div>
-
-            <div class="p-field p-grid">
-                <label for="lastnameprefix" class="p-col"> Last Name Prefix</label>
-                <div class="p-col">
-                    <InputText type="text" id="lastnameprefix" v-model="customuser.last_name_prefix" :class="{'borderless': v$.customuser.last_name_prefix.$error && submitted}" />
-                </div>
-            </div>
-
-                      <div class="p-field p-grid">
-                <label for="lastname" class="p-col">Last Name</label>
-                <div class="p-col">
-                    <InputText type="text" id="lastname" v-model="customuser.last_name" :class="{'borderless': v$.customuser.last_name.$error && submitted}" />
-                </div>
-            </div> -->
-
             <Button type="submit" value="submit" class="p-my-5 p-jc-center p-button-success">Register Account</Button>
         </form>
         <div class="p-d-flex p-jc-center p-ai-center">
@@ -105,12 +66,10 @@
 </template>
 
 <script>
-// import { AxiosInstance } from '../../plugins/axios'
-// import { API_URL } from '../../utils/constants'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from 'vuelidate/lib/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
-// import { maxLength, sameAs } from '../../utils/validators'
+import { mapActions, mapState } from 'vuex'
 
 export default {
     data () {
@@ -128,14 +87,15 @@ export default {
         }
     },
     computed: {
+        ...mapState('authentication', ['errors']),
         usernameErrors () {
-            return HandleValidationErrors(this.v$.customuser.username)
+            return HandleValidationErrors(this.v$.customuser.username, this.errors.username)
         },
         emailErrors () {
             return HandleValidationErrors(this.v$.customuser.email)
         },
         passwordErrors () {
-            return HandleValidationErrors(this.v$.customuser.password)
+            return HandleValidationErrors(this.v$.customuser.password, this.errors.password)
         },
         password2Errors () {
             return HandleValidationErrors(this.v$.customuser.password2)
@@ -162,28 +122,23 @@ export default {
             last_name: { required, maxLength: maxLength(50) }
         }
     },
+    created () {
+        this.initialize()
+    },
     methods: {
+        ...mapActions('authentication', ['userRegister']),
+        initialize () {
+            this.$store.commit('authentication/clearErrors')
+        },
         register (e) {
             this.submitted = true
             this.v$.customuser.$touch()
             if (this.v$.$invalid) {
-                console.log('not valid!', this.v$.$errors)
                 return
             }
             console.log('succes!')
-            this.userRegister({ newuser: customuser })
+            this.userRegister(this.customuser)
         }
-        // register: function (e) {
-        //     AxiosInstance.post(`${API_URL}/account/register/`,
-        //         this.customuser
-        //     )
-        //     .then(response => {
-        //         this.$router.push('/login')
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //     })
-        // }
     }
 }
 </script>
