@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000' // process.env.baseURL || process.env.apiUrl ||
+const API_URL = process.env.VUE_APP_ROOT_API // process.env.baseURL || process.env.apiUrl ||
 const STATUS = {
     IDLE: 'idle',
     IN_PROGRESS: 'in progress',
