@@ -47,7 +47,6 @@ import Sidebar from 'primevue/sidebar'
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresLogin)) {
       if (!store.getters['authentication/loggedIn']) {
-        console.log('sss')
         next({ name: 'login' })
       } else {
         next()

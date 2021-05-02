@@ -1,5 +1,6 @@
 <template>
     <div class="p-px-5" style="width: 500px">
+        {{network}}
         <div class="p-fluid p-text-left p-my-5">
             <!-- <form id="networkeditingform" @submit="checkform"> -->
              <div class="p-field">
@@ -65,12 +66,15 @@ export default {
         }
     },
     computed: {
-        ...mapState('network', ['network', 'networkform'])
-        // networkform () {
-        //     return this.network
-        // }
+        ...mapState('network', ['network', 'networkform']),
+        ...mapState('authentication', ['currentuser'])
     },
     created () {
+        if (this.network.created_by !== this.currentuser) {
+            console.log('You may not change settings!')
+            this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
+            return
+        }
         this.initialize()
     },
     methods: {

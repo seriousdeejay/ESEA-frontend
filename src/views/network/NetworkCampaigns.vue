@@ -1,5 +1,4 @@
 <template>
-    <div class="p-field p-fluid"><InputText id="description" v-model="something" autofocus required="true" /></div>
     <div class="p-d-flex p-jc-between p-m-5">
         <Button label="New Campaign" icon="pi pi-plus" class="p-button-success p-d-flex p-mx-5" @click="createCampaignDialog = true" />
         <span class="p-input-icon-left">

@@ -59,9 +59,15 @@ export default {
         }
     },
     computed: {
-        ...mapState('organisation', ['organisation'])
+        ...mapState('organisation', ['organisation']),
+        ...mapState('authentication', ['currentuser'])
     },
     created () {
+        if (this.organisation.created_by !== this.currentuser) {
+            console.log('You may not change settings!')
+            this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
+            return
+        }
         this.initialize()
     },
     methods: {

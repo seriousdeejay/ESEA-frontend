@@ -34,7 +34,8 @@ export default {
         }
     },
     computed: {
-        ...mapState('network', ['network'])
+        ...mapState('network', ['network']),
+        ...mapState('authentication', ['currentuser'])
     },
     methods: {
         goToPage (name) {
