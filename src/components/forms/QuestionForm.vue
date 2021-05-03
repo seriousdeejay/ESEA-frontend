@@ -3,7 +3,7 @@
             <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
                     <span class="p-float-label">
-                        <InputText id="questionkey" type="text" v-model="lazyQuestion.key"  :class="{'borderless': keyErrors.length}"  @blur="questionKeyFilter" :disabled="!active" />
+                        <InputText id="questionkey" type="text" v-model="lazyQuestion.key"  :class="{'borderless': keyErrors.length}"  @blur="questionKeyFilter(lazyQuestion.key)" :disabled="!active" />
                         <label for="questionkey">Question Key</label>
                     </span>
                     <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error"><small>{{error}}</small></div>
@@ -146,6 +146,7 @@ export default {
                 setTimeout(() => {
                 if (this.v$.lazyQuestion.$invalid) { return }
                 if (isEqual(this.question, val)) { return }
+                console.log(val)
                 this.$emit('input', cloneDeep(val))
                 }, 200)
             },
@@ -208,6 +209,7 @@ export default {
             }
         },
         questionKeyFilter (val) {
+            console.log(val)
             if (val.includes(' ')) {
                 this.lazyQuestion.key = val.replace(' ', '_')
             }

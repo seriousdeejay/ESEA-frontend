@@ -40,12 +40,10 @@ export default {
             state.indirectIndicator = data || {}
         },
         deleteIndirectIndicator (state, { id }) {
-            console.log(id)
             delete state.debouncers[id]
             delete state.errors[id]
             delete state.isSaved[id]
             state.indirectIndicators = state.indirectIndicators.filter(i => i.id !== id)
-            console.log(state.indirectIndicators)
         },
         updateList (state, { id, data }) {
             if (id !== data.id) {
@@ -64,19 +62,14 @@ export default {
             state.indirectIndicator = indirectIndicator
         },
         setDebouncer (state, { id, commit }) {
-            console.log('>>', state.errors[id])
-            console.log('>>', state.errors[id])
             state.debouncers[id] = debounce(
                 async ({ mId, indirectIndicator }) => {
                     const method = indirectIndicator.id > 0 ? 'put' : 'post'
-                    console.log(indirectIndicator)
                     const { response, error } = await IndirectIndicatorService[method]({ mId, id, data: indirectIndicator })
                 if (error) {
-                    console.log('KK', error)
                     commit('setError', { error, id: indirectIndicator.id })
                     return
                 }
-                console.log('beee')
                 commit('setError', { error: {}, id: indirectIndicator.id })
                 commit('setIsSaved', { id: indirectIndicator.id, isSaved: true })
 				commit('updateList', { id: indirectIndicator.id, data: response.data })
@@ -106,7 +99,6 @@ export default {
             commit('setIndirectIndicators', response)
         },
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
-            console.log('yeeee', indirectIndicator)
             delete state.errors[indirectIndicator.id]
           if (!indirectIndicator || !mId) { return }
           if (!state.debouncers[indirectIndicator.id]) {
@@ -120,11 +112,9 @@ export default {
           }
           commit('setIsSaved', { id: indirectIndicator.id })
           if (!indirectIndicator.name || !indirectIndicator.formula) { return }
-          console.log('reee')
           state.debouncers[indirectIndicator.id]({ mId, indirectIndicator })
         },
         async deleteIndirectIndicator ({ commit }, payload) {
-            console.log(payload)
             if (payload.id > 0) {
                 const { error } = await IndirectIndicatorService.delete(payload)
                 if (error) {

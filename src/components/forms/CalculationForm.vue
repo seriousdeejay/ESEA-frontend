@@ -8,13 +8,14 @@
                         <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': nameErrors.length}"  @blur="updateName" :disabled="!active" />
                         <label for="calculationkey">Key</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
+                    <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error">{{error}}</div>
                 </div>
                 <div class="p-col-8">
                     <span class="p-float-label">
-                        <InputText id="calculationame" type="text" v-model="lazyIndirectIndicator.name" :disabled="!active" />
+                        <InputText id="calculationame" type="text" v-model="lazyIndirectIndicator.name" :class="{'borderless': nameErrors.length}" :disabled="!active" />
                         <label for="calculationname">Name</label>
                     </span>
+                    <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div>
                 </div>
             </div>
             <div v-if="active" class="p-col-12 p-field">
@@ -29,8 +30,6 @@
                     <label for ="calculationformula">Formula</label>
                 </span>
                 <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
-                {{indirectIndicator}}
-                {{lazyIndirectIndicator}}
             </div>
         </form>
     </div>
@@ -62,7 +61,8 @@ export default {
     validations: {
         lazyIndirectIndicator: {
             name: { required, maxLength: maxLength(255) },
-            formula: { required }
+            formula: { required },
+            key: { required }
         }
     },
     data () {
@@ -73,6 +73,12 @@ export default {
     },
     computed: {
         ...mapGetters('indirectIndicator', ['getValidIndirectIndicatorNumber']),
+        keyErrors () {
+            return HandleValidationErrors(
+                this.v$.lazyIndirectIndicator.key,
+                this.errors.key
+            )
+        },
         nameErrors () {
             return HandleValidationErrors(
                 this.v$.lazyIndirectIndicator.name,
@@ -105,15 +111,16 @@ export default {
         },
         lazyIndirectIndicator: {
             handler (val) {
+                setTimeout(() => {
                 console.log('>', this.indirectIndicator)
                 console.log('check', this.indirectIndicator, val)
-                if (this.v$.lazyIndirectIndicator.$invalid) { return }
+
+                if (this.v$.$invalid) { return }
                 console.log('check2')
                 if (isEqual(this.indirectIndicator, val)) { return }
                 console.log('check3')
-                setTimeout(() => {
                 console.log('-------', val)
-                this.$emit('changedinput', cloneDeep(val))
+                this.$emit('input', cloneDeep(val))
                 }, 200)
             },
             deep: true

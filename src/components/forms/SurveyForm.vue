@@ -1,5 +1,7 @@
 <template>
     <form ref="form" class="p-grid p-fluid p-input-filled p-py-5">
+        {{this.survey}}
+        {{this.lazySurvey}}
         <div class="p-col-12 p-field">
             <span class="p-float-label">
             <InputText id="surveyname" type="text" v-model="lazySurvey.name" @blur="updateName" />
@@ -22,6 +24,11 @@
         </div>
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
+        <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" />
+        {{selectedQuestions}}
+        {{Object.keys(selectedQuestions)}}
+        {{v$.lazySurvey.questions.$invalid}}
+        {{lazySurvey.questions}}
         <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
                     <!-- <span class="p-float-label">
@@ -34,15 +41,17 @@
     </form>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
-import { required, maxLength } from '../../utils/validators'
+import { required, maxLength, minLength } from '../../utils/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
+import getMethodItems from '../../utils/getMethodItems'
 import { isEqual } from 'lodash'
-// import TreeSelect from 'primevue/treeselect'
+import TreeSelect from 'primevue/treeselect'
 
 export default {
     components: {
-        // TreeSelect
+        TreeSelect
     },
     props: {
         survey: {
@@ -64,10 +73,15 @@ export default {
     },
     data () {
         return {
-            lazySurvey: { ...this.survey }
+            lazySurvey: { ...this.survey },
+            selectedQuestions: [],
+            topicIndirectIndicators: []
         }
     },
     computed: {
+        ...mapGetters('topic', ['methodTopics', 'subTopics']),
+		...mapGetters('question', { topicQuestions: 'topicQuestions' }),
+		// ...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
         // items () {
         //     const data = getMethodItems(this.methodTopics,
 		// 		this.subTopics,
@@ -98,6 +112,23 @@ export default {
             return HandleValidationErrors(
                 this.v$.lazySurvey.stakeholder
             )
+        },
+        goodItems () {
+            const data = getMethodItems(this.methodTopics,
+				this.subTopics,
+				this.topicQuestions,
+				this.topicIndirectIndicators)
+
+            for (const topic of data) {
+                topic.label = topic.name
+                for (const subtopic of topic.children) {
+                    subtopic.label = subtopic.name
+                    for (const indicator of subtopic.children) {
+                        indicator.label = indicator.key
+                    }
+                }
+            }
+            return data
         }
     },
     watch: {
@@ -109,13 +140,13 @@ export default {
         lazySurvey: {
             handler (val) {
                 setTimeout(() => {
-                    console.log('check')
+                    this.lazySurvey.questions = Object.keys(this.selectedQuestions).filter(key => (key !== 'undefined'))
                     if (this.v$.invalid) { return }
-                    if (isEqual(this.topic, this.lazySurvey)) { return }
-                    console.log('check')
+                    if (isEqual(this.survey, this.lazySurvey)) { return }
+                    console.log('check', this.survey)
                     console.log('++', this.lazySurvey)
                     this.$emit('input', this.lazySurvey)
-                }, 200)
+                }, 1000)
             },
             deep: true
         }
@@ -124,7 +155,8 @@ export default {
     validations: {
         lazySurvey: {
             name: { required, maxLength: maxLength(120) },
-            stakeholder: { required }
+            stakeholder: { required },
+            questions: { required, minLength: minLength(1) }
         }
     },
     methods: {

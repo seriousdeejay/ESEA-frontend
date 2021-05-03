@@ -1,7 +1,7 @@
 import SurveyService from '../../../services/SurveyService'
 import { debounce, random } from 'lodash'
 
-const baseSurvey = { name: 'new Survey', description: '', stakeholder: '', rate: 0, questions: [], anonymous: false }
+const baseSurvey = { name: 'new Survey', description: '', stakeholders: [], rate: 0, questions: [1], responses: [], anonymous: false }
 
 export default {
     namespaced: true,
@@ -70,11 +70,14 @@ export default {
 		setDebouncer (state, { id, commit }) {
 			state.debouncers[id] = debounce(
 				async ({ oId, mId, survey }) => {
+					console.log('LLL', survey)
 					const method = survey.id > 0 ? 'put' : 'post'
 					const { response, error } = await SurveyService[method](
 						{ oId, mId, id, data: survey }
 						)
 					if (error) {
+						console.log('OOO', survey)
+						console.log('---', error.response.data)
 						commit('setError', { error, id: survey.id })
 						return
 					}
@@ -82,7 +85,7 @@ export default {
 					commit('setIsSaved', { id: survey.id, isSaved: true })
 					commit('updateList', { id: survey.id, data: response.data })
 				},
-				1000
+				10000
 				)
 			}
 	},
@@ -116,12 +119,15 @@ export default {
             commit('deleteSurvey', payload)
         },
         updateSurvey ({ state, commit }, { mId, survey }) {
+			console.log('updateSurvey', survey)
 			if (!survey || !mId) return
 			if (!state.debouncers[survey.id]) {
 				commit('setDebouncer', { id: survey.id, commit })
 			}
+			console.log('further')
 			commit('setIsSaved', { id: survey.id })
 			if (!survey.name && state.isSaved[survey.id]) return
+			console.log('even further', survey)
 			state.debouncers[survey.id]({ mId, survey })
 		},
 		setSurvey ({ state, commit }, { id }) {

@@ -83,7 +83,7 @@ export default {
             this.addNewSurvey()
         },
         saveSurvey (survey) {
-            this.updateSurvey({ mId: this.method.id, survey })
+            this.updateSurvey({ mId: this.method.id, survey: survey })
         },
         removeSurvey (id) {
             this.deleteSurvey({ mId: this.method.id, id })

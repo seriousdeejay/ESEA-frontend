@@ -1,6 +1,5 @@
 <template>
     <div class="p-px-5" style="width: 500px">
-        {{network}}
         <div class="p-fluid p-text-left p-my-5">
             <!-- <form id="networkeditingform" @submit="checkform"> -->
              <div class="p-field">

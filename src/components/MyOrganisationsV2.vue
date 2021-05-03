@@ -9,7 +9,7 @@
             <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createDialog = true" />
         </div>
         <span class="p-input-icon-left">
-            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search..." />
+            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
         </span>
     </div>
     <Divider />

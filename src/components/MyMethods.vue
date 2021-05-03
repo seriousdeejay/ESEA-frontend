@@ -28,6 +28,16 @@
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
             <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" />
+            <Column headerStyle="width: 8rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="{data}">
+                    <Button v-if="data.created_by === this.currentuser" label="Update" class="p-button-sm" @click="updateMethod(data)"  style="width: 100px" />
+                </template>
+            </Column>
+            <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="{data}">
+                    <Button v-if="data.created_by === this.currentuser" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="(selectedMethod = data) && (destroyMethodDialog = true)" style="width: 50px" />
+                </template>
+            </Column>
         </DataTable>
     </div>
     <div v-else class="p-p-3 p-text-bold"> {{addingProcess? 'There are no methods to add, create one first!' : 'This network has no methods, add one!'}}</div>
@@ -49,14 +59,37 @@
       </template>
     </Dialog>
 
-    <Dialog v-model:visible="importDialog" :style="{width: '450px'}" header="Import your Method" :modal="true" class="p-fluid">
-        <FileUpload name="myfile" :customUpload="true" @uploader="onUpload" :fileLimit="1" accept=".yaml" :maxFileSize="1000000">
+    <Dialog v-model:visible="importDialog" :style="{width: '1400px'}" header="Create New Method" :modal="true">
+        <div class="p-grid p-text-center p-m-5">
+        <div class="p-col-5 p-p-0" style="border: 1px solid lightgrey; border-radius: 5px;">
+            <h3>Upload a model</h3>
+            <p class="p-m-5 p-text-justify">Pick this option if you have a .yaml file which can be used as a model. You can modify this later through the editor.</p>
+        <FileUpload name="myfile" :customUpload="true" @uploader="onUpload" :fileLimit="1" accept=".yaml" :maxFileSize="10000000">
             <template #empty>
                 <p>Drag and drop your YAML file here to upload.</p>
             </template>
         </FileUpload>
+        </div>
+        <div class="p-col" />
+        <div class="p-col-5 p-p-0" style="border: 1px solid lightgrey; border-radius: 5px;">
+            <h3>Create a model</h3>
+            <p class="p-p-5 p-text-justify ">Pick this option if you don't have a model that can be imported directly. You'll be able to create the method manually.</p>
+            <Button label="Start Method Creation" @click="createNewMethod()" class="p-button-lg p-m-5" />
+        </div>
+        </div>
         <template #footer>
             <Button label="Remove window" icon="pi pi-times" class="p-button-text" @click="importDialog = false"/>
+        </template>
+    </Dialog>
+
+    <Dialog v-model:visible="destroyMethodDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
+            <span>Are you sure you want to delete <b>{{selectedMethod.name}}</b>?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="destroyMethodDialog = false"/>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="destroyMethod()" />
         </template>
     </Dialog>
 </template>
@@ -93,18 +126,21 @@ export default {
             selectionToggle: false,
             addingProcess: false,
             confirmationDialog: false,
-            importDialog: false
+            destroyMethodDialog: false,
+            importDialog: false,
+            selectedMethod: {}
         }
     },
     computed: {
         ...mapState('method', ['methods', 'method']),
-        ...mapState('network', ['network'])
+        ...mapState('network', ['network']),
+        ...mapState('authentication', ['currentuser'])
     },
     created () {
         this.initialize()
     },
     methods: {
-        ...mapActions('method', ['fetchMethods', 'setMethod', 'uploadMethod']),
+        ...mapActions('method', ['fetchMethods', 'setMethod', 'createMethod', 'uploadMethod', 'deleteMethod']),
         ...mapActions('network', ['patchNetwork']),
         async initialize () {
             if (this.networkMethods) {
@@ -116,9 +152,6 @@ export default {
             this.selectedRows = []
             this.confirmationDialog = false
             this.addingProcess = false
-        },
-        createMethod (event) {
-            console.log('create method')
         },
         addableMethods () {
             this.fetchMethods({ query: `?excludenetwork=${this.network?.id || 0}` })
@@ -143,6 +176,13 @@ export default {
                 this.$toast.add({ severity: 'success', summary: 'The following method was deleted', detail: `${method.name}`, life: 3000 })
             })
         },
+        async destroyMethod () {
+            await this.deleteMethod({ id: this.selectedMethod.id })
+            this.destroyMethodDialog = false
+            this.$toast.add({ severity: 'success', summary: 'The following method was deleted', detail: `${this.selectedMethod.name}`, life: 3000 })
+            this.selectedMethod = {}
+            this.initialize()
+        },
         async onUpload (event) {
             // for (const file of event.files) {
             //     console.log(file)
@@ -160,13 +200,21 @@ export default {
             .catch(err => { reject(err) })
             })
         },
-        goToSelectedMethods (event) {
+        async goToSelectedMethods (event) {
             this.$toast.add({ severity: 'info', summary: 'Method Selected', detail: `${event.data.name}`, life: 3000 })
             if (!this.selectionToggle) {
-                this.setMethod({ ...event.data })
+                await this.setMethod({ ...event.data })
                 this.$router.push({ name: 'methoddetails', params: { id: event.data.id } })
                 // this.$router.push({ name: 'networkmethod', params: { NetworkId: this.network.id, MethodId: this.method.id } })
             }
+       },
+       async updateMethod (method) {
+           await this.setMethod(method)
+            this.$router.push({ name: 'method-create', params: { id: method.id } })
+       },
+       async createNewMethod () {
+           await this.createMethod({})
+           this.$router.push({ name: 'method-create', params: { id: this.method.id } })
        }
     }
 }

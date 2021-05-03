@@ -13,7 +13,7 @@
                 <div class="p-shadow-5 p-m-5 p-pb-2" style="background-color: #fcfcfc;">
                     <component :is="`${topicChild.objType}-form`" ref="items" :topic="topicChild" :question="topicChild" :errors="errors[topicChild.objType] && errors[topicChild.objType][topicChild.id]" :indirect-indicator="topicChild" :active="activeItem.objType === topicChild.objType && activeItem.id === topicChild.id" @input="saveActive(topicChild.objType, $event)" @click="toggleActive(topicChild)" />
                     <div v-for="(subTopicChild, index) in topicChild.children" :key="`subTopicChild-${index}`">
-                        <component :is="`${subTopicChild.objType}-form`" ref="items" :topic="subTopicChild" :question="subTopicChild" :indirect-indicator="subTopicChild" :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]" :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id" @changedinput="saveActive(subTopicChild.objType, $event)" @click="toggleActive(subTopicChild)" class="p-m-5" />
+                        <component :is="`${subTopicChild.objType}-form`" ref="items" :topic="subTopicChild" :question="subTopicChild" :indirect-indicator="subTopicChild" :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]" :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id" @input="saveActive(subTopicChild.objType, $event)" @click="toggleActive(subTopicChild)" class="p-m-5" />
                     </div>
                     <!-- <Button label="Add Question" icon="pi pi-plus" class="p-button-text p-text-left p-p-5" @click="addQuestion()" /> -->
                 </div>
@@ -113,6 +113,7 @@ export default {
         ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'setIndirectIndicator', 'deleteIndirectIndicator']),
         async initialize () {
             const methodId = parseInt(this.$route.params.id, 10)
+            console.log(this.method.id, '&&', methodId)
             if (this.method.id !== methodId) {
                 await this.fetchMethod({ id: methodId })
                 if (this.error) {
