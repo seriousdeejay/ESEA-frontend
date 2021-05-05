@@ -1,23 +1,25 @@
 <template>
-    <form ref="form" class="p-grid p-fluid p-input-filled p-py-5">
+    <form ref="form" class="p-grid p-fluid p-input-filled p-text-left p-py-5">
         {{this.survey}}
         {{this.lazySurvey}}
         <div class="p-col-12 p-field">
             <span class="p-float-label">
-            <InputText id="surveyname" type="text" v-model="lazySurvey.name" @blur="updateName" />
+            <InputText id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="updateName" lazy />
             <label for="surveyname">Survey Name</label>
             </span>
+            <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div>
         </div>
         <div class="p-grid p-col-12 p-m-0 p-p-0">
             <div class="p-col-8">
                 <span class="p-float-label">
-                <InputText id="surveystakeholders" type="text" v-model="lazySurvey.stakeholder" @blur="updateStakeholder" />
+                <InputText id="surveystakeholders" type="text" v-model.lazy="surveystakeholder" @blur="updateStakeholder" lazy />
                 <label for="surveystakeholders">Stakeholder Group</label>
                 </span>
+                <div class="p-error p-text-italic p-pt-1" v-for="error in stakeholderErrors" :key="error">{{error}}</div>
             </div>
             <div class="p-col-4">
                 <span class="p-float-label">
-                    <InputNumber id="surveyresponserate" suffix="%" :min="0" :max="100" v-model="lazySurvey.rate" />
+                    <InputNumber id="surveyresponserate" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.rate" lazy />
                     <label for="surveyresponserate">Response Rate</label>
                 </span>
             </div>
@@ -25,10 +27,12 @@
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
         <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" />
-        {{selectedQuestions}}
+         <div class="p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div>
+        =:{{v$.$invalid}} >>{{questionsErrors}} ;; {{stakeholderErrors}}
         {{Object.keys(selectedQuestions)}}
         {{v$.lazySurvey.questions.$invalid}}
         {{lazySurvey.questions}}
+        >: {{lazySurvey.stakeholders}}
         <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
                     <!-- <span class="p-float-label">
@@ -75,7 +79,8 @@ export default {
         return {
             lazySurvey: { ...this.survey },
             selectedQuestions: [],
-            topicIndirectIndicators: []
+            topicIndirectIndicators: [],
+            surveystakeholder: undefined
         }
     },
     computed: {
@@ -110,7 +115,12 @@ export default {
         },
         stakeholderErrors () {
             return HandleValidationErrors(
-                this.v$.lazySurvey.stakeholder
+                this.v$.lazySurvey.stakeholders
+            )
+        },
+        questionsErrors () {
+            return HandleValidationErrors(
+                this.v$.lazySurvey.questions
             )
         },
         goodItems () {
@@ -134,6 +144,7 @@ export default {
     watch: {
         survey (val) {
             if (!isEqual(this.lazySurvey, val)) {
+                console.log('not the same')
                 this.lazySurvey = { ...val }
             }
         },
@@ -141,12 +152,18 @@ export default {
             handler (val) {
                 setTimeout(() => {
                     this.lazySurvey.questions = Object.keys(this.selectedQuestions).filter(key => (key !== 'undefined'))
-                    if (this.v$.invalid) { return }
-                    if (isEqual(this.survey, this.lazySurvey)) { return }
+                    this.lazySurvey.stakeholders = []
+                    if (this.surveystakeholder !== undefined) {
+                    this.lazySurvey.stakeholders.push(this.surveystakeholder)
+                    }
+                    console.log('==', this.lazySurvey.questions, this.lazySurvey.stakeholders)
+                    if (this.v$.$invalid) { return }
+                    if (isEqual(this.survey, val)) { return }
+                    console.log('it works?')
+                    this.$emit('goodinput', this.lazySurvey)
                     console.log('check', this.survey)
-                    console.log('++', this.lazySurvey)
-                    this.$emit('input', this.lazySurvey)
-                }, 1000)
+                    console.log('++', val)
+                }, 5000)
             },
             deep: true
         }
@@ -155,7 +172,7 @@ export default {
     validations: {
         lazySurvey: {
             name: { required, maxLength: maxLength(120) },
-            stakeholder: { required },
+            stakeholders: { required, minLength: minLength(1) },
             questions: { required, minLength: minLength(1) }
         }
     },
@@ -164,7 +181,7 @@ export default {
             this.v$.lazySurvey.name.$touch()
         },
         updateStakeholder () {
-            this.v$.lazySurvey.stakeholder.$touch()
+            this.v$.lazySurvey.stakeholders.$touch()
         }
     }
 }

@@ -15,7 +15,7 @@
                 </Button> -->
                 <Button icon="pi pi-trash" class="p-panel-header-icon p-link" @click="removeSurvey(survey.id)" />    <!-- <Menu id="config_menu" ref="menu" :model="items" :popup="true" /> -->
             </template>
-            <survey-form :survey="survey" :items="items" :stakeholders="stakeholders" :errors="errors[survey.id]" @input="saveSurvey" />
+            <survey-form :survey="survey" :items="items" :stakeholders="stakeholders" :errors="errors[survey.id]" @goodinput="saveSurvey" />
         </Panel>
         </div>
         <Button label="Add Survey" icon="pi pi-plus" class="p-col-12 p-button-text p-text-left p-p-5" @click="addSurvey()" />

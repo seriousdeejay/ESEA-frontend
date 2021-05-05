@@ -69,11 +69,11 @@ export default {
 		},
 		setDebouncer (state, { id, commit }) {
 			state.debouncers[id] = debounce(
-				async ({ oId, mId, survey }) => {
+				async ({ mId, survey }) => {
 					console.log('LLL', survey)
 					const method = survey.id > 0 ? 'put' : 'post'
 					const { response, error } = await SurveyService[method](
-						{ oId, mId, id, data: survey }
+						{ mId, id, data: survey }
 						)
 					if (error) {
 						console.log('OOO', survey)
@@ -85,7 +85,7 @@ export default {
 					commit('setIsSaved', { id: survey.id, isSaved: true })
 					commit('updateList', { id: survey.id, data: response.data })
 				},
-				10000
+				500
 				)
 			}
 	},
@@ -119,15 +119,12 @@ export default {
             commit('deleteSurvey', payload)
         },
         updateSurvey ({ state, commit }, { mId, survey }) {
-			console.log('updateSurvey', survey)
 			if (!survey || !mId) return
 			if (!state.debouncers[survey.id]) {
 				commit('setDebouncer', { id: survey.id, commit })
 			}
-			console.log('further')
 			commit('setIsSaved', { id: survey.id })
 			if (!survey.name && state.isSaved[survey.id]) return
-			console.log('even further', survey)
 			state.debouncers[survey.id]({ mId, survey })
 		},
 		setSurvey ({ state, commit }, { id }) {
