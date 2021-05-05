@@ -1,10 +1,8 @@
 <template>
     <form ref="form" class="p-grid p-fluid p-input-filled p-text-left p-py-5">
-        {{this.survey}}
-        {{this.lazySurvey}}
         <div class="p-col-12 p-field">
             <span class="p-float-label">
-            <InputText id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="updateName" lazy />
+            <InputText id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="updateName" :class="{'borderless': nameErrors.length}" lazy />
             <label for="surveyname">Survey Name</label>
             </span>
             <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div>
@@ -12,7 +10,7 @@
         <div class="p-grid p-col-12 p-m-0 p-p-0">
             <div class="p-col-8">
                 <span class="p-float-label">
-                <InputText id="surveystakeholders" type="text" v-model.lazy="surveystakeholder" @blur="updateStakeholder" lazy />
+                <InputText id="surveystakeholders" type="text" v-model.lazy="lazySurvey.stakeholdergroup" @blur="updateStakeholder" :class="{'borderless': stakeholderErrors.length}" lazy />
                 <label for="surveystakeholders">Stakeholder Group</label>
                 </span>
                 <div class="p-error p-text-italic p-pt-1" v-for="error in stakeholderErrors" :key="error">{{error}}</div>
@@ -26,15 +24,13 @@
         </div>
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
-        <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" />
-         <div class="p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div>
-        =:{{v$.$invalid}} >>{{questionsErrors}} ;; {{stakeholderErrors}}
-        {{Object.keys(selectedQuestions)}}
-        {{v$.lazySurvey.questions.$invalid}}
-        {{lazySurvey.questions}}
-        >: {{lazySurvey.stakeholders}}
+        <div class="p-grid p-col-12">
+            <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" />
+            <div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div>
+        </div>
         <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
+                     {{v$.$invalid}}
                     <!-- <span class="p-float-label">
                         <InputText id="questionkey" type="text" v-model="dd"  :class="{'borderless': keyErrors.length}"  @blur="questionKeyFilter" :disabled="!active" />
                         <label for="questionkey">Question Key</label>
@@ -47,7 +43,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
-import { required, maxLength, minLength } from '../../utils/validators'
+import { required, maxLength, minLength, between } from '../../utils/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import getMethodItems from '../../utils/getMethodItems'
 import { isEqual } from 'lodash'
@@ -110,17 +106,20 @@ export default {
         //     return data
         nameErrors () {
             return HandleValidationErrors(
-                this.v$.lazySurvey.name
+                this.v$.lazySurvey.name,
+                this.errors.name
             )
         },
         stakeholderErrors () {
             return HandleValidationErrors(
-                this.v$.lazySurvey.stakeholders
+                this.v$.lazySurvey.stakeholdergroup,
+                this.errors.stakeholdergroup
             )
         },
         questionsErrors () {
             return HandleValidationErrors(
-                this.v$.lazySurvey.questions
+                this.v$.lazySurvey.questions,
+                this.errors.questions
             )
         },
         goodItems () {
@@ -152,14 +151,17 @@ export default {
             handler (val) {
                 setTimeout(() => {
                     this.lazySurvey.questions = Object.keys(this.selectedQuestions).filter(key => (key !== 'undefined'))
-                    this.lazySurvey.stakeholders = []
-                    if (this.surveystakeholder !== undefined) {
-                    this.lazySurvey.stakeholders.push(this.surveystakeholder)
-                    }
-                    console.log('==', this.lazySurvey.questions, this.lazySurvey.stakeholders)
+                    console.log('test')
+                    // this.lazySurvey.stakeholders = []
+                    // if (this.surveystakeholder !== undefined) {
+                    // this.lazySurvey.stakeholders.push(this.surveystakeholder)
+                    // }
+                    // console.log('==', this.lazySurvey.questions, this.lazySurvey.stakeholdergroup)
+                    // console.log(this.v$.lazySurvey.questions)
                     if (this.v$.$invalid) { return }
+                    this.lazySurvey.questions.sort()
                     if (isEqual(this.survey, val)) { return }
-                    console.log('it works?')
+                    console.log('it works?', this.lazySurvey.questions)
                     this.$emit('goodinput', this.lazySurvey)
                     console.log('check', this.survey)
                     console.log('++', val)
@@ -172,7 +174,8 @@ export default {
     validations: {
         lazySurvey: {
             name: { required, maxLength: maxLength(120) },
-            stakeholders: { required, minLength: minLength(1) },
+            stakeholdergroup: { required, minLength: minLength(4) },
+            rate: { required, between: between(0, 100) },
             questions: { required, minLength: minLength(1) }
         }
     },
@@ -181,8 +184,22 @@ export default {
             this.v$.lazySurvey.name.$touch()
         },
         updateStakeholder () {
-            this.v$.lazySurvey.stakeholders.$touch()
+            this.v$.lazySurvey.stakeholdergroup.$touch()
+        },
+        updateQuestions () {
+            this.v$.lazySurvey.questions.$touch()
         }
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.p-inputtext {
+    border: none;
+    border-bottom: 1px solid lightgrey;
+}
+.borderless {
+    border-bottom: 1px solid red;
+
+}
+</style>

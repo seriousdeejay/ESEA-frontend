@@ -1,7 +1,7 @@
 import SurveyService from '../../../services/SurveyService'
 import { debounce, random } from 'lodash'
 
-const baseSurvey = { name: 'new Survey', description: '', stakeholders: [], rate: 0, questions: [1], responses: [], anonymous: false }
+const baseSurvey = { name: 'new Survey', description: '', stakeholdergroup: [], rate: 100, questions: [] }
 
 export default {
     namespaced: true,
@@ -18,6 +18,9 @@ export default {
 	},
     mutations: {
         setSurveys (state, { data }) {
+			for (const survey of data) {
+				survey.questions.sort()
+			}
             state.surveys = data
             state.debouncers = {}
 			state.errors = {}
@@ -49,6 +52,7 @@ export default {
 			delete state.errors[id]
 			delete state.isSaved[id]
 			}
+			data.questions.sort()
 			state.surveys = state.surveys.map((item) => {
 				if (item.id !== id) return item
 				return Object.assign(item, data)

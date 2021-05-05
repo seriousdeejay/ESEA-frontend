@@ -27,7 +27,11 @@
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
-            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" />
+            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field">
+                <template v-if="col.field === 'ispublic'" #body="slotProps">
+                    <i class="pi" :class="{'true-icon pi-check-circle': slotProps.data.ispublic, 'false-icon pi-times-circle': !slotProps.data.ispublic}"></i>
+                </template>
+            </Column>
             <Column headerStyle="width: 8rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
                     <Button v-if="data.created_by === this.currentuser" label="Update" class="p-button-sm" @click="updateMethod(data)"  style="width: 100px" />

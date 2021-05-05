@@ -31,7 +31,7 @@ export default {
             this.lazyOption = val
         },
         lazyOption (val) {
-            if (this.v$.lazyQuestion.$invalid) { return }
+            if (this.v$.lazyOption.$invalid) { return }
             if (val !== this.option && val.text && val.value) {
                  this.$emit('update', this.lazyOption)
             }

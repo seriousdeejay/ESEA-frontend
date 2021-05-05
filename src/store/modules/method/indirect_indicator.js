@@ -91,8 +91,9 @@ export default {
     },
     actions: {
         async fetchIndirectIndicators ({ commit }, payload) {
+            console.log('fetching indirect indicators')
             const { response, error } = await IndirectIndicatorService.get(payload)
-            if (response) {
+            if (error) {
                 commit('setError', { error })
                 return
             }

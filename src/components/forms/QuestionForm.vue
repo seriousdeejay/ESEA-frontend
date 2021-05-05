@@ -144,9 +144,9 @@ export default {
         lazyQuestion: {
             handler (val) {
                 setTimeout(() => {
-                if (this.v$.lazyQuestion.$invalid) { return }
+                if (this.v$.$invalid) { return }
                 if (isEqual(this.question, val)) { return }
-                console.log(val)
+                console.log('+++', val)
                 this.$emit('input', cloneDeep(val))
                 }, 200)
             },
