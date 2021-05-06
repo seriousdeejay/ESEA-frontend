@@ -20,7 +20,7 @@
             <div v-else>
                 <h4 class="p-mb-0">The following tasks require your attention.</h4>
                 <div v-for="survey, index in surveys" :key="survey.id" class="p-p-5"> <!-- Should be a v-for="task in tasks" -->
-                    <Button :label="`Survey ${index+1}: As ${survey.stakeholders} of ${organisation.name} you are asked to fill in the following survey deployed by network 1: '${survey.name}'.`" class="p-button-text p-shadow-3 p-p-4" @click="goToSurvey(survey.method.id, survey.id)"/>
+                    <Button :label="`Survey ${index+1}: As ${survey.stakeholdergroup} of ${organisation.name} you are asked to fill in the following survey deployed by network 1: '${survey.name}'.`" class="p-button-text p-shadow-3 p-p-4" @click="goToSurvey(survey.method.id, survey.id)"/>
                     <br><br>
                     <!-- <Button label="Task 2: As manager of organisation 2 you are asked to fill in the survey of network 1." class="p-button-text p-shadow-1" /> -->
                 </div>

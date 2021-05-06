@@ -1,43 +1,54 @@
 <template>
     <div class="p-px-5" style="width: 500px">
-        <div class="p-fluid p-text-left p-my-5">
-            <div class="p-field">
-                <label for="name">Name</label>
-                <InputText id="name" v-model.trim="organisation.name" required="true" autofocus :class="{'p-invalid': submitted && !organisation.name}" class="p-text-italic" />
-                <small class="p-error" v-if="!organisation.name">Name is required.</small>
+        <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
+            <div class="p-col-12 p-field p-d-flex p-ai-center p-jc-center p-mb-5">
+                <img :src="organisation.image" alt="Profile Avatar" style="width: 150px; height: 150px; border-radius: 50%;" format="image/jpeg">
+                <div class="p-grid p-ml-5">
+                    <input id="uploadfile" type="file" accept="image/*" @change="validateImage" hidden />
+                    <label for="uploadfile" class="p-col-12 imageupload">Change Organisation Image</label> <div class="p-col-12">{{file.name}}</div>
+                </div>
             </div>
-            <div class="p-field">
-                <label for="description">Description</label>
-                <Textarea id="description" v-model="organisation.description" class="p-text-italic" required="false" rows="3" cols="20" />
+            <div class="p-col-12 p-field">
+                <span class="p-float-label">
+                     <InputText id="organisationname" v-model.trim="organisation.name" :class="{'p-invalid': !organisation.name}" class="p-text-italic" />
+                     <label for="organisationname">Name</label>
+                </span>
+                <div class="p-error p-text-italic" v-if="!organisation.name">Name is required.</div>
             </div>
-            <div class="p-field">
-                <label for="ispublic">Should this orgnaisation be public? </label>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" :disabled="true" class="p-mb-3" />
-                <small class="p-text-italic">*Public organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
+            <div class="p-col-12 p-field">
+                <span class="p-float-label">
+                    <Textarea id="organisationdescription" v-model="organisation.description" class="p-text-italic" rows="3" cols="20" />
+                    <label for="organisationdescription">Description</label>
+                </span>
             </div>
-        </div>
-        <div class="p-d-flex p-jc-between">
-            <Button label="Save Organisation Details" class="p-button-primary" @click="editOrganisation" :disabled="false" />
+            <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
+                <span>Organisation Status</span>
+                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" />
+            </div>
+            <small class="p-text-italic">*Public organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
+        </form>
+        <div class="p-col-12 p-d-flex p-jc-between">
+            <Button type="submit" form="settingsform" label="Save Organisation Details" class="p-button-primary" :disabled="v$.$invalid" />
             <Button label="Delete Organisation" class="p-button-danger" @click="deleteOrganisationDialog = true" />
         </div>
     </div>
 
-    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium required" :modal="true">
+    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium Feature" :modal="true" dismissableMask="true">
         <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
-        <span>You need premium to make your organisation private.</span>
+        <span>Go premium to make your organisation private!</span>
         <template #footer>
             <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
             <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
         </template>
     </Dialog>
 
-    <Dialog v-if="organisation" v-model:visible="deleteOrganisationDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+    <Dialog v-if="organisation" v-model:visible="deleteOrganisationDialog" :style="{width: '450px'}" header="Confirm" :modal="true" dismissableMask="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
             <span>Are you sure you want to delete <b>{{organisation.name}}</b>?</span>
         </div>
         <template #footer>
-            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteOrganisationDialog = false"/>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteOrganisationDialog = false" />
             <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation()" />
         </template>
     </Dialog>
@@ -46,6 +57,9 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { required } from 'vuelidate/lib/validators'
+import useVuelidate from '@vuelidate/core'
+import imageValidator from '../../utils/imageValidator'
 export default {
     data () {
         return {
@@ -55,12 +69,21 @@ export default {
             ],
             boolChoice: null,
             ispublicDialog: false,
-            deleteOrganisationDialog: false
+            deleteOrganisationDialog: false,
+            file: false
         }
     },
     computed: {
         ...mapState('organisation', ['organisation']),
         ...mapState('authentication', ['currentuser'])
+    },
+    setup: () => ({ v$: useVuelidate() }),
+    validations: {
+        organisation: {
+            name: { required },
+            description: {}
+        },
+        file: {}
     },
     created () {
         if (this.organisation.created_by !== this.currentuser) {
@@ -71,13 +94,29 @@ export default {
         this.initialize()
     },
     methods: {
-        ...mapActions('organisation', ['updateOrganisation', 'deleteOrganisation']),
+        ...mapActions('organisation', ['fetchOrganisation', 'updateOrganisation', 'deleteOrganisation']),
         initialize () {
-            this.boolChoice = { name: 'Public', value: this.organisation.ispublic }
+            this.boolChoice = { name: 'Public', value: true }
         },
-        async editOrganisation () {
-            await this.updateOrganisation({})
+        async validateImage (e) {
+            this.file = await imageValidator(e)
+        },
+        async updateDetails () {
+            if (this.v$.organisation.$invalid) { return }
+            var formData = new FormData()
+            for (var key in this.organisation) {
+                if (key !== 'image') {
+                    if (this.organisation[key].length) {
+                        formData.append(key, this.organisation[key])
+                    }
+                }
+            }
+            if (this.file) {
+            formData.append('image', this.file)
+            }
             this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Organisation Updated', life: 3000 })
+            await this.updateOrganisation(formData)
+            await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
         },
         async removeOrganisation () {
             this.deleteOrganisationDialog = false
@@ -88,3 +127,13 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.imageupload {
+  background-color: #2196F3;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>

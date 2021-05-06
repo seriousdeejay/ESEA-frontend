@@ -82,7 +82,8 @@ export default {
         },
         async patchNetwork ({ state, commit }, payload) {
             const id = parseInt(state.network.id)
-            const { response, error } = await NetworkService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
+            console.log('LLL', payload)
+            const { response, error } = await NetworkService.patch({ id, data: payload.data, headers: { 'Content-Type': 'application/json' } })
             if (error) {
                 commit('setError', { error })
                 return
