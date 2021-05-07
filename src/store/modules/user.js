@@ -44,11 +44,11 @@ export default {
             }
             commit('setUser', response)
         },
-        async updateUser ({ state, commit }) {
+        async updateUser ({ state, commit }, payload) {
             const id = state.user.id
-            const data = state.user
-            const { response, error } = await UserService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+            const { response, error } = await UserService.put({ id, data: payload, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
+                console.log(error.response.data)
                 commit('setError', { error })
                 return
             }

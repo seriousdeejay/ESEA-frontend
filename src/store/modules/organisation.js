@@ -65,13 +65,9 @@ export default {
             dispatch('setOrganisation', response.data)
         },
         async updateOrganisation ({ state, commit }, payload) {
-            console.log('ttt', payload)
             const id = state.organisation.id
-            // const data = state.organisation
-            console.log('-------', state.organisation)
             const { response, error } = await OrganisationService.put({ id, data: payload, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
-                console.log(error.response.data)
                 commit('setError', { error })
                 return
             }

@@ -3,7 +3,7 @@ import BaseApiService from './BaseApiService'
 
 const createUrl = ({ id, query = '' }) => {
     let base = `${API_URL}/users`
-    base = id ? `${base}/${id}/` : base
+    base = id ? `${base}/${id}` : base
     return `${base}/${query}`
 }
 

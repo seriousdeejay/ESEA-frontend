@@ -60,10 +60,9 @@ export default {
             await dispatch('fetchNetworks', {})
             dispatch('setNetwork', response.data)
         },
-        async updateNetwork ({ state, commit }) {
+        async updateNetwork ({ state, commit }, payload) {
             const id = state.network.id
-            const data = state.network
-            const { response, error } = await NetworkService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+            const { response, error } = await NetworkService.put({ id, data: payload, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return

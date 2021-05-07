@@ -2,10 +2,11 @@
     <div class="p-px-5" style="width: 500px">
         <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
             <div class="p-col-12 p-field p-d-flex p-ai-center p-jc-center p-mb-5">
-                <img :src="organisation.image" alt="Profile Avatar" style="width: 150px; height: 150px; border-radius: 50%;" format="image/jpeg">
-                <div class="p-grid p-ml-5">
+                <img :src="organisation.image" alt="Organisation Image" style="width: 150px; height: 150px; border-radius: 50%;" format="image/jpeg">
+                <div class="p-col p-grid p-ml-5">
                     <input id="uploadfile" type="file" accept="image/*" @change="validateImage" hidden />
-                    <label for="uploadfile" class="p-col-12 imageupload">Change Organisation Image</label> <div class="p-col-12">{{file.name}}</div>
+                    <label for="uploadfile" class="p-col-12 imageupload p-text-center">Change Organisation Image</label>
+                    <div class="p-col-12">{{file.name}}</div>
                 </div>
             </div>
             <div class="p-col-12 p-field">
@@ -37,7 +38,7 @@
         <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
         <span>Go premium to make your organisation private!</span>
         <template #footer>
-            <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
+            <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false" />
             <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
         </template>
     </Dialog>
@@ -60,6 +61,7 @@ import { mapState, mapActions } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import useVuelidate from '@vuelidate/core'
 import imageValidator from '../../utils/imageValidator'
+
 export default {
     data () {
         return {
@@ -82,8 +84,7 @@ export default {
         organisation: {
             name: { required },
             description: {}
-        },
-        file: {}
+        }
     },
     created () {
         if (this.organisation.created_by !== this.currentuser) {
@@ -114,7 +115,6 @@ export default {
             if (this.file) {
             formData.append('image', this.file)
             }
-            this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Organisation Updated', life: 3000 })
             await this.updateOrganisation(formData)
             await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
         },
