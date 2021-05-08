@@ -66,44 +66,9 @@
         </TabPanel>
         <TabPanel header="Settings">
             <div class="p-grid">
-                <div class="p-col-8 p-fluid p-text-left p-p-5" style="width: 600px">
-                    <div class="p-field p-grid">
-                        <label for="name" class="p-col-fixed" style="width: 200px">Name</label>
-                        <InputText id="name" v-model.trim="campaign.name" required="true" autofocus :class="{'p-invalid': submitted && !campaign.name}" class="p-col"/>
-                        <small class="p-error" v-if="submitted && !campaign.name">A name is required.</small>
-
-                    </div>
-                    <div class="p-field p-grid">
-                        <label for="method" class="p-col-fixed" style="width: 200px">Method</label>
-                        <Dropdown id="method" v-model="campaign.method" :options="methods" optionLabel="name" optionValue="name" placeholder="Select a Method" :class="{'p-invalid': submitted && !campaign.method}" class="p-col" />
-                        <small class="p-error" v-if="submitted && !campaign.method">A method is required.</small>
-                    </div>
-                    <div class="p-field p-grid">
-                        <label for="opendate" class="p-col-fixed" style="width: 200px">Opening Date</label>
-                        <Calendar id="opendate" v-model="campaign.open_survey_date" placeholder="Calendar" appendTo="body" :showTime="true" :showIcon="true" class="p-col p-p-0" />
-                        </div>
-                    <div class="p-field p-grid">
-                        <label for="enddate" class="p-col-fixed" style="width: 200px">Closing Date</label>
-                        <Calendar id="enddate" v-model="campaign.close_survey_date" placeholder="Calendar" appendTo="body" showTime="true" :showIcon="true" class="p-col p-p-0" />
-                    </div>
-
-                    <div class="p-field p-grid">
-                        <label for="description" class="p-col-fixed" style="width: 200px">Description</label>
-                        <Textarea id="description" v-model="something" required="true" rows="3" cols="20" class="p-col" />
-                    </div>
-
-                    <div class="p-field p-grid">
-                        <label for="reminder" class="p-col-fixed" style="width: 200px">Respondent reminder before deadline (in days)</label>
-                        <InputNumber id="inputnumber" v-model="reminder" :min=1 class="p-col p-p-0"/>
-                    </div>
-                    <div class="p-d-flex p-jc-between">
-                        <Button label="Save Campaign Details" class="p-button-primary p-button-sm p-mr-5" @click="editCampaign" :disabled="false"/>
-                        <Button label="Delete Campaign" class="p-button-danger p-button-sm p-ml-5" @click="deleteCampaignDialog = true" />
-                    </div>
-                </div>
-                <Divider layout="vertical" class="p-col-1"/>
+                <campaign-update-form class="p-col-8" style="width:600px; border-right: 1px solid lightgrey;" />
                 <div class="p-col p-p-5">
-                    <DataTable :value="campaign.organisation_accounts" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="menu" v-model:selection="selectedOrganisations"  selectionMode="multiple" class="p-datatable-gridlines p-datatable-striped p-datatable-sm"
+                    <DataTable :value="eseaAccounts" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="menu" v-model:selection="selectedOrganisations"  selectionMode="multiple" class="p-datatable-gridlines p-datatable-striped p-datatable-sm"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
                         <template #header>
@@ -114,7 +79,7 @@
                                     <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                                 </span>
                                 <div>
-                                    <Button @click="(addOrganisationsDialog = true && addableOrganisations())" label="Add" class="p-button-success p-mr-2" />
+                                    <Button @click="addableOrganisations()" label="Add" class="p-button-success p-mr-2" />
                                     <Button @click="removeOrganisationsDialog = true" label="Remove" class="p-button-danger" />
                                 </div>
                             </div>
@@ -147,7 +112,7 @@
 
     <Dialog v-model:visible="addOrganisationsDialog" :style="{width: '500px'}" :modal="true" dismissableMask="true">
         <div class="p-grid">
-            <MultiSelect id="organisations" v-model="chosenOrganisations" :options="organisations" optionLabel="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom p-col-12 p-mt-2">
+            <MultiSelect id="organisations" v-model="chosenOrganisations" :options="organisations" optionLabel="name" optionValue="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom p-col-12 p-mt-2">
                 <template #value="slotProps">
                     <div v-for="option of slotProps.value" :key="option.id">
                         <div>{{option.name}}</div>
@@ -164,7 +129,7 @@
             </MultiSelect>
         </div>
         <template #footer>
-                <Button label="Add Selected Organisations" icon="pi pi-plus" @click="(addOrganisationsDialog = false && addOrganisations())"/>
+                <Button label="Add Selected Organisations" icon="pi pi-plus" @click="addOrganisations()"/>
                 <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="addOrganisationsDialog = false" />
         </template>
     </Dialog>
@@ -175,19 +140,17 @@ import { mapActions, mapState } from 'vuex'
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import ProgressBar from 'primevue/progressbar'
 import Slider from 'primevue/slider'
-import Calendar from 'primevue/calendar'
-import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import dateFixer from '../../utils/datefixer'
 import moment from 'moment'
+import CampaignUpdateForm from '../../components/forms/CampaignUpdateForm.vue'
 
 export default {
     components: {
-        Calendar,
-        Dropdown,
         ProgressBar,
         Slider,
-        MultiSelect
+        MultiSelect,
+        CampaignUpdateForm
     },
     data () {
         return {
@@ -231,7 +194,7 @@ export default {
             ],
             selectedOrganisations: [],
             removeOrganisationsDialog: false,
-            chosenOrganisations: null,
+            chosenOrganisations: [],
             addOrganisationsDialog: false
         }
     },
@@ -266,7 +229,7 @@ export default {
         this.initialize()
     },
     methods: {
-        ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount']),
+        ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount', 'createEseaAccount', 'deleteEseaAccount']),
         ...mapActions('method', ['fetchMethod']),
         ...mapActions('organisation', ['fetchOrganisations']),
         dateFixer,
@@ -274,17 +237,32 @@ export default {
             this.boolChoice = { name: 'Public', value: true }
             await this.fetchEseaAccounts({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId })
             await this.fetchMethod({ id: this.campaign.method })
+            await this.fetchOrganisations
         },
         toggle (event) {
             this.$refs.menu.toggle(event)
         },
         async addableOrganisations () {
-            await this.fetchOrganisations({ query: `?network=${this.network.id}` })
+            await this.fetchOrganisations({ query: `?excludecampaign=${this.$route.params.CampaignId}` })
+            this.addOrganisationsDialog = true
         },
         async addOrganisations () {
-            if (this.chosenOrganisations) {
-                // Add Organisation to Campaign
+            if (this.chosenOrganisations.length) {
+                for (var organisation of this.chosenOrganisations) {
+                    var newEseaAccount = { organisation: organisation, method: this.campaign.method, campaign: this.campaign.id }
+                    console.log('new account', newEseaAccount)
+                    await this.createEseaAccount({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId, data: newEseaAccount })
+                }
             }
+            this.addOrganisationsDialog = false
+        },
+        async removeOrganisations () {
+            console.log('LLL', this.selectedOrganisations)
+            for (var eseaAccount of this.selectedOrganisations) {
+                await this.deleteEseaAccount({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId, id: eseaAccount.id })
+            }
+            this.removeOrganisationsDialog = false
+            this.initialize()
         },
         async goToEseaAccount (event) {
             await this.setEseaAccount(event.data)

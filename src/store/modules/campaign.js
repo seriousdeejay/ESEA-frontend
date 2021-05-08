@@ -28,12 +28,19 @@ export default {
             state.campaigns = state.campaigns.filter(c => c.id !== id)
         },
         setError (state, { error }) {
-            state.error = error
+            console.log(error?.response.data)
+            state.error = error?.response.data || []
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {
-        async fetchCampaigns ({ commit }, payload) {
+        async fetchCampaigns ({ commit, state }, payload) {
             const { response, error } = await CampaignService.get(payload)
+            state.error = []
+            // var error = []
+            // commit('setError', { error })
             if (error) {
                 commit('setError', { error })
                 return
@@ -54,14 +61,13 @@ export default {
                 commit('setError', { error })
                 return
             }
-            console.log('ddddd', response.data)
             await dispatch('fetchCampaigns', { nId: nId })
             await dispatch('setCampaign', response.data)
         },
-        async updateCampaign ({ state, commit }) {
+        async updateCampaign ({ state, commit }, { nId, data }) {
             const id = state.campaign.id
-            const data = state.campaign
-            const { response, error } = await CampaignService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+            state.error = []
+            const { response, error } = await CampaignService.put({ nId, id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return
@@ -75,7 +81,7 @@ export default {
                 return
             }
             commit('deleteCampaign', { payload })
-            dispatch('setCampaign', {})
+            await dispatch('setCampaign', {})
         },
         setCampaign ({ state, commit }, { id }) {
             if (id) {

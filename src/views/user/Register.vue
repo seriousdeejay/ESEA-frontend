@@ -1,7 +1,7 @@
 <template>
     <div style="width: 500px; border-radius: 2px" class="p-shadow-10 p-input-filled p-py-5">
         <h1 class="p-mx-5 p-px-5" style="border-bottom: 1px solid green;">Create An Account</h1>
-        <form v-on:submit.prevent="register" class="p-grid p-fluid p-m-5 p-text-left">
+        <form @submit.prevent="register" class="p-grid p-fluid p-m-5 p-text-left">
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="text" id="username" v-model="customuser.username" :class="{'borderless': usernameErrors.length && submitted}" />
@@ -133,9 +133,7 @@ export default {
         register (e) {
             this.submitted = true
             this.v$.customuser.$touch()
-            if (this.v$.$invalid) {
-                return
-            }
+            if (this.v$.$invalid) { return }
             console.log('succes!')
             this.userRegister(this.customuser)
         }

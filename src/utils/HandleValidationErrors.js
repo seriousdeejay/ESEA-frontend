@@ -22,6 +22,7 @@ export default (validationObject, serverValidationErrors = []) => {
         })
     }
     if (serverValidationErrors && serverValidationErrors.length) {
+        console.log('validator:', serverValidationErrors)
         serverValidationErrors.forEach(
             validationError => errors.push(validationError)
         )

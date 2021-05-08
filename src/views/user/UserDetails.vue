@@ -148,6 +148,7 @@ export default {
             }
             await this.updateUser(formData)
             await this.fetchUser({ id: this.$route.params.id })
+            setTimeout(() => { this.loading = false }, 1000)
             // this updateUser({})
         },
         async deleteAccount () {

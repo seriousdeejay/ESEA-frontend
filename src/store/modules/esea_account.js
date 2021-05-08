@@ -24,10 +24,11 @@ export default {
             })
         },
         deleteEseaAccount (state, { id }) {
-            state.eseaAccounts = state.setEseaAccount.filter(e => e.id !== id)
+            state.eseaAccounts = state.eseaAccounts.filter(e => e.id !== id)
         },
         setError (state, { error }) {
-            state.error = error
+            console.log('my error:', error?.response.data)
+            state.error = error?.response.data || []
         }
     },
     actions: {
@@ -47,10 +48,20 @@ export default {
             }
             commit('setEseaAccount', response)
         },
-        async updateEseaAccount ({ state, commit }) {
-            const id = state.eseaAccount.id
-            const data = state.eseaAccount
-            const { response, error } = await EseaAccountService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+        async createEseaAccount ({ commit, dispatch }, { nId, cId, data }) {
+            const { response, error } = await EseaAccountService.post({ nId, cId, data: data })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            await dispatch('fetchEseaAccounts', { nId, cId })
+            await dispatch('setEseaAccount', response.data)
+        },
+        async updateEseaAccount ({ state, commit }, { nId, cId, data }) {
+            console.log(nId, cId, data)
+            // const id = state.eseaAccount.id
+            // const data = state.eseaAccount
+            const { response, error } = await EseaAccountService.put({ nId, cId, id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return

@@ -30,6 +30,7 @@ export default {
         //     state.networkorganisations = state.networkorganisations.filter(o => o.id !== id)
         // },
         setError (state, { error }) {
+            console.log('error -->', error.response.data)
             state.error = error
         }
     },
@@ -82,7 +83,7 @@ export default {
         async patchNetwork ({ state, commit }, payload) {
             const id = parseInt(state.network.id)
             console.log('LLL', payload)
-            const { response, error } = await NetworkService.patch({ id, data: payload.data, headers: { 'Content-Type': 'application/json' } })
+            const { response, error } = await NetworkService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
             if (error) {
                 commit('setError', { error })
                 return
