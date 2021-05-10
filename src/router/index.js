@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import Login from '../views/user/Login'
+import Register from '../views/user/Register'
 import SurveyFill from '../views/survey/SurveyFill'
-import surveyThankYou from '../views/survey/SurveyThankYou'
+import SurveyThankYou from '../views/survey/SurveyThankYou'
 
 const routes = [
   {
@@ -25,7 +27,7 @@ const routes = [
     path: '/survey-thank-you/',
     name: 'survey-thank-you',
     components: {
-      anonymousview: surveyThankYou
+      anonymousview: SurveyThankYou
     },
     meta: {
       requiresLogin: false
@@ -34,7 +36,9 @@ const routes = [
   {
     path: '/register',
     name: 'register',
-    component: () => import('../views/user/Register.vue')
+    components: {
+      loginview: Register
+    }
       // {
       // a: () => import('../views/user/Register.vue')
       // }
@@ -42,7 +46,9 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/user/Login.vue')
+    components: {
+      loginview: Login
+  }
   },
   {
     path: '/logout',

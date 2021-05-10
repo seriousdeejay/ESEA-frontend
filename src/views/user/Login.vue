@@ -76,7 +76,7 @@ export default {
         ...mapActions('authentication', ['userLogin']),
         async login () {
             this.submitted = true
-            if (this.v$.invalid) { return }
+            if (this.v$.$invalid) { return }
 
             await this.userLogin({
                 username: this.username,
@@ -94,10 +94,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-inputtext {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-}
+// .p-inputtext {
+//     border: none;
+//     border-bottom: 1px solid lightgrey;
+// }
 .borderless {
     border-bottom: 1px solid red;
 

@@ -11,10 +11,12 @@
     </Menubar>
     <my-bread-crumb />
     <!-- <h1>Breadcrumb with Chosen Network>Chosen Organisation>Chosen Method</h1> -->
-    <router-view />
+    <div style="margin-top: 30px;">
+      <router-view />
+    </div>
   </div>
   <div v-else class="centered">
-    <router-view style="background-color: white;" />
+    <router-view name="loginview" style="background-color: white;" />
   </div>
     <router-view class="anonymous view" name="anonymousview"/>
 </template>

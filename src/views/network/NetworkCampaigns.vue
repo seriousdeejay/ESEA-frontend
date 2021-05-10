@@ -6,8 +6,8 @@
         </span>
     </div>
     <Divider />
-
-    <div v-if="campaigns.length" class="p-grid p-m-5">
+<ProgressSpinner v-if="loading" />
+    <div v-if="campaigns.length && !loading" class="p-grid p-m-5">
         <div v-for="campaign in campaigns" :key="campaign.name" class="p-col-12 p-md-6 p-lg-4" style="width: 400px">
             <div class="p-p-3" :class="campaign.hover ? 'p-shadow-1 p-m-1' : 'p-shadow-1 p-m-0'" style="border-radius: 3px" :style="(campaign.hover ? styleObject : '')"  @mouseover="campaign.hover=true" @mouseleave="campaign.hover = false" @click="goToCampaign(campaign)">
                     <p class="p-text-light">{{ dateFixer(campaign.open_survey_date, 'MMMM Do YYYY') }} - {{ dateFixer(campaign.close_survey_date, 'MMMM Do YYYY') }}</p> <!-- MM/Do/YYYY' -->
@@ -34,13 +34,15 @@
 import { mapActions, mapState } from 'vuex'
 import dateFixer from '../../utils/datefixer'
 import CampaignForm from '../../components/forms/CampaignForm'
-
+import ProgressSpinner from 'primevue/progressspinner'
 export default {
     components: {
-        CampaignForm
+        CampaignForm,
+        ProgressSpinner
     },
     data () {
         return {
+            loading: true,
             hover: false,
             styleObject: { backgroundColor: '#EFEEEE' },
             createCampaignDialog: false
@@ -58,7 +60,9 @@ export default {
         ...mapActions('campaign', ['fetchCampaigns', 'setCampaign']),
         dateFixer,
         async initialize () {
+            setTimeout(() => { this.loading = false }, 4000)
             await this.fetchCampaigns({ nId: this.$route.params.NetworkId })
+            this.loading = false
         },
 
         async goToCampaign (campaign) {

@@ -54,7 +54,7 @@
       </template>
     </Dialog>
 
-    <Dialog v-model:visible="createDialog" :style="{width: '450px'}" header="Organisation Details" :modal="true" class="p-fluid">
+    <Dialog v-model:visible="createDialog" :style="{width: '450px'}" header="Organisation Details" modal="true" dismissableMask="true" class="p-fluid">
         <div class="p-field">
             <label for="name">Name</label>
             <InputText id="name" v-model.trim="organisationForm.name" required="true" autofocus :class="{'p-invalid': submitted && !organisationForm.name}" />

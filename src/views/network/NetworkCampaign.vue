@@ -17,7 +17,7 @@
         <TabPanel header="Method">
             <h4>Method: <span class="p-text-light p-text-italic">'{{method.name}}'</span></h4>
             <h4>Description: <span class="p-text-light p-text-italic">'{{method.description}}'</span></h4>
-            <Button label="Go to Method" @click="goToMethod" />
+            <Button label="Go to Method" @click="goToMethod" :disabled="true" />
 
         </TabPanel>
         <TabPanel header="ESEA Accounts" style="background-color: black;">
@@ -66,7 +66,9 @@
         </TabPanel>
         <TabPanel header="Settings">
             <div class="p-grid">
-                <campaign-update-form class="p-col-8" style="width:600px; border-right: 1px solid lightgrey;" />
+                <div class="p-col-6" style="min-width: 500px; border-right: 1px solid lightgrey;">
+                <campaign-update-form />
+                </div>
                 <div class="p-col p-p-5">
                     <DataTable :value="eseaAccounts" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="menu" v-model:selection="selectedOrganisations"  selectionMode="multiple" class="p-datatable-gridlines p-datatable-striped p-datatable-sm"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
@@ -91,7 +93,7 @@
         </TabPanel>
     </TabView>
 
-    <Dialog v-model:visible="removeOrganisationsDialog" :style="{width: '500px'}" header="Removal confirmation" :modal="true" dismissableMask="true">
+    <Dialog v-model:visible="removeOrganisationsDialog" style="width: 500px" header="Removal confirmation" :modal="true" dismissableMask="true">
         <div v-if="selectedOrganisations.length">
             <span>Are you sure you want to <b>remove</b> these from your campaign?</span>
             <div v-for="item in selectedOrganisations" :key=item.name class="p-shadow-2 p-mt-5 p-p-3">{{item.organisation}}</div>
@@ -101,7 +103,7 @@
         </div>
         <template #footer>
             <div v-if="selectedOrganisations.length">
-                <Button label="No" icon="pi pi-times" class="p-button-text" @click="(removeOrganisationsDialog = false) && (selectedRows = [])"/>
+                <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeOrganisationsDialog = false"/>
                 <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisations()" />
             </div>
             <div v-else>
@@ -110,12 +112,12 @@
         </template>
     </Dialog>
 
-    <Dialog v-model:visible="addOrganisationsDialog" :style="{width: '500px'}" :modal="true" dismissableMask="true">
+    <Dialog v-model:visible="addOrganisationsDialog" style="width: 800px" contentStyle="height: 300px" :modal="true" dismissableMask="true">
         <div class="p-grid">
             <MultiSelect id="organisations" v-model="chosenOrganisations" :options="organisations" optionLabel="name" optionValue="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom p-col-12 p-mt-2">
                 <template #value="slotProps">
-                    <div v-for="option of slotProps.value" :key="option.id">
-                        <div>{{option.name}}</div>
+                    <div v-for="option in slotProps.value" :key="option.id">
+                        <div>{{option}}</div>
                     </div>
                     <template v-if="!slotProps.value || slotProps.value.length === 0">
                         Select Organisations

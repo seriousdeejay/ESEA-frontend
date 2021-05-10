@@ -111,42 +111,4 @@ export default {
         }
     }
 }
-       //  editNetwork (network) {
-      //    this.network = { ...network }
-      //    this.networkDialog = true
-      //  },
-      //  confirmDeleteNetwork (network) {
-      //    this.network = network
-      //    this.deleteNetworkDialog = true
-      //  },
-
-      //  async removeNetwork (network) {
-      //    this.deleteNetworkDialog = false
-      //    this.deleteNetwork({ id: network.id })
-      //    // this.network = {}
-      //    this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Network Deleted', life: 3000 })
-      //  },
-
-            //  deleteNetwork () {
-      //    this.deleteNetworkDialog = true
-      //    this.$store.state.networks = this.$store.state.networks.filter(val => val.id !== this.network.id)
-      //    this.network = {}
-      //    this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Network Deleted', life: 3000 })
-      //  },
-
-          //  if (this.network.id) {
-          //    this.$store.state.networks[this.findIndexById(this.network.id)] = this.network
-          //    this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Network updated', life: 3000 })
-          //  } else {
-
-      //  findIndexById (id) {
-      //      let index = -1
-      //      for (let i = 0; i < this.$store.state.networks.length; i++) {
-      //          if (this.$store.state.networks[i].id === id) {
-      //            index = i
-      //              break
-      //          }
-      //      }
-        //    return index
-        //  },
  </script>

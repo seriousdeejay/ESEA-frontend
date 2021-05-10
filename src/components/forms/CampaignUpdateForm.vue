@@ -34,10 +34,9 @@
             <InputNumber id="inputnumber" v-model="empty" :min=1 class="p-col p-p-0"/>
             <small class="p-error p-text-italic" v-for="error in reminderErrors" :key="error" style="padding-left: 200px;">{{error}}</small>
         </div>
-        <div class="p-d-flex p-jc-between">
-            <Button type="submit" label="Save Details" :loading="loading" class="p-button-primary p-button-sm p-mr-5" />
+        <div class="p-d-flex p-jc-between p-p-0 p-m-0">
+            <Button type="submit" :label="loading? 'Saving...': 'Save Details'" :loading="loading" class="p-button-primary p-button-sm p-mr-5" />
             <Button label="Delete Campaign" class="p-button-danger p-button-sm p-ml-5" @click="deleteCampaignDialog = true" />
-            {{deleteCampaignDialog}}
         </div>
     </form>
 
@@ -101,8 +100,8 @@ export default {
         this.initialize()
     },
     methods: {
-        ...mapActions('campaign', ['updateCampaign']),
-        ...mapActions('method', ['fetchMethods', 'deleteCampaign']),
+        ...mapActions('campaign', ['updateCampaign', 'deleteCampaign']),
+        ...mapActions('method', ['fetchMethods']),
         async initialize () {
             await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
         },
@@ -118,6 +117,7 @@ export default {
         async destroyCampaign () {
             this.deleteCampaignDialog = false
             await this.deleteCampaign({ nId: this.$route.params.NetworkId, id: this.$route.params.CampaignId })
+            this.$router.push({ name: 'networkcampaigns' })
         }
     }
 }

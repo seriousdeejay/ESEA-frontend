@@ -34,7 +34,8 @@ export default {
         //     state.organisationParticipants = state.organisationParticipants.filter(o => o.id !== id)
         // },
         setError (state, { error }) {
-            state.error = error
+            console.log(error?.response.data)
+            state.error = error?.response.data || []
         }
     },
     actions: {

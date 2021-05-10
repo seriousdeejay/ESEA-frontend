@@ -18,7 +18,7 @@
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
-                    <Textarea id="networkdescription" v-model.trim="network.description" class="p-text-italic" rows="3" cols="20" />
+                    <Textarea id="networkdescription" v-model.trim="network.description" rows="3" cols="20" />
                     <label for="networkdescription">Description</label>
                 </span>
             </div>
@@ -29,7 +29,7 @@
             <small class="p-text-italic">*Public Networks are visible to anyone. Explicitly granted access is still required for cetain operations.</small>
         </form>
         <div class="p-col-12 p-d-flex p-jc-between">
-            <Button type="submit" form="settingsform" label="Save Network Details" class="p-button-primary" :disabled="v$.$invalid" />
+            <Button type="submit" form="settingsform" :label="loading?'Save...' : 'Save Details'" :loading="loading" class="p-button-primary" style="width: 150px;" :disabled="v$.$invalid" />
             <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
         </div>
 
@@ -53,51 +53,6 @@
             </template>
         </Dialog>
     </div>
-
-<!--
-        <div class="p-fluid p-text-left p-my-5">
-             <form id="networkeditingform" @submit="checkform">
-             <div class="p-field">
-                <label for="name">Name</label>
-                <InputText id="name" v-model.trim="network.name" required="true" autofocus :class="{'p-invalid': submitted && !network.name}" class="p-text-italic" />
-                <small class="p-error" v-if="!network.name">Name is required.</small>
-            </div>
-            <div class="p-field">
-                <label for="description">Description</label>
-                <Textarea id="description" v-model="network.description" class="p-text-italic" required="false" rows="3" cols="20" />
-            </div>
-            <div class="p-field">
-                <label for="ispublic">Should this network be public? </label>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" :disabled="true" class="p-mb-3" />
-                <small class="p-text-italic">*Public networks and their organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
-            </div>
-        </div>
-            </form>
-        <div class="p-d-flex p-jc-between">
-            <Button label="Save Network Details" class="p-button-primary" @click="editNetwork" :disabled="false"/>
-            <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
-        </div>
-    </div>
-
-    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium required" :modal="true">
-        <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
-        <span>You need premium to make your network private.</span>
-        <template #footer>
-            <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
-            <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
-        </template>
-    </Dialog>
-
-    <Dialog v-if="network" v-model:visible="deleteNetworkDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
-            <span>Are you sure you want to delete <b>{{network.name}}</b>?</span>
-        </div>
-        <template #footer>
-            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteNetworkDialog = false"/>
-            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeNetwork()" />
-        </template>
-    </Dialog> -->
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -108,6 +63,7 @@ import imageValidator from '../../utils/imageValidator'
 export default {
     data () {
         return {
+            loading: false,
             ispublicbool: [
                 { name: 'Public', value: true },
                 { name: 'Private', value: false }
@@ -153,6 +109,7 @@ export default {
         },
         async updateDetails () {
             if (this.v$.network.$invalid) { return }
+            this.loading = true
             var formData = new FormData()
             for (var key in this.network) {
                 if (key !== 'image' && this.network[key].length) {
@@ -164,6 +121,7 @@ export default {
             }
             await this.updateNetwork(formData)
             await this.fetchNetwork({ id: this.$route.params.NetworkId })
+            this.loading = false
         },
         async removeNetwork () {
             this.deleteNetworkDialog = false
@@ -184,3 +142,48 @@ export default {
   cursor: pointer;
 }
 </style>
+
+<!--
+        <div class="p-fluid p-text-left p-my-5">
+             <form id="networkeditingform" @submit="checkform">
+             <div class="p-field">
+                <label for="name">Name</label>
+                <InputText id="name" v-model.trim="network.name" required="true" autofocus :class="{'p-invalid': submitted && !network.name}" class="p-text-italic" />
+                <small class="p-error" v-if="!network.name">Name is required.</small>
+            </div>
+            <div class="p-field">
+                <label for="description">Description</label>
+                <Textarea id="description" v-model="network.description" class="p-text-italic" required="false" rows="3" cols="20" />
+            </div>
+            <div class="p-field">
+                <label for="ispublic">Should this network be public? </label>
+                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" :disabled="true" class="p-mb-3" />
+                <small class="p-text-italic">*Public networks and their organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
+            </div>
+        </div>
+            </form>
+        <div class="p-d-flex p-jc-between">
+            <Button label="Save Network Details" class="p-button-primary" @click="editNetwork" :disabled="false"/>
+            <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
+        </div>
+    </div>
+
+    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium required" :modal="true">
+        <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
+        <span>You need premium to make your network private.</span>
+        <template #footer>
+            <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
+            <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
+        </template>
+    </Dialog>
+
+    <Dialog v-if="network" v-model:visible="deleteNetworkDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
+            <span>Are you sure you want to delete <b>{{network.name}}</b>?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteNetworkDialog = false"/>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeNetwork()" />
+        </template>
+    </Dialog> -->

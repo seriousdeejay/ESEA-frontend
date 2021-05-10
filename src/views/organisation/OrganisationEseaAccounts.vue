@@ -1,5 +1,5 @@
 <template>
-    <Button label="New Campaign" icon="pi pi-plus" class="p-button-success p-d-flex p-mx-5" @click="createCampaignDialog = true" />
+    <Button label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-d-flex p-mx-5" @click="createCampaignDialog = true" :disabled="true" />
     <Divider />
     <div class="p-grid p-m-5">
         <div v-for="eseaAccount in eseaAccounts" :key="eseaAccount.id" class="p-col-12 p-md-6 p-lg-4" style="width: 450px">
@@ -9,8 +9,9 @@
                 <Divider />
                 <div class="p-text-left p-ml-5">
                     <div class="p-grid">
+                        <p class="p-col-12">Deployed by Network: <span class="p-text-bold">{{eseaAccount.network}}</span></p>
                         <p class="p-col-6">Method: <span class="p-text-bold">{{eseaAccount.method.name}}</span></p>
-                        <p class="p-col-6"> Report: <span class="p-text-bold">{{eseaAccount.report}} No</span></p>
+                        <p class="p-col-6">Report: <span class="p-text-bold">{{eseaAccount.report || 'No'}}</span></p>
                         <p class="p-col-6">Respondents: <span class="p-text-bold">{{eseaAccount.all_respondents}}</span></p>
                         <p class="p-col-6">Responses: <span class="p-text-bold">{{eseaAccount.all_responses.length}}</span></p>
                     </div>

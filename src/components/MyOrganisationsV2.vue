@@ -1,12 +1,12 @@
 <template>
     <!-- <my-organisations network-organisations selection-enabled></my-organisations> -->
-    <div class="p-d-flex p-jc-between p-m-5" style="min-width: 600px;">
+    <div class="p-d-flex p-jc-between p-mx-5" style="min-width: 600px;">
         <div v-if="networkOrganisations">
             <Button :label="'Invite Organisation'" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="addableOrganisations()" />
             <Button :label="removeMode ? 'Select the organisation to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-danger p-button-sm" :disabled="!organisations.length" @click="removeMode = !removeMode" />
         </div>
         <div v-else>
-            <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createDialog = true" />
+            <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success" @click="createDialog = true" />
         </div>
         <span class="p-input-icon-left">
             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />

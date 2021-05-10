@@ -1,6 +1,5 @@
 <template>
-
-<div class="p-grid nested-grid p-px-2" style="min-height: 60vh;">
+<div class="p-grid nested-grid p-px-2" style="min-height: 70vh;">
     <div class="p-col-9">
         <div class="p-col-12 p-text-justify"><h4 class="p-text-bold">Description</h4>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis.

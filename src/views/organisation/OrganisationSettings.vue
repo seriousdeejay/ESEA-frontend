@@ -88,7 +88,6 @@ export default {
     },
     created () {
         if (this.organisation.created_by !== this.currentuser) {
-            console.log('You may not change settings!')
             this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
             return
         }
@@ -104,16 +103,15 @@ export default {
         },
         async updateDetails () {
             if (this.v$.organisation.$invalid) { return }
+            console.log('orgg', this.organisation)
+
             var formData = new FormData()
-            for (var key in this.organisation) {
-                if (key !== 'image') {
-                    if (this.organisation[key].length) {
-                        formData.append(key, this.organisation[key])
-                    }
-                }
-            }
+            formData.append('name', this.organisation.name)
+            formData.append('description', this.organisation.description)
+            formData.append('ispublic', this.organisation.ispublic)
+
             if (this.file) {
-            formData.append('image', this.file)
+                formData.append('image', this.file)
             }
             await this.updateOrganisation(formData)
             await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
@@ -137,3 +135,11 @@ export default {
   cursor: pointer;
 }
 </style>
+
+            // for (var key in this.organisation) {
+            //     if (key !== 'image' && key !== 'networks' && key !== 'esea_accounts') {
+            //         if (this.organisation[key].length) {
+            //             formData.append(key, this.organisation[key])
+            //         }
+            //     }
+            // }

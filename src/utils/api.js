@@ -3,9 +3,9 @@ import store from '../store'
 
 export default async ({ method = 'get', url, data }) => {
     try {
-        console.log('>>', url, data)
+        console.log('Url: ', url)
+        if (data) { console.log('Request Data: ', data) }
         const response = await AxiosInstance[method](url, data)
-        console.log('///', response)
         return { response }
     } catch (error) {
         console.log('nnnnnnnn', error)
