@@ -39,6 +39,7 @@ export default {
     },
     actions: {
         async fetchNetworks ({ commit }, payload) {
+            commit('clearError')
             const { response, error } = await NetworkService.get(payload)
             if (error) {
 				commit('setError', { error })
