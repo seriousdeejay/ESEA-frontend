@@ -17,7 +17,7 @@
         <TabPanel header="Method">
             <h4>Method: <span class="p-text-light p-text-italic">'{{method.name}}'</span></h4>
             <h4>Description: <span class="p-text-light p-text-italic">'{{method.description}}'</span></h4>
-            <Button label="Go to Method" @click="goToMethod" :disabled="true" />
+            <Button label="Go to Method" @click="goToMethod" />
 
         </TabPanel>
         <TabPanel header="ESEA Accounts" style="background-color: black;">
@@ -66,10 +66,10 @@
         </TabPanel>
         <TabPanel header="Settings">
             <div class="p-grid">
-                <div class="p-col-6" style="min-width: 500px; border-right: 1px solid lightgrey;">
+                <div class="p-col-6" style="min-width: 600px; border-right: 1px solid lightgrey;">
                 <campaign-update-form />
                 </div>
-                <div class="p-col p-p-5">
+                <div class="p-col-6 p-p-5" style="min-width: 600px;">
                     <DataTable :value="eseaAccounts" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="menu" v-model:selection="selectedOrganisations"  selectionMode="multiple" class="p-datatable-gridlines p-datatable-striped p-datatable-sm"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -245,7 +245,7 @@ export default {
             this.$refs.menu.toggle(event)
         },
         async addableOrganisations () {
-            await this.fetchOrganisations({ query: `?excludecampaign=${this.$route.params.CampaignId}` })
+            await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}&excludecampaign=${this.$route.params.CampaignId}` })
             this.addOrganisationsDialog = true
         },
         async addOrganisations () {

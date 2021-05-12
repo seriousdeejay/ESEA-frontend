@@ -17,20 +17,20 @@
             </div>
             <div class="p-col-4">
                 <span class="p-float-label">
-                    <InputNumber id="surveyresponserate" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.rate" lazy />
-                    <label for="surveyresponserate">Response Rate</label>
+                    <InputNumber id="surveyminthreshold" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.min_threshold" lazy />
+                    <label for="surveyresponserate">Minimal Response Threshold</label>
                 </span>
             </div>
         </div>
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
-        <div class="p-grid p-col-12">
+        <div class="p-grid p-col-12 p-m-0">
             <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" />
             <div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div>
         </div>
+        <Button label="Save Survey" class="p-m-2" @click="saveSurvey" :loading="loading" />
         <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
-                     {{v$.$invalid}}
                     <!-- <span class="p-float-label">
                         <InputText id="questionkey" type="text" v-model="dd"  :class="{'borderless': keyErrors.length}"  @blur="questionKeyFilter" :disabled="!active" />
                         <label for="questionkey">Question Key</label>
@@ -73,6 +73,7 @@ export default {
     },
     data () {
         return {
+            loading: false,
             lazySurvey: { ...this.survey },
             selectedQuestions: [],
             topicIndirectIndicators: [],
@@ -175,7 +176,7 @@ export default {
         lazySurvey: {
             name: { required, maxLength: maxLength(120) },
             stakeholdergroup: { required, minLength: minLength(4) },
-            rate: { required, between: between(0, 100) },
+            min_threshold: { required, between: between(0, 100) },
             questions: { required, minLength: minLength(1) }
         }
     },
@@ -188,6 +189,11 @@ export default {
         },
         updateQuestions () {
             this.v$.lazySurvey.questions.$touch()
+        },
+        saveSurvey () {
+            this.loading = true
+            this.v$.lazySurvey.$touch()
+            setTimeout(() => { this.loading = false }, 500)
         }
     }
 }

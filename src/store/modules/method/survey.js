@@ -1,7 +1,7 @@
 import SurveyService from '../../../services/SurveyService'
 import { debounce, random } from 'lodash'
 
-const baseSurvey = { name: 'new Survey', description: '', stakeholdergroup: [], rate: 100, questions: [] }
+const baseSurvey = { name: 'new Survey', description: '', stakeholdergroup: [], min_threshold: 100, questions: [] }
 
 export default {
     namespaced: true,

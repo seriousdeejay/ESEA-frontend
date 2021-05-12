@@ -37,13 +37,6 @@ export default {
 			delete state.isSaved[id]
 			state.surveyResponses = state.surveyResponses.filter(q => q.id !== id)
 		},
-		setError (state, { error, id }) {
-			if (id && error?.response?.data) {
-				state.errors = { ...state.errors, [id]: error?.response?.data }
-				return
-			}
-			state.error = error
-		},
 		updateList (state, { id, data }) {
 			if (id !== data.id) {
 				delete state.debouncers[id]
@@ -90,6 +83,15 @@ export default {
 					[id]: isSaved
 				}
 			}
+		},
+		setError (state, { error, id }) {
+			console.log(error?.response.data)
+
+			if (id && error?.response?.data) {
+				state.errors = { ...state.errors, [id]: error?.response?.data }
+				return
+			}
+			state.error = error
 		}
 	},
 	actions: {

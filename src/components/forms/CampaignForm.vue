@@ -150,7 +150,6 @@ export default {
         },
         closeDialog () {
             this.$emit('closedialog')
-            // this.$parent.$data.createCampaignDialog = false
         }
     }
 }

@@ -29,7 +29,7 @@
             <small class="p-text-italic">*Public organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
         </form>
         <div class="p-col-12 p-d-flex p-jc-between">
-            <Button type="submit" form="settingsform" label="Save Organisation Details" class="p-button-primary" :disabled="v$.$invalid" />
+            <Button type="submit" form="settingsform" :label="loading? 'Save...' : 'Save Details'" class="p-button-primary" :loading="loading" :disabled="v$.$invalid" style="width: 150px;" />
             <Button label="Delete Organisation" class="p-button-danger" @click="deleteOrganisationDialog = true" />
         </div>
     </div>
@@ -65,6 +65,7 @@ import imageValidator from '../../utils/imageValidator'
 export default {
     data () {
         return {
+            loading: false,
             ispublicbool: [
                 { name: 'Public', value: true },
                 { name: 'Private', value: false }
@@ -103,6 +104,7 @@ export default {
         },
         async updateDetails () {
             if (this.v$.organisation.$invalid) { return }
+            this.loading = true
             console.log('orgg', this.organisation)
 
             var formData = new FormData()
@@ -115,6 +117,7 @@ export default {
             }
             await this.updateOrganisation(formData)
             await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
+            this.loading = false
         },
         async removeOrganisation () {
             this.deleteOrganisationDialog = false

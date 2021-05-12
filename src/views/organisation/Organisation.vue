@@ -42,7 +42,7 @@ export default {
     methods: {
         goToPage (name) {
             this.pagename = name
-            this.$router.push({ name: `organisation${name.toLowerCase()}`, params: { OrganisationId: this.organisation?.id || 0 } })
+            this.$router.push({ name: `organisation${name.toLowerCase()}`, params: { OrganisationId: this.organisation?.id } })
         }
     }
 }

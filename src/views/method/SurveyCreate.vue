@@ -1,7 +1,7 @@
 <template>
 <method-header />
 
-<div class="p-shadow-10 p-d-flex p-jc-center">
+<div class="p-shadow-10">
     <div class="p-shadow-5 p-m-5 p-p-5" style="width: 80%">
         <div class="p-d-flex p-ai-center p-jc-between">
         <h1>Stakeholder Survey</h1> <Button label="Create Survey" class="p-button-info p-button-lg" @click="addSurvey()" />
@@ -15,6 +15,9 @@
                 </Button> -->
                 <Button icon="pi pi-trash" class="p-panel-header-icon p-link" @click="removeSurvey(survey.id)" />    <!-- <Menu id="config_menu" ref="menu" :model="items" :popup="true" /> -->
             </template>
+            <div class="p-col-12 p-d-flex p-jc-start">
+            <Button type="button" :label="isSaved[survey?.id] ? 'Saved' : 'Unsaved'" icon="pi pi-check" :class="isSaved[survey?.id] ? '' : 'p-button-warning'" />
+            </div>
             <survey-form :survey="survey" :items="items" :stakeholders="stakeholders" :errors="errors[survey.id] || {}" @goodinput="saveSurvey" />
         </Panel>
         </div>
@@ -42,7 +45,7 @@ export default {
     },
     computed: {
         ...mapState('method', ['method']),
-        ...mapState('survey', ['surveys', 'error', 'errors']),
+        ...mapState('survey', ['surveys', 'error', 'errors', 'isSaved']),
         ...mapGetters('topic', ['methodTopics', 'subTopics']),
         ...mapGetters('question', ['topicQuestions']),
         items () {

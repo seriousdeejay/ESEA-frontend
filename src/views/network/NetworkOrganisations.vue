@@ -1,50 +1,21 @@
 <template>
-    <!-- <my-organisations network-organisations selection-enabled></my-organisations> -->
-    <div class="p-d-flex p-jc-between p-m-5" style="min-width: 600px;">
-        <div v-if="this.network.created_by === this.currentuser">
+    <div class="p-d-flex p-m-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
+        <div v-if="permission">
             <Button :label="'Invite Organisation'" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="addableOrganisations()" />
-            <Button :label="removeMode ? 'Select the organisation to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-danger p-button-sm" :disabled="!organisations.length" @click="removeMode = !removeMode" />
+            <Button :label="removeMode ? 'Select the organisation to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!organisations.length" @click="removeMode = !removeMode" />
         </div>
         <span class="p-input-icon-left">
-            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search..." />
+            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
         </span>
     </div>
     <Divider />
-    <div v-if="organisations.length && !inviteDialog" class="p-grid p-m-5">
-        <div v-for="organisation in filteredList" :key="organisation.id" class="p-col-12 p-md-6 p-lg-4" style="width: 300px; height: auto;">
-            <div class="p-p-3" :class="organisation.hover ? 'p-shadow-2 p-m-1' : 'p-shadow-1 p-m-2'" :style="(organisation.hover ? styleObject: '')" @mouseover="organisation.hover=true" @mouseleave="organisation.hover = false" @click.left="goToOrganisation(organisation)">
-                <img :src="organisation.image" alt="Profile Avatar" style="max-width: 150px; max-height: 150px; border-radius: 50%;" format="PNG">
-                <p class="p-text-italic">{{organisation.name}}</p>
-            </div>
-        </div>
-    </div>
-    <div v-else class="p-text-italic">There are no Organisations to display!</div>
-<!--
-    <Dialog v-model:visible="createDialog" style="width: 450px" header="Organisation Details" modal="true" dismissableMask="true" class="p-fluid">
-        <div class="p-field">
-            <label for="name">Name</label>
-            <InputText id="name" v-model.trim="organisationForm.name" required="true" autofocus :class="{'p-invalid': submitted && !organisationForm.name}" />
-            <small class="p-error" v-if="submitted && !organisationForm.name">Name is required.</small>
-        </div>
-        <div class="p-field">
-            <label for="description">Description</label>
-            <Textarea id="description" v-model="organisationForm.description" required="true" rows="3" cols="20" />
-        </div>
-        <div class="p-field">
-            <label for="ispublic">Should this organisation be public? </label>
-            <SelectButton id="ispublic" v-model="organisationForm.ispublic" required="true" :options="ispublicbool" />
-        </div>
-        <template #footer>
-            <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="createDialog = false" />
-            <Button label="Save" icon="pi pi-check" class="p-button-text" @click="createNewOrganisation" :disabled="!organisationForm.name" />
-        </template>
-    </Dialog> -->
+    <organisation-list v-if="!inviteDialog" :organisations="organisations" :search="search" :loading="loading" @clicked-organisation="goToOrganisation" />
 
     <Dialog v-model:visible="removeDialog" style="width: 500px" header="Confirm Deletion" modal="true"  dismissableMask="true">
             Are you sure you want to <b>delete</b> the following organisation(s)?
             <div v-for="organisation in selectedOrganisations" :key="organisation.id" class="p-shadow-1 p-p-3 p-m-5">{{organisation.name}}</div>
         <template #footer>
-        <Button label="No" icon="pi pi-times" class="p-button-text" @click="(removeDialog = false) && (selectedRows = null)"/>
+        <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeDialog=false" />
         <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation()" />
       </template>
     </Dialog>
@@ -71,7 +42,7 @@
             </div>
         <template #footer>
                 <Button label="Invite Organisations" icon="pi pi-plus" @click="addOrganisations"/>
-                <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="inviteDialog = false" />
+                <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="inviteDialog=false" />
         </template>
     </Dialog>
 </template>
@@ -79,16 +50,20 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import MultiSelect from 'primevue/multiselect'
+import OrganisationList from '../../components/lists/OrganisationList'
 
 export default {
     components: {
+        OrganisationList,
         MultiSelect
     },
     data () {
         return {
+            permission: false,
             search: '',
+            loading: true,
             selectedOrganisations: [],
-            organisationsToInvite: '',
+            organisationsToInvite: [],
             inviteDialog: false,
             removeMode: false,
             removeDialog: false
@@ -107,25 +82,19 @@ export default {
             if (!this.inviteDialog) { this.initialize() }
         }
     },
-    created () {
-        this.initialize()
+    async created () {
+        this.permission = this.network.created_by === this.currentuser
+        await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
+        this.loading = false
     },
     methods: {
         ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
         ...mapActions('network', ['patchNetwork']),
         async initialize () {
+            this.loading = true
             await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
+            this.loading = false
         },
-        // async createNewOrganisation () {
-        //     this.submitted = false
-        //     if (this.organisationForm.name.trim()) {
-        //         await this.createOrganisation({ data: this.organisationForm })
-        //         this.$toast.add({ severity: 'success', summary: 'Organisation created', detail: `organisation: ${this.organisation.name}`, life: 3000 })
-        //     this.createDialog = false
-        //     this.submitted = true
-        //     this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
-        //     }
-        // },
         async addableOrganisations () {
             await this.fetchOrganisations({ query: `?excludenetwork=${this.$route.params.NetworkId}` })
             this.inviteDialog = true
@@ -144,6 +113,7 @@ export default {
         },
         async goToOrganisation (organisation) {
             if (this.removeMode) {
+                this.selectedOrganisations = []
                 this.selectedOrganisations.push(organisation)
                 this.removeDialog = true
             } else {

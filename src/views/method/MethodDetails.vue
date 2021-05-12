@@ -4,16 +4,16 @@
             <h1>{{method.name}}</h1>
             <h3>{{method.description}}</h3>
         </div>
-        <div class="p-grid p-col-6 p-p-3" style="min-width: 800px;">
+        <div v-if="method.surveys.length" class="p-grid p-col-6 p-p-3" style="min-width: 800px;">
             <div class="p-col-12 p-d-flex p-jc-between p-p-5">
             <SelectButton v-model="amountDisplayButtonValue" :options="amountDisplayButtonOptions" optionLabel="name" />
             <Button icon="pi pi-external-link" label="Download as pdf" class="p-button-info" @click="exportMethod($event)" />
             </div>
-            <TabView v-if="amountDisplayButtonValue.value === 1" class="p-shadow-5">
+            <TabView v-if="amountDisplayButtonValue.value === 1" class="p-col-12 p-shadow-5">
                 <TabPanel v-for="survey in method.surveys" :key="survey.id" :header="survey.name">
                     <h4 class="p-text-left">Name: <span class="p-text-light">{{survey.name}}</span></h4>
-                    <h4 class="p-text-left">Stakeholdergroup: <span class="p-text-light">{{survey.stakeholders[0]}}</span></h4>
-                    <h4 class="p-text-left">Required Responserate: <span class="p-text-light">{{survey.rate * 100}}%</span></h4>
+                    <h4 class="p-text-left">Stakeholdergroup: <span class="p-text-light">{{survey.stakeholdergroup}}</span></h4>
+                    <h4 class="p-text-left">Required Responserate: <span class="p-text-light">{{survey.min_threshold}}%</span></h4>
                     <h4 v-if="survey.description" class="p-text-left">Description: <span class="p-text-light">{{survey.description}}</span></h4>
 
                     <div v-for="topic in survey.topics" :key="topic.id" class="p-grid p-col-12">

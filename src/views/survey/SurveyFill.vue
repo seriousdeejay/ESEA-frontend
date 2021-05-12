@@ -106,8 +106,9 @@ export default {
     //   axios.get('http://127.0.0.1:8000/methods/27/surveys/13/organisations/1/responses/')
     //   .then(response => (console.log(response)))
     //    AxiosInstance.get('/methods/27/surveys/13/organisations/1/responses/GhjrpoLc/', {}).then(response => (console.log(response)))
-            await this.setSurveyResponse({})
-            await this.fetchSurveyResponse({ nId: 0, cId: 0, eaId: this.eseaAccount.id || 0, id: this.$route.params.uniquetoken }) // this.$route.params.uniquetoken
+            // await this.setSurveyResponse({})
+            await this.fetchSurveyResponse({ nId: this.eseaAccount?.network || 0, cId: this.eseaAccount?.campaign || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken }) // this.$route.params.uniquetoken
+            console.log('++++', this.surveyResponse)
             await this.fetchSurvey({ mId: this.surveyResponse.method, id: this.surveyResponse.survey })
             if (this.surveyResponse.finished) {
                 this.$router.push({ name: 'survey-thank-you' })

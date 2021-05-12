@@ -30,8 +30,11 @@ export default {
         //     state.networkorganisations = state.networkorganisations.filter(o => o.id !== id)
         // },
         setError (state, { error }) {
-            console.log('error -->', error.response.data)
-            state.error = error
+            console.log(error?.response.data)
+            state.error = error?.response.data || []
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {

@@ -1,13 +1,12 @@
 <template>
+    <h1>Manage Users</h1>
 <my-users />
     <div class="users">
-        <h1>Manage Users</h1>
         <Toast position="top-right"/>
         <div class="card p-m-5 p-shadow-2">
               <Toolbar>
                 <template #left>
                     <ToggleButton v-model="selectionToggle" onLabel="Selecting: Enabled" offLabel="Selecting: Disabled" onIcon="pi pi-check" offIcon="pi pi-times" class="p-mr-2" />
-                    <Button label="Send Message" icon="pi pi-plus" class="p-button-success p-mr-2" @click="something" :disabled="selectedUsers.length === 0" />
                 </template>
 
                 <template #right>

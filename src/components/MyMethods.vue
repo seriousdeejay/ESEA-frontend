@@ -1,9 +1,9 @@
 <template>
     <Toolbar>
         <template #left>
-            <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-mr-2" @click="importDialog = true" />
-            <div v-if="networkMethods">
+            <div v-if="(networkMethods && permission)">
                 <div v-if="!addingProcess">
+                        <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-mr-2" @click="importDialog = true" />
                         <ToggleButton v-if="selectionEnabled" v-model="selectionToggle" onLabel="Selecting: Enabled" offLabel="Selecting: Disabled" onIcon="pi pi-check" offIcon="pi pi-times" class="p-mr-2" />
                         <Button label="Add Methods" icon="pi pi-plus" class="p-button-success p-mr-2" @click="addableMethods()" />
                         <Button label="Remove Methods" icon="pi pi-trash" class="p-button-danger" @click="confirmationDialog = true" :disabled="!selectedRows.length" />
@@ -12,6 +12,9 @@
                     <Button label="Show network methods" class="p-button-success p-mr-2" @click="initialize()" />
                     <Button label="Add selected Methods" class="p-button-primary p-mr-2" @click="confirmationDialog = true" :disabled="!selectedRows.length" />
                 </div>
+            </div>
+            <div v-if="!networkMethods">
+                <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-mr-2" @click="importDialog = true" />
             </div>
         </template>
 
@@ -125,6 +128,7 @@ export default {
     },
     data () {
         return {
+            permission: false,
             filters: {},
             selectedRows: [],
             selectionToggle: false,
@@ -141,6 +145,7 @@ export default {
         ...mapState('authentication', ['currentuser'])
     },
     created () {
+        this.permission = this.network.created_by === this.currentuser
         this.initialize()
     },
     methods: {
