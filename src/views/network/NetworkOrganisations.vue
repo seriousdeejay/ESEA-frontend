@@ -22,10 +22,10 @@
 
      <Dialog v-model:visible="inviteDialog" style="width: 500px" modal="true" dismissableMask="true" class="p-fluid">
          <div class="p-field">
-            <MultiSelect id="organisations" v-model="organisationsToInvite" :options="organisations" optionLabel="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom">
+            <MultiSelect id="organisations" v-model="organisationsToInvite" :options="organisations" optionLabel="name" optionValue="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom">
                 <template #value="slotProps">
                     <div v-for="option of slotProps.value" :key="option.id">
-                        <div>{{option.name}}</div>
+                        <div>{{option}}</div>
                     </div>
                     <template v-if="!slotProps.value || slotProps.value.length === 0">
                         Select Organisations
@@ -97,24 +97,29 @@ export default {
         },
         async addableOrganisations () {
             await this.fetchOrganisations({ query: `?excludenetwork=${this.$route.params.NetworkId}` })
+            this.organisationsToInvite = []
             this.inviteDialog = true
         },
         async addOrganisations () {
             this.inviteDialog = false
-            console.log(this.organisationsToInvite)
-            await this.patchNetwork(this.organisationsToInvite)
+            if (this.organisationsToInvite.length) {
+                var newListOfOrganisations = this.network.organisations.concat(this.organisationsToInvite)
+                await this.patchNetwork({ organisations: newListOfOrganisations })
+            }
             this.initialize()
         },
         async removeOrganisation () {
             this.removeDialog = false
-            console.log(this.selectedOrganisations)
-            await this.patchNetwork(this.selectedOrganisations)
+            if (!this.selectedOrganisations.length) {
+                var newListOfOrganisations = this.network.organisations.filter((item) => !this.selectedOrganisations.includes(item))
+                await this.patchNetwork({ organisations: newListOfOrganisations })
+            }
             this.initialize()
         },
         async goToOrganisation (organisation) {
             if (this.removeMode) {
                 this.selectedOrganisations = []
-                this.selectedOrganisations.push(organisation)
+                this.selectedOrganisations.push(organisation.name)
                 this.removeDialog = true
             } else {
             await this.setOrganisation({ ...organisation })

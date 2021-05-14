@@ -74,27 +74,28 @@
                 </div>
         </TabPanel>
     </TabView>
-    {{surveyy}}
+
     <Dialog v-model:visible="importEmployeesDialog" :style="{width: '900px'}" header="Import your stakeholders" :modal="true" class="p-fluid">
         <div class="p-d-flex p-jc-between p-ai-start p-p-5" style="border: 1px solid lightgrey;">
-        <Listbox v-if="surveyy.respondees.length" v-model="s" :options="surveyy.respondees" :multiple="false"  optionLabel="name" :filter="true" listStyle="max-height:250px" style="width:15rem" filterPlaceholder="Search">
-            <template #option="slotProps">
-                <div class="country-item">
-                    <div>{{slotProps.option.name}}</div>
-                </div>
-            </template>
-        </Listbox>
-        <div>
-        <p>Import employees for the following survey: <span class="p-text-italic">'{{surveyy.name}}'</span>.</p>
-        <FileUpload name="myfile" :customUpload="true" @uploader="onUpload" :fileLimit="1" accept=".csv" :maxFileSize="1000000">
-            <template #empty>
-                <p>Drag and drop your csv file here to upload.</p>
-            </template>
-        </FileUpload>
-        </div>
+            <Listbox v-if="surveyy.respondees.length" v-model="s" :options="surveyy.respondees" :multiple="false"  optionLabel="name" :filter="true" listStyle="max-height:250px" style="width:15rem" filterPlaceholder="Search">
+                <template #option="slotProps">
+                    <div class="country-item">
+                        <div>{{slotProps.option.name}}</div>
+                    </div>
+                </template>
+            </Listbox>
+            <div>
+                <p>Import employees for the following survey: <span class="p-text-italic">'{{surveyy.name}}'</span>.</p>
+                <FileUpload name="myfile" :customUpload="true" @uploader="onUpload" :fileLimit="1" accept=".csv" :maxFileSize="1000000">
+                    <template #empty>
+                        <p>Drag and drop your csv file here to upload.</p>
+                    </template>
+                </FileUpload>
+                <div class="p-error p-text-italic" v-for="response in stakeholderupload" :key="response"><small>{{response}}</small></div>
+            </div>
         </div>
         <template #footer>
-            <Button label="Remove window" icon="pi pi-times" class="p-button-text" @click="(importEmployeesDialog = false)"/>
+            <Button label="Remove window" icon="pi pi-times" class="p-button-text" @click="importEmployeesDialog = false"/>
         </template>
     </Dialog>
 </template>
@@ -129,6 +130,7 @@ export default {
             ],
             importEmployeesDialog: false,
             surveyy: null,
+            stakeholderupload: null,
              items: [
                 {
                     label: '- Send Message',
@@ -173,14 +175,14 @@ export default {
         ...mapActions('campaign', ['fetchCampaign']),
         dateFixer,
         async initialize () {
-            this.fetchSurveys({ mId: this.eseaAccount.method.id })
+            this.fetchSurveys({ mId: this.eseaAccount.method })
             this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
         },
         addEmployees (data) {
             this.surveyy = data
-            this.importEmployeesDialog = true
             if (data.id) {
                 this.importEmployeesDialog = true
+                this.stakeholdergroup = null
             }
         },
         async onUpload (event) {
@@ -189,6 +191,8 @@ export default {
             return new Promise((resolve, reject) => {
                 AxiosInstance.post(`/import-employees/${this.$route.params.EseaAccountId || 0}/${this.surveyy.id}/`, formData) // esea account // survey
                 .then(response => {
+                    this.stakeholderupload = response.data
+                    console.log('...response:', response.data)
                     this.importDialog = false
                     this.$toast.add({ severity: 'success', summary: 'CSV uploaded', detail: 'Your csv was correctly uploaded.' })
                     this.initialize()

@@ -65,12 +65,10 @@ export default {
             type: Array,
             default: function () {
                 return [
-                   { field: 'username', header: 'Username' },
-                   { field: 'first_name', header: 'First Name' },
+                    { field: 'username', header: 'Username' },
+                    { field: 'first_name', header: 'First Name' },
                     { field: 'last_name_prefix', header: 'Prefix' },
                     { field: 'last_name', header: 'Last Name' }
-                    // { field: `${that.users.user_organisations[0].user}`, header: 'Stakeholder Group' }
-                    // stakeholder group
                 ]
             }
         },
@@ -114,8 +112,7 @@ export default {
         async initialize () {
             await this.fetchUsers({ query: this.query })
             this.selectedRows = []
-            this.addingProcess = false
-            // query: `excludeorganisation=${this.$route.params.id || 0}`
+            this.addingProcess = false // query: `excludeorganisation=${this.$route.params.id || 0}`
         },
         async addableUsers () {
             console.log('>>', this.$route.params.OrganisationId)

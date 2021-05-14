@@ -168,15 +168,27 @@ export default {
             this.selectionToggle = true
         },
         async addMethods () {
-            await this.patchNetwork(this.selectedRows)
+            if (this.selectedRows.length) {
+                var newListOfMethods = []
+                this.selectedRows.forEach(method => newListOfMethods.push(method.name))
+                newListOfMethods = this.network.methods.concat(newListOfMethods)
+                console.log('+++++', newListOfMethods)
+                await this.patchNetwork({ methods: newListOfMethods })
+            }
             this.initialize()
         },
 
         async removeMethods () {
-            await this.patchNetwork(this.selectedRows)
-            this.selectedRows.forEach((method, i) => {
-                this.$toast.add({ severity: 'success', summary: 'The following method was removed', detail: `${method.name}`, life: 3000 })
-            })
+            if (this.selectedRows.length) {
+                var newListOfMethods = []
+                this.selectedRows.forEach(method => newListOfMethods.push(method.name))
+
+                newListOfMethods = this.network.methods.filter((item) => !this.newListOfMethods.includes(item))
+                await this.patchNetwork({ methods: newListOfMethods })
+                this.selectedRows.forEach((method, i) => {
+                    this.$toast.add({ severity: 'success', summary: 'The following method was removed', detail: `${method.name}`, life: 3000 })
+                })
+            }
             this.initialize()
         },
         async deleteMethods () {

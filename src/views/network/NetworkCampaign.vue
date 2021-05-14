@@ -64,6 +64,9 @@
                 </Column>
             </DataTable>
         </TabPanel>
+        <TabPanel header="Validation">
+            Validation Closing Date: {{ dateFixer(campaign.close_validation_date, 'MMMM Do YYYY') }}
+        </TabPanel>
         <TabPanel header="Settings">
             <div class="p-grid">
                 <div class="p-col-6" style="min-width: 600px; border-right: 1px solid lightgrey;">

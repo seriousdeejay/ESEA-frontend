@@ -22,6 +22,16 @@
                 </span>
             </div>
         </div>
+        <div class="p-field">
+            <label for="description">Welcoming Text</label>
+            <Textarea id="description" v-model="lazySurvey.welcome_text" rows="3" cols="20" />
+            <!-- <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div> -->
+        </div>
+        <div class="p-field">
+            <label for="description">Closing Text</label>
+            <Textarea id="description" v-model="lazySurvey.closing_text" rows="3" cols="20" />
+            <!-- <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div> -->
+        </div>
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
         <div class="p-grid p-col-12 p-m-0">

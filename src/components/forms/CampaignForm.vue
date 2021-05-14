@@ -124,10 +124,12 @@ export default {
         // Methods of a Network
     },
     created () {
+        this.fetchMethods({ query: `?network=${this.network?.id || 0}` })
         this.initialize()
     },
     methods: {
         ...mapActions('campaign', ['createCampaign', 'setCampaign']),
+        ...mapActions('method', ['fetchMethods']),
         async initialize () {
             this.campaignForm.close_survey_date = new Date(this.campaignForm.close_survey_date.setDate(this.campaignForm.open_survey_date.getDate() + 30))
             await this.setCampaign({})

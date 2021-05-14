@@ -1,4 +1,5 @@
 <template>
+{{methods}} ii
     <div class="p-d-flex p-m-5" :class="permission ? 'p-jc-between' : 'p-jc-end'">
         <Button v-if="permission" label="New Campaign" icon="pi pi-plus" class="p-button-success p-mx-5" @click="createCampaignDialog=true" />
         <span class="p-input-icon-left">
