@@ -7,7 +7,7 @@
         </div>
         <div class="p-field">
             <label for="description">Description</label>
-            <Textarea id="description" v-model="networkForm.description" rows="3" cols="20" />
+            <Textarea id="description" v-model="networkForm.description" :autoResize="true" rows="3" />
             <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div>
         </div>
         <div class="p-field">
