@@ -1,5 +1,6 @@
 <template>
-    <ProgressSpinner v-if="loading" />
+    <ProgressSpinner v-if="loading && !failedLoad" />
+    <div v-else-if="loading && failedLoad" class="p-text-italic">Networks could not be retrieved</div>
     <div v-else-if="networks.length">
          <div v-if="table" class="p-grid p-m-5">
             <div v-for="network in filteredNetworks" :key="network.id" class="p-col-12 p-md-6 p-lg-4" style="width: 300px; height: auto;">
@@ -64,8 +65,9 @@
                 columns: [
                     { field: 'name', header: 'Name' },
                     { field: 'description', header: 'Description' },
-                    { field: 'organisations.length', header: 'Organisations' }
-                ]
+                    { field: 'organisations.length', header: 'Networks' }
+                ],
+                failedLoad: false
             }
         },
         computed: {
@@ -74,12 +76,14 @@
                 return this.networks.filter(network => { return network.name.toLowerCase().includes(this.search.toLowerCase()) })
             }
         },
+        created () {
+            setTimeout(() => { this.failedLoad = true }, 10000)
+        },
         methods: {
             goToNetwork (network) {
                 if (network?.data) {
                     network = network.data
                 }
-                console.log('check1', network)
                 this.$emit('clicked-network', network)
             }
         }

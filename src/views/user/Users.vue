@@ -1,7 +1,20 @@
 <template>
+    <div style="min-width: 1000px;">
     <h1>Manage Users</h1>
-<my-users />
-    <div class="users">
+    <div class="p-d-flex p-jc-between p-m-5">
+        <div>
+            <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
+            <Button label="Send Message" icon="pi pi-plus" class="p-button-success p-mr-2" @click="messageDialog = true" />
+        </div>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Users..." />
+        </span>
+    </div>
+    <Divider />
+
+    <user-list :users="users" :table="tableDisplay" :search="search" :loading="loading" @clicked-user="goToUser" />
+<!-- <my-users /> -->
+    <!-- <div class="users">
         <Toast position="top-right"/>
         <div class="card p-m-5 p-shadow-2">
               <Toolbar>
@@ -19,54 +32,84 @@
           <personalised-datatable table-name="users" selectionToggle :columns="ParticipantsColumns" :filters="filters" :custom-data="users" @item-redirect="goToUser"/>
 
         </div>
+    </div> -->
     </div>
+    <Dialog v-model:visible="messageDialog" style="width: 500px" header="Send Message" :modal="true" :dismissableMask="true" class="p-fluid">
+        <div>
+         <MultiSelect id="users" v-model="usersToMessage" :options="users" optionLabel="username" placeholder="Select Users" :filter="true" class="multiselect-custom">
+                <template #value="slotProps">
+                    <div v-for="option of slotProps.value" :key="option.id">
+                        <div>{{option.username}}</div>
+                    </div>
+                    <template v-if="!slotProps.value || slotProps.value.length === 0">
+                        Select Users
+                    </template>
+                </template>
+                <template #option="slotProps">
+                    <div>{{slotProps.option.username}}</div>
+                </template>
+            </MultiSelect>
+</div>
+<div class="p-field p-grid">
+            <label for="message" class="p-col-12">Message to selected User(s)</label>
+            <Textarea id="message" v-model="something" :autoResize="true" rows="3" />
+</div>
+        <template #footer>
+                <Button label="Send Message" icon="pi pi-plus" @click="SendMessage()"/>
+                <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="messageDialog = false" />
+        </template>
+    </Dialog>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import PersonalisedDatatable from '../../components/PersonalisedDatatable'
-import MyUsers from '../../components/MyUsersV2'
+import UserList from '../../components/lists/UserList'
+import MultiSelect from 'primevue/multiselect'
 
 export default {
     name: 'Users',
     components: {
-      PersonalisedDatatable,
-      MyUsers
+        UserList,
+        MultiSelect
+
     },
     data () {
         return {
-            ParticipantsColumns: [
-                 { field: 'username', header: 'Username' },
-                 { field: 'email', header: 'E-mail' },
-                 { field: 'first_name', header: 'First Name' },
-                 { field: 'last_name_prefix', header: 'Prefix' },
-                 { field: 'last_name', header: 'Last Name' }
-                 ],
-            selectionToggle: false,
-          filters: {},
-          selectedUsers: []
+            tableDisplay: false,
+            search: '',
+            loading: true,
+            messageDialog: false,
+            usersToMessage: []
+        //     ParticipantsColumns: [
+        //          { field: 'username', header: 'Username' },
+        //          { field: 'email', header: 'E-mail' },
+        //          { field: 'first_name', header: 'First Name' },
+        //          { field: 'last_name_prefix', header: 'Prefix' },
+        //          { field: 'last_name', header: 'Last Name' }
+        //          ],
+        //     selectionToggle: false,
+        //   filters: {},
+        //   selectedUsers: []
         }
     },
     computed: {
         ...mapState('user', ['users', 'user'])
       },
-    created () {
-      this.initialize()
+    async created () {
+      await this.fetchUsers({})
+      this.loading = false
     },
     methods: {
       ...mapActions('user', ['fetchUsers', 'setUser']),
-      async initialize () {
-        await this.fetchUsers({})
-      },
-      goToUser (selectedRows) {
-        console.log(selectedRows)
-        this.$toast.add({ severity: 'info', summary: 'User Selected', detail: `${selectedRows[selectedRows.length - 1].username}`, life: 3000 })
-        if (!this.selectionToggle) {
-          this.setUser({ ...selectedRows[0] })
-          this.$router.push({ name: 'userdetails', params: { id: this.user.id } })
-        } else {
-          this.selectedUsers = selectedRows
-          console.log(this.selectedUsers.length)
+    //   async initialize () {
+    //     await this.fetchUsers({})
+    //   },
+      goToUser (user) {
+          console.log(user)
+          if (user.id) {
+            this.$toast.add({ severity: 'info', summary: 'User Selected', detail: `${user.username}`, life: 3000 })
+            this.setUser(user)
+            this.$router.push({ name: 'userdetails', params: { id: user.id } })
         }
       }
     }

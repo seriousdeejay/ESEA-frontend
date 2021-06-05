@@ -1,14 +1,18 @@
 <template>
-    <h1>Organisations Overview</h1>
-    <div class="p-d-flex p-jc-between p-m-5">
-        <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success" @click="createOrganisationDialog=true" />
-        <span class="p-input-icon-left">
-            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
-        </span>
+    <div style="min-width: 1000px;">
+        <h1>Organisations Overview</h1>
+        <div class="p-d-flex p-jc-between p-m-5">
+            <div>
+                <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
+                <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success" @click="createOrganisationDialog=true" />
+            </div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
+            </span>
+        </div>
+        <Divider />
+        <organisation-list :organisations="organisations" :table="tableDisplay" :search="search" :loading="loading" @clicked-organisation="goToOrganisation" />
     </div>
-    <Divider />
-    <organisation-list :organisations="organisations" @clicked-organisation="goToOrganisation" :search="search" :loading="loading" />
-
     <Dialog v-model:visible="createOrganisationDialog" style="width: 500px" header="Organisation Details" :modal="true" :dismissableMask="true">
         <organisation-form @closedialog="createOrganisationDialog=false" />
     </Dialog>
@@ -27,6 +31,7 @@ export default {
     },
     data () {
         return {
+            tableDisplay: false,
             search: '',
             loading: true,
             createOrganisationDialog: false
@@ -36,8 +41,8 @@ export default {
         ...mapState('organisation', ['organisations'])
     },
 
-    created () {
-        this.fetchOrganisations({})
+    async created () {
+        await this.fetchOrganisations({})
         this.loading = false
     },
     methods: {

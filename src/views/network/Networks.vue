@@ -1,17 +1,17 @@
 <template>
     <div style="min-width: 1000px;">
-    <h1>Networks Overview</h1>
-    <div class="p-d-flex p-jc-between p-m-5">
-        <div>
-            <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-            <Button label="Create Network" icon="pi pi-plus" class="p-button-success" @click="createNetworkDialog=true" />
+        <h1>Networks Overview</h1>
+        <div class="p-d-flex p-jc-between p-m-5">
+            <div>
+                <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
+                <Button label="Create Network" icon="pi pi-plus" class="p-button-success" @click="createNetworkDialog=true" />
+            </div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Networks..." />
+            </span>
         </div>
-        <span class="p-input-icon-left">
-            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Networks..." />
-        </span>
-    </div>
-    <Divider />
-    <network-list :networks="networks" :table="tableDisplay" :search="search" :loading="loading"  @clicked-network="goToNetwork" />
+        <Divider />
+        <network-list :networks="networks" :table="tableDisplay" :search="search" :loading="loading"  @clicked-network="goToNetwork" />
     </div>
     <Dialog v-model:visible="createNetworkDialog" style="width: 500px" header="Network Details" :modal="true" :dismissableMask="true">
         <network-form @closedialog="createNetworkDialog=false" />
