@@ -225,7 +225,8 @@ export default {
             this.$toast.add({ severity: 'info', summary: 'Method Selected', detail: `${event.data.name}`, life: 3000 })
             if (!this.selectionToggle) {
                 await this.setMethod({ ...event.data })
-                this.$router.push({ name: 'methoddetails', params: { id: event.data.id } })
+                this.$router.push({ name: 'newmethoddetails', params: { id: event.data.id } })
+                // this.$router.push({ name: 'methoddetails', params: { id: event.data.id } })
                 // this.$router.push({ name: 'networkmethod', params: { NetworkId: this.network.id, MethodId: this.method.id } })
             }
        },

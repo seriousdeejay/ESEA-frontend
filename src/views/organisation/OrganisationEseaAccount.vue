@@ -50,12 +50,13 @@
             </Column>
             <Column field="required_response_rate" header="Response Rate Threshold" sortable>
                 <template #body='{data}'>
-                    {{data.required_response_rate}}%
+                    {{data.required_response_rate*100}}%
                 </template>
             </Column>
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
-                    <Button v-if="(data.stakeholdergroup === 'accountant')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
+                    {{data}}
+                    <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
                     <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
                 </template>
             </Column>

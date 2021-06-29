@@ -31,6 +31,7 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import ProgressSpinner from 'primevue/progressspinner'
 
     export default {
@@ -61,12 +62,13 @@
                 columns: [
                     { field: 'name', header: 'Name' },
                     { field: 'description', header: 'Description' },
-                    { field: 'networks.length', header: 'Organisations' }
+                    { field: 'networks.length', header: 'Networks' }
                 ],
                 failedLoad: false
             }
         },
         computed: {
+            ...mapState('authentication', ['currentuser']),
             filteredOrganisations () {
                 return this.organisations.filter(organisation => { return organisation.name.toLowerCase().includes(this.search.toLowerCase()) })
             }

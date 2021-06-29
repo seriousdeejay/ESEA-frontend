@@ -279,7 +279,8 @@ export default {
             console.log(event.data)
         },
         async goToMethod () {
-            this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
+            this.$router.push({ name: 'newmethoddetails', params: { id: this.campaign.method } })
+            // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
         }
     }
 }

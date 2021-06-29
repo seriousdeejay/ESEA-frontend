@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <div v-else class="p-text-italic">No Networks to display!</div>
+        <div v-else class="p-text-italic">No Campaigns to display!</div>
 </template>
 
 <script>

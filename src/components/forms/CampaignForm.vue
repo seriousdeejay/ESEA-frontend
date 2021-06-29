@@ -47,16 +47,16 @@
         </div>
         <div class="p-field">
             <label for="description">Description</label>
-            <Textarea id="description" v-model="something" rows="3" cols="20" />
+            <Textarea id="description" v-model="something" :autoResize="true" rows="3" />
         </div>
         <div class="p-field">
             <label for="message">Message to Organisations</label>
-            <Textarea id="message" v-model="something" rows="3" cols="20" />
+            <Textarea id="message" v-model="something" :autoResize="true" rows="3" />
         </div>
 
         <div class="p-d-flex p-jc-between">
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="closeDialog" style="width: 100px" />
-            <Button type="submit" form="campaignform" label="Save" icon="pi pi-check" class="p-button-text" @click="createNewCampaign" :disabled="v$.campaignForm.$error" style="width: 100px" />
+            <Button type="submit" form="campaignform" label="Save" icon="pi pi-check" class="p-button-text" :disabled="v$.campaignForm.$error" style="width: 100px" />
         </div>
     </form>
 </template>

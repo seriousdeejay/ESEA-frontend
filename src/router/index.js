@@ -467,6 +467,14 @@ const routes = [
       requiresLogin: true
     }
   },
+  {
+    path: '/newmethods/:id',
+    name: 'newmethoddetails',
+    component: () => import('../views/method/NewMethods.vue'),
+    meta: {
+        requiresLogin: true
+    }
+  },
   // {
   //   path: '/methods/:id/surveys',
   //   name: 'methodsurveys',
