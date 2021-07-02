@@ -5,8 +5,7 @@
         <div v-if="table" class="p-grid p-m-5">
             <div v-for="eseaAccount in filteredEseaAccounts" :key="eseaAccount.id" class="p-col-12 p-md-6 p-lg-4" style="width: 300px; height: auto;">
                 <div class="p-p-3" :class="eseaAccount.hover ? 'p-shadow-2 p-m-1' : 'p-shadow-1 p-m-2'" :style="(eseaAccount.hover ? styleObject: '')" @mouseover="eseaAccount.hover = true" @mouseleave="eseaAccount.hover = false" @click="goToEseaAccount(eseaAccount)">
-                    <!-- <img :src="EseaAccount.image" alt="Profile Avatar" style="max-width: 150px; max-height: 150px; border-radius: 50%;" format="PNG" /> -->
-                    <p class="p-text-bold">{{eseaAccount.method}}</p>
+                    <p class="p-text-bold">{{eseaAccount.method_name}}</p>
                     <p class="p-text-italic">{{eseaAccount.year}}</p>
                 </div>
             </div>
@@ -15,7 +14,7 @@
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
-            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" /> <!-- text-align: center; overflow: visible  contentStyle="width: 500px;" -->
+            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" />
         </Datatable>
     </div>
 </template>

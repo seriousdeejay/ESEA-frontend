@@ -49,7 +49,7 @@ export default {
         ...mapState('method', ['methods']),
         ...mapState('eseaAccount', ['eseaAccount']),
         filteredEseaAccounts () {
-            return this.eseaAccounts.filter(eseaAccount => eseaAccount.year === this.eseaaccountForm.year && eseaAccount.method.includes(this.eseaaccountForm.method.name)) // .filter(eseaAccount => { return eseaAccount.year.includes(2020) })
+            return this.eseaAccounts.filter(eseaAccount => eseaAccount.year === this.eseaaccountForm.year && eseaAccount.method_name.includes(this.eseaaccountForm.method.name)) // .filter(eseaAccount => { return eseaAccount.year.includes(2020) })
         },
         possibleyears () {
             const currentyear = new Date().getFullYear()

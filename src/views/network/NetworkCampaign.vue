@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </template>
-                <Column field="organisation" header="Organisation" sortable>
+                <Column field="organisation_name" header="Organisation" sortable>
                     <template #filter="{filterModel}">
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name"/>
                     </template>
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                         </template>
-                        <Column field="organisation"></Column>
+                        <Column field="organisation_name"></Column>
                     </DataTable>
                 </div>
             </div>

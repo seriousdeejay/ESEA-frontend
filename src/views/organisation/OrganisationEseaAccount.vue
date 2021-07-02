@@ -1,5 +1,5 @@
 <template>
-    <div class="card p-mx-5 p-mb-5">
+    <div v-if="eseaAccount.campaign" class="card p-mx-5 p-mb-5">
         <div class="p-d-flex p-jc-between p-m-2">
             <div>
                 {{ dateFixer(campaign.open_survey_date, 'MMMM Do YYYY') }}

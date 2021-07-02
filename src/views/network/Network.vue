@@ -24,10 +24,10 @@ export default {
         return {
             links: [
                 { label: 'Overview', icon: 'home' },
-                { label: 'Campaigns', icon: 'chart-bar' },
-                { label: 'Methods', icon: 'chart-bar' },
-                // { label: 'Stakeholders', icon: 'users' },
                 { label: 'Organisations', icon: 'cloud' },
+                { label: 'Methods', icon: 'chart-bar' },
+                { label: 'Campaigns', icon: 'book' },
+                // { label: 'Stakeholders', icon: 'users' },
                 { label: 'Settings', icon: 'cog' }
             ],
             pagename: undefined

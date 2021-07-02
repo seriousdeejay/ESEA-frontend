@@ -1,7 +1,6 @@
 <template>
     <div style="min-width: 1000px;">
-        <h1>Organisations Overview</h1>
-        <div class="p-d-flex p-jc-between p-m-5">
+        <div class="p-d-flex p-jc-between p-mx-5">
             <div>
                 <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
                 <Button label="Create ESEA Account" icon="pi pi-plus" class="p-button-success" @click="createEseaAccountDialog = true" />

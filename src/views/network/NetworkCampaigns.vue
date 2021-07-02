@@ -1,13 +1,17 @@
 <template>
-    <div class="p-d-flex p-m-5" :class="permission ? 'p-jc-between' : 'p-jc-end'">
-        <Button v-if="permission" label="New Campaign" icon="pi pi-plus" class="p-button-success p-mx-5" @click="createCampaignDialog=true" />
-        <span class="p-input-icon-left">
-            <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Campaigns..." />
-        </span>
+    <div style="min-width: 1000px;">
+        <div class="p-d-flex p-m-5 p-jc-between">
+            <div>
+            <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
+            <Button v-if="permission" label="New Campaign" icon="pi pi-plus" class="p-button-success" @click="createCampaignDialog=true" />
+            </div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Campaigns..." />
+            </span>
+        </div>
+        <Divider />
+        <campaign-list :campaigns="campaigns" :table="tableDisplay" :search="search" :loading="loading" @clicked-campaign="goToCampaign" />
     </div>
-    <Divider />
-    <campaign-list :campaigns="campaigns" :search="search" :loading="loading" @clicked-campaign="goToCampaign" />
-
     <Dialog v-model:visible="createCampaignDialog" style="width: 700px" header="Campaign Details" :modal="true" :dismissableMask="true">
         <campaign-form @closedialog="createCampaignDialog=false" />
     </Dialog>
@@ -25,6 +29,7 @@ export default {
     },
     data () {
         return {
+            tableDisplay: false,
             search: '',
             loading: true,
             permission: false,
