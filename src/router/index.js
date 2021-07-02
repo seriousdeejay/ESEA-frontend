@@ -239,32 +239,32 @@ const routes = [
           ]
         }
       },
-      {
-        path: 'methods',
-        name: 'organisationmethods',
-        component: () => import('../views/organisation/OrganisationMethods'),
-        meta: {
-          breadcrumb: [
-            { label: 'Organisations', to: '/organisations' },
-            { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-            { label: 'Methods', to: { name: 'organisationmethods' } }
-          ]
-        }
-        },
-        {
-          path: 'method/:MethodId',
-          name: 'organisationmethod',
-          component: () => import('../views/organisation/OrganisationMethod'),
-          meta: {
-            requiresLogin: true,
-            breadcrumb: [
-              { label: 'Organisations', to: '/organisations' },
-              { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-              { label: 'Methods', to: { name: 'organisationmethods' } },
-              { label: 'BIA', to: { name: 'organisationmethod' } }
-            ]
-          }
-        },
+    //   {
+    //     path: 'methods',
+    //     name: 'organisationmethods',
+    //     component: () => import('../views/organisation/OrganisationMethods'),
+    //     meta: {
+    //       breadcrumb: [
+    //         { label: 'Organisations', to: '/organisations' },
+    //         { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+    //         { label: 'Methods', to: { name: 'organisationmethods' } }
+    //       ]
+    //     }
+    //     },
+    //     {
+    //       path: 'method/:MethodId',
+    //       name: 'organisationmethod',
+    //       component: () => import('../views/organisation/OrganisationMethod'),
+    //       meta: {
+    //         requiresLogin: true,
+    //         breadcrumb: [
+    //           { label: 'Organisations', to: '/organisations' },
+    //           { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+    //           { label: 'Methods', to: { name: 'organisationmethods' } },
+    //           { label: 'BIA', to: { name: 'organisationmethod' } }
+    //         ]
+    //       }
+    //     },
         {
           path: 'esea-accounts',
           name: 'organisationeseaaccounts',

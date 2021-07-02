@@ -48,20 +48,20 @@ export default {
             }
             commit('setEseaAccount', response)
         },
-        async createEseaAccount ({ commit, dispatch }, { nId, cId, data }) {
-            const { response, error } = await EseaAccountService.post({ nId, cId, data: data })
+        async createEseaAccount ({ commit, dispatch }, { oId, data }) {
+            const { response, error } = await EseaAccountService.post({ oId, data: data })
             if (error) {
                 commit('setError', { error })
                 return
             }
-            await dispatch('fetchEseaAccounts', { nId, cId })
+            await dispatch('fetchEseaAccounts', { oId })
             await dispatch('setEseaAccount', response.data)
         },
-        async updateEseaAccount ({ state, commit }, { nId, cId, data }) {
-            console.log(nId, cId, data)
+        async updateEseaAccount ({ state, commit }, { oId, data }) {
+            console.log(oId, data)
             // const id = state.eseaAccount.id
             // const data = state.eseaAccount
-            const { response, error } = await EseaAccountService.put({ nId, cId, id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+            const { response, error } = await EseaAccountService.put({ oId, id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return

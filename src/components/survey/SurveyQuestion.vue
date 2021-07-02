@@ -5,7 +5,9 @@
             <answer-input
             :value="goodanswer || question.default"
             :type="question.answertype"
-            :options="question.options"
+            :uiComponent="question.uiComponent"
+            :indicator="question.direct_indicator[0]"
+            :options="question.direct_indicator[0].options"
             :readonly="readonly"
             :checkanswerrequired="checkanswerrequired"
             option-value-key="text"
@@ -50,14 +52,14 @@ export default {
     computed: {
         primaryBorder () {
             return { 'border-color': '#00008B' }
-        },
-        goodanswer () {
-            console.log(this.answer)
-            if (this.question.answertype === ('RADIO' || 'CHECKBOX')) {
-                return this.answer[0]
-            }
-            return this.answer[1]
         }
+        // goodanswer () {
+        //     console.log(this.answer)
+        //     if (this.question.answertype === ('RADIO' || 'CHECKBOX')) {
+        //         return this.answer[0]
+        //     }
+        //     return this.answer[1]
+        // }
     },
     methods: {
         changeAnswer (answer) {

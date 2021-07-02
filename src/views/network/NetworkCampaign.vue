@@ -240,7 +240,7 @@ export default {
         dateFixer,
         async initialize () {
             this.boolChoice = { name: 'Public', value: true }
-            await this.fetchEseaAccounts({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId })
+            await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}` })
             await this.fetchMethod({ id: this.campaign.method })
             await this.fetchOrganisations
         },

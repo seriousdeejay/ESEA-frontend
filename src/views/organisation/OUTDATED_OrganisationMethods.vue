@@ -18,7 +18,7 @@
                             <div class="p-col-6">Networks:</div>
                             <div class="p-col-3">{{method.networks.length}}</div>
                             <div class="p-col-6">Organisations:</div>
-                            <div class="p-col-3">{{method.organisations.length}}</div>
+                            <div class="p-col-3">{{method.networks.length}}</div>
                         </div>
                     </template>
                 </Card>
@@ -48,7 +48,7 @@ export default {
     methods: {
         ...mapActions('method', ['fetchMethods', 'setMethod']),
         async initialize () {
-            this.fetchMethods({ query: `?organisation=${this.$route.params.OrganisationId}` })
+            this.fetchMethods({ }) // query: `?organisation=${this.$route.params.OrganisationId}`
         },
         goToMethod (method) {
             console.log(method)

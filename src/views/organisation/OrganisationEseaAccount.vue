@@ -55,7 +55,6 @@
             </Column>
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
-                    {{data}}
                     <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
                     <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
                 </template>
@@ -177,7 +176,9 @@ export default {
         dateFixer,
         async initialize () {
             this.fetchSurveys({ mId: this.eseaAccount.method })
-            this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
+            if (this.eseaAccount.campaign) {
+                this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
+            }
         },
         addEmployees (data) {
             this.surveyy = data
@@ -203,7 +204,7 @@ export default {
             })
         },
         async goToSurveyFill (data) {
-            this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: 'accountant' } })
+            this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
         },
         goToSurvey (methodid, surveyid) {
             console.log(methodid)

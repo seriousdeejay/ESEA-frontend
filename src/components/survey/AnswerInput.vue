@@ -1,21 +1,61 @@
 <template>
-    <div class="p-p-3 p-my-3" style="border: 1px solid lightgrey;">
-        <InputNumber v-if="type === questionTypes.NUMBER" v-model="lazyValue" :disabled="readonly" required/>
-        <InputText v-if="type === questionTypes.TEXT" type="text" v-model="lazyValue" :disabled="readonly" required/>
+    <!--
+        uiComponent: field, line, textBox, checkBox, dropDown, radioButton
+        datatype: Text, Integer, Double, Date, Boolean, SingleChoice, MultipleChoice
 
-        <div v-if="type === questionTypes.CHECKBOX">
+    -->
+    <div class="p-p-0 p-my-0 p-text-left p-d-flex p-ai-center">
+        {{indicator.datatype}}
+        <span class="p-mr-2"> {{indicator.pre_unit}} </span>
+        <!-- <InputText v-if="uiComponent === 'field'" type="text" v-model="lazyValue" :disabled="readonly" required /> -->
+        <!-- Field
+                - Text
+                - Integer
+                - Double
+                - Date
+        -->
+        <!-- Line -->
+        <!-- Textbox -->
+        <div v-if="uiComponent === 'field'">
+            <div v-if="indicator.datatype === 'text'">
+
+            </div>
+            <div v-if="indicator.datatype === 'integer'" >
+                <InputNumber v-model="lazyValue" :disabled="readonly" required  />
+                <!-- <input type="number" step="1" v-model="lazyValue" :disabled="readonly" required /> -->
+            </div>
+            <div v-if="indicator.datatype === 'double'">
+            </div>
+            <div v-if="indicator.datatype === 'date'">
+                <input type="date" v-model="lazyValue" :disabled="readonly" required />
+            </div>
+        </div>
+
+        <div v-if="uiComponent === 'line'" style="width: 100%;">
+            <input type="text" v-model="lazyValue" :disabled="readonly" required style="width: 100%;" />
+        </div>
+
+        <Textarea v-if="uiComponent === 'textBox'" id="description" v-model="lazyValue" :disabled="readonly" autoResize="true" rows="3" />
+
+        <div v-if="uiComponent === 'radioButton'">
+            <div v-for="(option, index) in options" :key="`${index}-option`" class="p-field-radiobutton">
+                <RadioButton :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required/>
+                <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
+            </div>
+        </div>
+
+        <div v-if="uiComponent === 'checkBox'">
             <div v-for="(option, index) in options" :key="`${index}-option`" class="p-field-checkbox">
                 <Checkbox :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required/>
                 <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
             </div>
         </div>
 
-        <div v-if="type === questionTypes.RADIO">
-            <div v-for="(option, index) in options" :key="`${index}-option`" class="p-field-radiobutton">
-                <RadioButton :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required/>
-                <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
-            </div>
+        <div v-if="uiComponent === 'dropDown'">
+            <div></div>
         </div>
+
+        <span class="p-ml-2">{{indicator.post_unit}}</span>
     </div>
 </template>
 
@@ -36,10 +76,16 @@ export default {
             type: Boolean,
             default: false
         },
+        indicator: {
+            type: Object
+        },
         type: {
             type: String,
             default: 'text'
             // validator: v => Object.values(QUESTION_TYPES).includes(v)
+        },
+        uiComponent: {
+            type: String
         },
         options: {
             type: Array,
