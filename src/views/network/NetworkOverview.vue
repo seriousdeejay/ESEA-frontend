@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="p-d-flex p-jc-between">
-            <h3 class="p-text-left"><router-link :to="{name: 'networkmethods', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Methods</router-link></h3>
+            <h3 class="p-text-left"><router-link :to="{name: 'networkmethods', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Methods</router-link></h3> {{numberOfItems}}
             <h3>Page {{methodPage}} of {{methodPages}}</h3>
         </div>
         <div class="p-d-flex" style="height: 150px;">
@@ -54,53 +54,20 @@
         <Divider />
 
     </div>
-    <!-- <div class="p-col-1">
-        <Divider layout="vertical" />
-    </div>
-    <div class="p-col-2">
-        <div class="p-grid">
-            Content here
-             <div class="p-col-12">
-                <h3 class="p-mb-2 p-text-left">Available Surveys</h3>
-                <Divider class="p-m-0" />
-                <div class="p-m-3">
-                    <div v-if="surveys.length">
-                        <div v-for="survey, num in surveys" :key="survey.name">
-                            {{num+1}}. <router-link :to="{name: 'survey-fill', params: { id: survey.method.id, surveyId: survey.id }}" style="text-decoration: none; color: blue;">survey {{num+1}}</router-link>
-                            <Divider class="p-m-1" />
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="p-py-5 p-text-italic">No surveys</div>
-                    </div>
-                </div>
-                <router-link :to="{name: 'organisationsurveys', params: { OrganisationId: this.$route.params.OrganisationId }}" style="text-decoration: none; color: blue;">Show all Organisation Surveys</router-link>
-            </div>
-            <div class="p-col-12">
-                <h3 class="p-mb-2 p-text-left">Reports</h3>
-                <Divider class="p-m-0" />
-                <div class="p-m-3">
-                    <div v-if="organisations">
-                        <div v-for="organisation, num in organisations" :key="organisation.name">
-                            {{num+1}}. <router-link :to="{name: 'organisationreports', params: { OrganisationId: this.$route.params.OrganisationId }}" style="text-decoration: none; color: blue;">report {{num+1}}</router-link>
-                            <Divider class="p-m-1" />
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="p-py-5 p-text-italic">No reports yet</div>
-                    </div>
-                </div>
-                <router-link :to="{name: 'organisationreports', params: { OrganisationId: this.$route.params.OrganisationId } }" style="text-decoration: none; color: blue;">Show all Organisation Reports</router-link>
-            </div>
-        </div>
-    </div> -->
+
 </div>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
+import HorizontalScrollBar from '../../components/HorizontalScrollBar.vue'
+
 export default {
+    component: {
+        HorizontalScrollBar
+    },
     data () {
         return {
+            numberOfItems: 4,
             methodbar: [],
             organisationbar: [],
             methodPage: 1,
@@ -114,36 +81,23 @@ export default {
         ...mapState('method', ['methods']),
         ...mapState('survey', ['surveys']),
         methodPages () {
-            const page = Math.ceil(this.methods.length / 4)
-            // if (this.methods.length > 4) {
-            //     page = this.methods.length / 4
-            // }
+            const page = Math.ceil(this.methods.length / this.numberOfItems)
             return page
         },
         organisationPages () {
-            const page = Math.ceil(this.organisations.length / 4)
+            const page = Math.ceil(this.organisations.length / this.numberOfItems)
             return page
         }
-        // methodbar () {
-        //     const m = [...this.methods]
-        //     if (m.length < 5) {
-        //         for (let i = 0; i <= (5 - m.length); i++) {
-        //             m.push({ hover: false, color: 'lightgrey' })
-        //         }
-        //     }
-        //     return m
-        // }
-        // bar () {
-        //     const m = this.localmethods
-        //     if (this.localmethods.length < 5) {
-        //         for (let i = 0; i <= (5 - m.length); i++) {
-        //             m.push({ hover: false })
-        //         }
-        //     }
-        //     return m
-        // }
+
+    },
+    watch: {
+        numberOfItems: function () {
+            console.log('changed')
+            this.changeList()
+        }
     },
     created () {
+        window.addEventListener('resize', this.checkWindowSize)
         this.initialize()
     },
     methods: {
@@ -152,14 +106,15 @@ export default {
         ...mapActions('survey', ['fetchSurveys']),
 
         async initialize () {
+            this.checkWindowSize()
             await this.fetchMethods({})
-            console.log(this.methods.length)
-            this.methodbar = this.methods.slice(0, 4) // [...this.methods]
-            if (this.methodbar.length < 5) {
-                for (let i = 0; i <= (5 - this.methodbar.length); i++) {
-                    this.methodbar.push({ hover: false, color: true })
-                }
-            }
+            // this.methodbar = this.methods.slice(0, this.numberOfItems) // [...this.methods]
+            console.log('items:', this.numberOfItems)
+            // if (this.methodbar.length < this.numberOfItems) {
+            //     for (let i = 0; i <= (5 - this.methodbar.length); i++) {
+            //         this.methodbar.push({ hover: false, color: true })
+            //     }
+            // }
 
             await this.fetchOrganisations({})
             this.organisationbar = this.organisations.slice(0, 4)
@@ -168,10 +123,18 @@ export default {
                     this.organisationbar.push({ hover: false, color: true })
                 }
             }
-            this.organisationbar = this.tempbar.slice(0, 4)
+            this.organisationbar = this.organisations.slice(0, 4)
 
             for (const method of this.methods) {
                 await this.fetchSurveys({ mId: method.id, query: `?organisation=${this.$route.params.OrganisationId}` })
+            }
+        },
+        checkWindowSize () {
+            if (window.innerWidth <= 1200) {
+                this.numberOfItems = 4
+            }
+            if (window.innerWidth > 1200) {
+                this.numberOfItems = 6
             }
         },
         methodsScroll (direction) {
@@ -208,20 +171,109 @@ export default {
                 }
                 this.organisationPage++
             }
-            this.organisationbar = this.organisations.slice((this.organisationPage - 1) * 4, (this.organisationPage) * 4)
+            this.organisationbar = this.organisations.slice((this.organisationPage - 1) * this.numberOfItems, (this.organisationPage) * this.numberOfItems)
 
-            if (this.organisationbar.length < 4) {
+            if (this.organisationbar.length < this.numberOfItems) {
                 console.log(this.organisationbar.length)
-                const j = 4 - this.organisationbar.length
+                const j = this.numberOfItems - this.organisationbar.length
                 for (let i = 0; i < j; i++) {
                     console.log('c')
                     this.organisationbar.push({ hover: false, color: true })
                 }
                 console.log('length:', this.organisationbar.length)
             }
+        },
+        changeList () {
+            this.methodbar = this.methods.slice(0, this.numberOfItems)
+            const methodPlaceholderItems = this.numberOfItems - this.methodbar.length
+            if (this.methodbar.length < this.numberOfItems) {
+                for (let i = 0; i < methodPlaceholderItems; i++) {
+                    this.methodbar.push({ hover: false, color: true })
+                    console.log(this.methodbar.length)
+                }
+            }
+
+            this.organisationbar = this.organisations.slice(0, this.numberOfItems)
+            const organisationPlaceholderItems = this.numberOfItems - this.organisationbar.length
+            if (organisationPlaceholderItems > 0) {
+                for (let i = 0; i < organisationPlaceholderItems; i++) {
+                    this.organisationbar.push({ hover: false, color: true })
+                    console.log(this.organisationbar.length)
+                }
+            }
         }
     }
 }
+        // methodbar () {
+        //     this.changeList()
+        //     // const methodbar = this.methods.slice(0, this.numberOfItems)
+        //     // console.log(this.numberOfItems)
+        //     // if (this.methodbar.length < this.numberOfItems) {
+        //     //     for (let i = 0; i <= (this.numberOfItems - this.methodbar.length); i++) {
+        //     //         this.methodbar.push({ hover: false, color: true })
+        //     //     }
+        //     // }
+        //     // return methodbar
+        //     return []
+        // }
+        // methodbar () {
+        //     const m = [...this.methods]
+        //     if (m.length < 5) {
+        //         for (let i = 0; i <= (5 - m.length); i++) {
+        //             m.push({ hover: false, color: 'lightgrey' })
+        //         }
+        //     }
+        //     return m
+        // }
+        // bar () {
+        //     const m = this.localmethods
+        //     if (this.localmethods.length < 5) {
+        //         for (let i = 0; i <= (5 - m.length); i++) {
+        //             m.push({ hover: false })
+        //         }
+        //     }
+        //     return m
+        // }
+    // <!-- <div class="p-col-1">
+    //     <Divider layout="vertical" />
+    // </div>
+    // <div class="p-col-2">
+    //     <div class="p-grid">
+    //         Content here
+    //          <div class="p-col-12">
+    //             <h3 class="p-mb-2 p-text-left">Available Surveys</h3>
+    //             <Divider class="p-m-0" />
+    //             <div class="p-m-3">
+    //                 <div v-if="surveys.length">
+    //                     <div v-for="survey, num in surveys" :key="survey.name">
+    //                         {{num+1}}. <router-link :to="{name: 'survey-fill', params: { id: survey.method.id, surveyId: survey.id }}" style="text-decoration: none; color: blue;">survey {{num+1}}</router-link>
+    //                         <Divider class="p-m-1" />
+    //                     </div>
+    //                 </div>
+    //                 <div v-else>
+    //                     <div class="p-py-5 p-text-italic">No surveys</div>
+    //                 </div>
+    //             </div>
+    //             <router-link :to="{name: 'organisationsurveys', params: { OrganisationId: this.$route.params.OrganisationId }}" style="text-decoration: none; color: blue;">Show all Organisation Surveys</router-link>
+    //         </div>
+    //         <div class="p-col-12">
+    //             <h3 class="p-mb-2 p-text-left">Reports</h3>
+    //             <Divider class="p-m-0" />
+    //             <div class="p-m-3">
+    //                 <div v-if="organisations">
+    //                     <div v-for="organisation, num in organisations" :key="organisation.name">
+    //                         {{num+1}}. <router-link :to="{name: 'organisationreports', params: { OrganisationId: this.$route.params.OrganisationId }}" style="text-decoration: none; color: blue;">report {{num+1}}</router-link>
+    //                         <Divider class="p-m-1" />
+    //                     </div>
+    //                 </div>
+    //                 <div v-else>
+    //                     <div class="p-py-5 p-text-italic">No reports yet</div>
+    //                 </div>
+    //             </div>
+    //             <router-link :to="{name: 'organisationreports', params: { OrganisationId: this.$route.params.OrganisationId } }" style="text-decoration: none; color: blue;">Show all Organisation Reports</router-link>
+    //         </div>
+    //     </div>
+    // </div> -->
 </script>
 
 <style lang="scss" scoped>
