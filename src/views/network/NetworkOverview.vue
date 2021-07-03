@@ -24,54 +24,25 @@
                 <Button label="Task 2: Survey responserate threshold has been achieved for method BIA." class="p-button-secondary p-shadow-1" />
             </div>
         </div>
-        <div class="p-d-flex p-jc-between">
-            <h3 class="p-text-left"><router-link :to="{name: 'networkmethods', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Methods</router-link></h3> {{numberOfItems}}
-            <h3>Page {{methodPage}} of {{methodPages}}</h3>
+        <div class="p-m-5">
+        <horizontal-scroll-bar :items="methods" name="Methods" itemslink="networkmethods"  @clicked-item="goToItem" />
+        <horizontal-scroll-bar :items="organisations" name="Organisations" itemslink="networkorganisations"  @clicked-item="goToItem" />
+        <horizontal-scroll-bar :items="campaigns" name="Campaigns" itemslink="networkcampaigns"  @clicked-item="goToItem" />
         </div>
-        <div class="p-d-flex" style="height: 150px;">
-            <div class="scrollIcon p-d-flex"  style="height: 150px;" @click="methodsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
-            <div v-for="method, index in methodbar" :key="method" @mouseover="method.hover=true" @mouseleave="method.hover=false">
-                <div class="p-d-flex" :class="((method.hover && !method.color) ? 'p-shadow-2 p-m-1 p-text-bold' : 'p-shadow-1 p-mx-1')" style="background-color: white; width: 200px; height: 150px;" :style="(method.hover ? 'background-color: #EFEEEE' : '', method.color ? 'background-color: #F3F3F3' : '' )" >
-                    <p v-if="method.name" class="p-as-center" style="width: 100%">{{index + 1}}. Method</p>
-                </div>
-            </div>
-           <div class="scrollIcon p-d-flex" style="height: 150px;" @click="methodsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
-        </div>
-        <Divider />
-        <div class="p-d-flex p-jc-between">
-            <h3 class="p-text-left"><router-link :to="{name: 'networkorganisations', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Organisations</router-link></h3>
-            <h3>Page {{organisationPage}} of {{organisationPages}}</h3>
-        </div>
-        <div class="p-d-flex" style="height: 150px;">
-            <div class="scrollIcon p-d-flex"  style="height: 150px;" @click="organisationsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
-            <div v-for="organisation, index in organisationbar" :key="organisation" @mouseover="organisation.hover=true" @mouseleave="organisation.hover=false">
-                <div class="p-d-flex" :class="((organisation.hover && !organisation.color) ? 'p-shadow-2 p-m-1 p-text-bold' : 'p-shadow-1 p-mx-1')" style="background-color: white; width: 200px; height: 150px;" :style="(organisation.hover ? 'background-color: #EFEEEE' : '', organisation.color ? 'opacity: 0.35;' : '' )" >  <!-- background-color: #F3F3F3; -->
-                    <p v-if="organisation.name" class="p-as-center" style="width: 100%">{{index + 1}}. {{organisation.name}}</p>
-                </div>
-            </div>
-           <div class="scrollIcon p-d-flex" style="height: 150px;" @click="organisationsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
-        </div>
-        <Divider />
-
     </div>
 
 </div>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
-import HorizontalScrollBar from '../../components/HorizontalScrollBar.vue'
+import HorizontalScrollBar from '../../components/HorizontalScrollBar'
 
 export default {
-    component: {
+    components: {
         HorizontalScrollBar
     },
     data () {
         return {
-            numberOfItems: 4,
-            methodbar: [],
-            organisationbar: [],
-            methodPage: 1,
-            organisationPage: 1
 
         }
     },
@@ -79,6 +50,7 @@ export default {
         ...mapState('network', ['network']),
         ...mapState('organisation', ['organisations']),
         ...mapState('method', ['methods']),
+        ...mapState('campaign', ['campaigns']),
         ...mapState('survey', ['surveys']),
         methodPages () {
             const page = Math.ceil(this.methods.length / this.numberOfItems)
@@ -90,12 +62,12 @@ export default {
         }
 
     },
-    watch: {
-        numberOfItems: function () {
-            console.log('changed')
-            this.changeList()
-        }
-    },
+    // watch: {
+    //     numberOfItems: function () {
+    //         console.log('changed')
+    //         this.changeList()
+    //     }
+    // },
     created () {
         window.addEventListener('resize', this.checkWindowSize)
         this.initialize()
@@ -103,105 +75,104 @@ export default {
     methods: {
         ...mapActions('organisation', ['fetchOrganisations']),
         ...mapActions('method', ['fetchMethods']),
+        ...mapActions('campaign', ['fetchCampaigns']),
         ...mapActions('survey', ['fetchSurveys']),
-
         async initialize () {
-            this.checkWindowSize()
-            await this.fetchMethods({})
-            // this.methodbar = this.methods.slice(0, this.numberOfItems) // [...this.methods]
-            console.log('items:', this.numberOfItems)
-            // if (this.methodbar.length < this.numberOfItems) {
-            //     for (let i = 0; i <= (5 - this.methodbar.length); i++) {
-            //         this.methodbar.push({ hover: false, color: true })
-            //     }
-            // }
-
-            await this.fetchOrganisations({})
-            this.organisationbar = this.organisations.slice(0, 4)
-            if (this.organisations.length < 4) {
-                for (let i = 0; i <= (5 - this.organisationbar.length); i++) {
-                    this.organisationbar.push({ hover: false, color: true })
-                }
-            }
-            this.organisationbar = this.organisations.slice(0, 4)
+            // this.checkWindowSize()
+            await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
+            await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
+            await this.fetchCampaigns({ nId: this.$route.params.NetworkId })
 
             for (const method of this.methods) {
                 await this.fetchSurveys({ mId: method.id, query: `?organisation=${this.$route.params.OrganisationId}` })
             }
         },
-        checkWindowSize () {
-            if (window.innerWidth <= 1200) {
-                this.numberOfItems = 4
+        async goToItem (item, name) {
+            if (!item.id) { return }
+            if (name === 'organisations') {
+                this.$router.push({ name: 'organisationoverview', params: { OrganisationId: item.id } })
             }
-            if (window.innerWidth > 1200) {
-                this.numberOfItems = 6
+            if (name === 'methods') {
+                this.$router.push({ name: 'newmethoddetails', params: { id: item.id } })
             }
-        },
-        methodsScroll (direction) {
-            if (direction === 'left' && this.methodPage > 1) {
-                this.methodPage--
-                this.methodbar = this.methods.slice((this.methodPage - 1) * 4, (this.methodPage) * 4)
-                }
-
-            if (direction === 'right' && this.methodPage < this.methodPages) {
-                this.methodPage++
-                this.methodbar = this.methods.slice((this.methodPage - 1) * 4, (this.methodPage) * 4)
-                }
-            console.log(direction)
-            // Show other Methods
-        },
-        organisationsScroll (direction) {
-            // if (direction === 'left' && this.organisationPage > 1) {
-            //     this.organisationPage--
-            //     this.organisationbar = this.organisations.slice((this.organisationPage - 1) * 4, (this.organisationPage) * 4)
-            //     }
-            // if (direction === 'right' && this.organisationPage < this.organisationPages) {
-            //     this.organisationPage++
-            //     this.organisationbar = this.organisations.slice((this.organisationPage - 1) * 4, (this.organisationPage) * 4)
-            //     }
-            if (direction === 'left') {
-                if (this.organisationPage < 2) {
-                return
-                }
-                this.organisationPage--
+            if (name === 'campaigns') {
+                this.$router.push({ name: 'networkcampaign', params: { NetworkId: this.$route.params.NetworkId, CampaignId: item.id } })
             }
-            if (direction === 'right') {
-                if (this.organisationPage >= this.organisationPages) {
-                return
-                }
-                this.organisationPage++
-            }
-            this.organisationbar = this.organisations.slice((this.organisationPage - 1) * this.numberOfItems, (this.organisationPage) * this.numberOfItems)
-
-            if (this.organisationbar.length < this.numberOfItems) {
-                console.log(this.organisationbar.length)
-                const j = this.numberOfItems - this.organisationbar.length
-                for (let i = 0; i < j; i++) {
-                    console.log('c')
-                    this.organisationbar.push({ hover: false, color: true })
-                }
-                console.log('length:', this.organisationbar.length)
-            }
-        },
-        changeList () {
-            this.methodbar = this.methods.slice(0, this.numberOfItems)
-            const methodPlaceholderItems = this.numberOfItems - this.methodbar.length
-            if (this.methodbar.length < this.numberOfItems) {
-                for (let i = 0; i < methodPlaceholderItems; i++) {
-                    this.methodbar.push({ hover: false, color: true })
-                    console.log(this.methodbar.length)
-                }
-            }
-
-            this.organisationbar = this.organisations.slice(0, this.numberOfItems)
-            const organisationPlaceholderItems = this.numberOfItems - this.organisationbar.length
-            if (organisationPlaceholderItems > 0) {
-                for (let i = 0; i < organisationPlaceholderItems; i++) {
-                    this.organisationbar.push({ hover: false, color: true })
-                    console.log(this.organisationbar.length)
-                }
-            }
+            console.log(name, item)
         }
+        // checkWindowSize () {
+        //     if (window.innerWidth <= 1200) {
+        //         this.numberOfItems = 4
+        //     }
+        //     if (window.innerWidth > 1200) {
+        //         this.numberOfItems = 6
+        //     }
+        // },
+        // methodsScroll (direction) {
+        //     if (direction === 'left' && this.methodPage > 1) {
+        //         this.methodPage--
+        //         this.methodbar = this.methods.slice((this.methodPage - 1) * 4, (this.methodPage) * 4)
+        //         }
+
+        //     if (direction === 'right' && this.methodPage < this.methodPages) {
+        //         this.methodPage++
+        //         this.methodbar = this.methods.slice((this.methodPage - 1) * 4, (this.methodPage) * 4)
+        //         }
+        //     console.log(direction)
+        //     // Show other Methods
+        // },
+        // organisationsScroll (direction) {
+        //     // if (direction === 'left' && this.organisationPage > 1) {
+        //     //     this.organisationPage--
+        //     //     this.organisationbar = this.organisations.slice((this.organisationPage - 1) * 4, (this.organisationPage) * 4)
+        //     //     }
+        //     // if (direction === 'right' && this.organisationPage < this.organisationPages) {
+        //     //     this.organisationPage++
+        //     //     this.organisationbar = this.organisations.slice((this.organisationPage - 1) * 4, (this.organisationPage) * 4)
+        //     //     }
+        //     if (direction === 'left') {
+        //         if (this.organisationPage < 2) {
+        //         return
+        //         }
+        //         this.organisationPage--
+        //     }
+        //     if (direction === 'right') {
+        //         if (this.organisationPage >= this.organisationPages) {
+        //         return
+        //         }
+        //         this.organisationPage++
+        //     }
+        //     this.organisationbar = this.organisations.slice((this.organisationPage - 1) * this.numberOfItems, (this.organisationPage) * this.numberOfItems)
+
+        //     if (this.organisationbar.length < this.numberOfItems) {
+        //         console.log(this.organisationbar.length)
+        //         const j = this.numberOfItems - this.organisationbar.length
+        //         for (let i = 0; i < j; i++) {
+        //             console.log('c')
+        //             this.organisationbar.push({ hover: false, color: true })
+        //         }
+        //         console.log('length:', this.organisationbar.length)
+        //     }
+        // },
+        // changeList () {
+        //     this.methodbar = this.methods.slice(0, this.numberOfItems)
+        //     const methodPlaceholderItems = this.numberOfItems - this.methodbar.length
+        //     if (this.methodbar.length < this.numberOfItems) {
+        //         for (let i = 0; i < methodPlaceholderItems; i++) {
+        //             this.methodbar.push({ hover: false, color: true })
+        //             console.log(this.methodbar.length)
+        //         }
+        //     }
+
+        //     this.organisationbar = this.organisations.slice(0, this.numberOfItems)
+        //     const organisationPlaceholderItems = this.numberOfItems - this.organisationbar.length
+        //     if (organisationPlaceholderItems > 0) {
+        //         for (let i = 0; i < organisationPlaceholderItems; i++) {
+        //             this.organisationbar.push({ hover: false, color: true })
+        //             console.log(this.organisationbar.length)
+        //         }
+        //     }
+        // }
     }
 }
         // methodbar () {
@@ -274,6 +245,34 @@ export default {
     //         </div>
     //     </div>
     // </div> -->
+        //     <!-- <div class="p-d-flex p-jc-between">
+        //     <h3 class="p-text-left"><router-link :to="{name: 'networkmethods', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Methods</router-link></h3> {{numberOfItems}}
+        //     <h3>Page {{methodPage}} of {{methodPages}}</h3>
+        // </div>
+        // <div class="p-d-flex" style="height: 150px;">
+        //     <div class="scrollIcon p-d-flex"  style="height: 150px;" @click="methodsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
+        //     <div v-for="method, index in methodbar.slice(0,1)" :key="method" @mouseover="method.hover=true" @mouseleave="method.hover=false">
+        //         <div class="p-d-flex" :class="((method.hover && !method.color) ? 'p-shadow-2 p-m-1 p-text-bold' : 'p-shadow-1 p-mx-1')" style="background-color: white; width: 200px; height: 150px;" :style="(method.hover ? 'background-color: #EFEEEE' : '', method.color ? 'background-color: #F3F3F3' : '' )" >
+        //             <p v-if="method.name" class="p-as-center" style="width: 100%">{{index + 1}}. Method</p>
+        //         </div>
+        //     </div>
+        //    <div class="scrollIcon p-d-flex" style="height: 150px;" @click="methodsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
+        // </div>
+        // <Divider />
+        // <div class="p-d-flex p-jc-between">
+        //     <h3 class="p-text-left"><router-link :to="{name: 'networkorganisations', params: { NetworkId: network.id } }" style="text-decoration: none; color: blue;">Organisations</router-link></h3>
+        //     <h3>Page {{organisationPage}} of {{organisationPages}}</h3>
+        // </div>
+        // <div class="p-d-flex" style="height: 150px;">
+        //     <div class="scrollIcon p-d-flex"  style="height: 150px;" @click="organisationsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
+        //     <div v-for="organisation, index in organisationbar.slice(0,1)" :key="organisation" @mouseover="organisation.hover=true" @mouseleave="organisation.hover=false">
+        //         <div class="p-d-flex" :class="((organisation.hover && !organisation.color) ? 'p-shadow-2 p-m-1 p-text-bold' : 'p-shadow-1 p-mx-1')" style="background-color: white; width: 200px; height: 150px;" :style="(organisation.hover ? 'background-color: #EFEEEE' : '', organisation.color ? 'opacity: 0.35;' : '' )" >  background-color: #F3F3F3;
+        //             <p v-if="organisation.name" class="p-as-center" style="width: 100%">{{index + 1}}. {{organisation.name}}</p>
+        //         </div>
+        //     </div>
+        //    <div class="scrollIcon p-d-flex" style="height: 150px;" @click="organisationsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
+        // </div>
+        // <Divider /> -->
 </script>
 
 <style lang="scss" scoped>
