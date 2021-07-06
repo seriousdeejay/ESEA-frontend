@@ -1,4 +1,4 @@
-<template> 
+<template>
     <ProgressSpinner v-if="loading && !failedLoad" />
     <div v-else-if="loading && failedLoad" class="p-text-italic">Methods could not be retrieved</div>
     <div v-else-if="methods.length">

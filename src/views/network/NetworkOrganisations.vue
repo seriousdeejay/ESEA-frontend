@@ -38,7 +38,7 @@
          </div>
             <div class="p-field">
             <label for="message">Message to Organisations</label>
-            <Textarea id="message" v-model="something" required="true" rows="3" cols="20" />
+            <Textarea id="message" v-model="something" required="true" :autoResize="true" rows="3" />
             </div>
         <template #footer>
                 <Button label="Invite Organisations" icon="pi pi-plus" @click="addOrganisations"/>

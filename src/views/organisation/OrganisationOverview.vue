@@ -8,7 +8,7 @@
             </div>
         </div> -->
         <div class="p-col-12 p-text-justify"><h4 class="p-text-bold">Description</h4>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis.
+                <span v-if="organisation.description.length">{{organisation.description}}</span><span v-else>This organisation has no description</span>
         </div>
          <div class="p-col-12 p-p-5 p-m-5" style="border: 1px solid lightgray">
             <div v-if="!surveys.length">
