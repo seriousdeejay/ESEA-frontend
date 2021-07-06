@@ -36,10 +36,14 @@ export default {
         setError (state, { error }) {
             console.log(error?.response.data)
             state.error = error?.response.data || []
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {
         async fetchOrganisations ({ commit }, payload) {
+            commit('clearError')
             const { response, error } = await OrganisationService.get(payload)
             if (error) {
                 commit('setError', { error })
