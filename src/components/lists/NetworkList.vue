@@ -25,7 +25,7 @@
             <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" /> <!-- text-align: center; overflow: visible  contentStyle="width: 500px;" -->
             <Column field="created_by" header="Creator">
                 <template #body="slotProps">
-                    <div v-if="slotProps.data.created_by !== currentuser">{{slotProps.data.created_by}}--{{currentuser}}</div> <div v-else class="p-text-bold">You</div>
+                    <div v-if="slotProps.data.created_by !== currentuser">{{slotProps.data.created_by}}</div> <div v-else class="p-text-bold">You</div>
                 </template>
             </Column>
             <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
