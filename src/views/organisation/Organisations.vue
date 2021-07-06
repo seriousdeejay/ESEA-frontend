@@ -3,6 +3,7 @@
         <h1>Organisations Overview</h1>
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
+                <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-mr-2" @click="allOrganisations = !allOrganisations"/>
                 <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
                 <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success" @click="createOrganisationDialog=true" />
             </div>
@@ -31,6 +32,7 @@ export default {
     },
     data () {
         return {
+            allOrganisations: false,
             tableDisplay: false,
             search: '',
             loading: true,
@@ -40,13 +42,24 @@ export default {
     computed: {
         ...mapState('organisation', ['organisations'])
     },
-
+    watch: {
+        allOrganisations (val) {
+            this.getOrganisations()
+        }
+    },
     async created () {
-        await this.fetchOrganisations({})
-        this.loading = false
+        this.getOrganisations()
     },
     methods: {
         ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
+        async getOrganisations () {
+            if (this.allOrganisations) {
+                await this.fetchOrganisations({ query: '?allorganisations=1' })
+            } else {
+            await this.fetchOrganisations({})
+            }
+            this.loading = false
+        },
         async goToOrganisation (organisation) {
             if (organisation.id) {
                 await this.setOrganisation(organisation)

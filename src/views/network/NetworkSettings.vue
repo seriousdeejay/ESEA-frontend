@@ -18,7 +18,7 @@
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
-                    <Textarea id="networkdescription" v-model.trim="network.description" rows="3" cols="20" />
+                    <Textarea id="networkdescription" v-model.trim="network.description" :autoResize="true" rows="3" />
                     <label for="networkdescription">Description</label>
                 </span>
             </div>
@@ -108,17 +108,20 @@ export default {
             this.file = await imageValidator(e)
         },
         async updateDetails () {
+            console.log('---->', this.network.name.length)
             if (this.v$.network.$invalid) { return }
             this.loading = true
             var formData = new FormData()
             for (var key in this.network) {
-                if (key !== 'image' && this.network[key].length) {
+                console.log('>>>', this.network[key])
+                if (key !== 'image' && this.network[key].length && !Array.isArray(this.network[key])) {
                     formData.append(key, this.network[key])
                 }
             }
             if (this.file) {
                 formData.append('image', this.file)
             }
+            console.log('======', formData)
             await this.updateNetwork(formData)
             await this.fetchNetwork({ id: this.$route.params.NetworkId })
             this.loading = false

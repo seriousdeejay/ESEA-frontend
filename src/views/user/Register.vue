@@ -141,7 +141,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .p-inputtext {
     border: none;
     border-bottom: 1px solid lightgrey;

@@ -16,8 +16,8 @@
     <br>
     <br>
     <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id" class="p-m-5">
-        <ProgressBar :value="survey.current_response_rate + 10" :showValue="true">
-            '{{survey.name}}' - Response Rate: {{survey.current_response_rate + 10}}%
+        <ProgressBar :value="survey.current_response_rate * 100 + 1" :showValue="true">
+            '{{survey.name}}' - Response Rate: {{survey.current_response_rate * 100}}%
         </ProgressBar>
     </div>
     <TabView>
@@ -45,7 +45,7 @@
             <Column field="responses" header="Responses" sortable />
             <Column field="current_response_rate" header="Response Rate" sortable>
                 <template #body="{data}">
-                    <ProgressBar :value="(data.current_response_rate)" :showValue="true" />
+                    <ProgressBar :value="(data.current_response_rate) * 100" :showValue="true" />
                 </template>
             </Column>
             <Column field="required_response_rate" header="Response Rate Threshold" sortable>
@@ -66,10 +66,9 @@
         </TabPanel>
         <TabPanel header="Settings">
             <div class="p-col-8 p-fluid p-text-left p-p-5" style="width: 600px">
-
                     <div class="p-d-flex p-jc-between">
-                        <Button label="Save ESEA Account Details" class="p-button-primary p-button-sm p-mr-5" @click="editCampaign" :disabled="false"/>
-                        <Button label="Delete ESEA Account" class="p-button-danger p-button-sm p-ml-5" @click="deleteCampaignDialog = true" />
+                        <Button label="Save ESEA Account Details" class="p-button-primary p-button-sm p-mr-5" @click="editEseaAccount" :disabled="false"/>
+                        <Button label="Delete ESEA Account" class="p-button-danger p-button-sm p-ml-5" @click="deleteEseaAccountDialog = true" />
                     </div>
                 </div>
         </TabPanel>
@@ -98,124 +97,143 @@
             <Button label="Remove window" icon="pi pi-times" class="p-button-text" @click="importEmployeesDialog = false"/>
         </template>
     </Dialog>
+
+    <Dialog v-if="eseaAccount" v-model:visible="deleteEseaAccountDialog" style="width: 450px;" header="Confirm" :modal="true" dismissableMask="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 1.5rem" />
+            <span>Are you sure you want to delete this Esea Account?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteEseaAccountDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeEseaAccount()" />
+        </template>
+    </Dialog>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-import { AxiosInstance } from '../../plugins/axios'
-import { FilterMatchMode } from 'primevue/api'
-import ProgressBar from 'primevue/progressbar'
-import Listbox from 'primevue/listbox'
-import SplitButton from 'primevue/splitbutton'
-import dateFixer from '../../utils/datefixer'
-import moment from 'moment'
+    import { mapActions, mapState } from 'vuex'
+    import { AxiosInstance } from '../../plugins/axios'
+    import { FilterMatchMode } from 'primevue/api'
+    import ProgressBar from 'primevue/progressbar'
+    import Listbox from 'primevue/listbox'
+    import SplitButton from 'primevue/splitbutton'
+    import dateFixer from '../../utils/datefixer'
+    import moment from 'moment'
 
-export default {
-    components: {
-        ProgressBar,
-        Listbox,
-        SplitButton
-    },
-    data () {
-        return {
-            filters: {
-                global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-            },
-            columns: [
-                { field: 'name', header: 'Name' },
-                { field: 'method', header: 'Method' },
-                // { field: 'description', header: 'Description' },
-                { field: 'questions.length', header: 'Questions' },
-                { field: 'stakeholders', header: 'Stakeholder group' }
-            ],
-            importEmployeesDialog: false,
-            surveyy: null,
-            stakeholderupload: null,
-             items: [
-                {
-                    label: '- Send Message',
-                    command: () => {
-                        this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
-                    }
+    export default {
+        components: {
+            ProgressBar,
+            Listbox,
+            SplitButton
+        },
+        data () {
+            return {
+                filters: {
+                    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
                 },
-                {
-                    label: '- Send Reminder',
-                    command: () => {
-                        this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
+                columns: [
+                    { field: 'name', header: 'Name' },
+                    { field: 'method', header: 'Method' },
+                    // { field: 'description', header: 'Description' },
+                    { field: 'questions.length', header: 'Questions' },
+                    { field: 'stakeholders', header: 'Stakeholder group' }
+                ],
+                deleteEseaAccountDialog: false,
+                importEmployeesDialog: false,
+                surveyy: null,
+                stakeholderupload: null,
+                items: [
+                    {
+                        label: '- Send Message',
+                        command: () => {
+                            this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
+                        }
+                    },
+                    {
+                        label: '- Send Reminder',
+                        command: () => {
+                            this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
+                        }
                     }
+                ]
+            }
+        },
+        computed: {
+            ...mapState('eseaAccount', ['eseaAccount']),
+            ...mapState('survey', ['surveys']),
+            ...mapState('campaign', ['campaign']),
+            timeline () {
+                const jsondate = new Date().toJSON()
+                var currentdate = moment(jsondate, 'YYYY-MM-DD')
+                var admission = moment(this.campaign.open_survey_date, 'YYYY-MM-DD')
+                var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
+                var progress = (admission.diff(currentdate, 'days') / admission.diff(discharge, 'days')) * 100
+                return progress
+            },
+            campaigntimeleft () {
+                const jsondate = new Date().toJSON()
+                var currentdate = moment(jsondate, 'YYYY-MM-DD')
+                var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
+                var daysleft = (discharge.diff(currentdate, 'days'))
+                return daysleft
+            }
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('eseaAccount', ['deleteEseaAccount']),
+            ...mapActions('survey', ['fetchSurveys']),
+            ...mapActions('campaign', ['fetchCampaign']),
+            dateFixer,
+            async initialize () {
+                this.fetchSurveys({ mId: this.eseaAccount.method })
+                if (this.eseaAccount.campaign) {
+                    this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
                 }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('eseaAccount', ['eseaAccount']),
-        ...mapState('survey', ['surveys']),
-        ...mapState('campaign', ['campaign']),
-        timeline () {
-            const jsondate = new Date().toJSON()
-            var currentdate = moment(jsondate, 'YYYY-MM-DD')
-            var admission = moment(this.campaign.open_survey_date, 'YYYY-MM-DD')
-            var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
-            var progress = (admission.diff(currentdate, 'days') / admission.diff(discharge, 'days')) * 100
-            return progress
-        },
-        campaigntimeleft () {
-            const jsondate = new Date().toJSON()
-            var currentdate = moment(jsondate, 'YYYY-MM-DD')
-            var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
-            var daysleft = (discharge.diff(currentdate, 'days'))
-            return daysleft
-        }
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('survey', ['fetchSurveys']),
-        ...mapActions('campaign', ['fetchCampaign']),
-        dateFixer,
-        async initialize () {
-            this.fetchSurveys({ mId: this.eseaAccount.method })
-            if (this.eseaAccount.campaign) {
-                this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
-            }
-        },
-        addEmployees (data) {
-            this.surveyy = data
-            if (data.id) {
-                this.importEmployeesDialog = true
-                this.stakeholdergroup = null
-            }
-        },
-        async onUpload (event) {
-            var formData = new FormData()
-            formData.append('file', event.files[0])
-            return new Promise((resolve, reject) => {
-                AxiosInstance.post(`/import-employees/${this.$route.params.EseaAccountId || 0}/${this.surveyy.id}/`, formData) // esea account // survey
-                .then(response => {
-                    this.stakeholderupload = response.data
-                    console.log('...response:', response.data)
-                    this.importDialog = false
-                    this.$toast.add({ severity: 'success', summary: 'CSV uploaded', detail: 'Your csv was correctly uploaded.' })
-                    this.initialize()
-                resolve()
+            },
+            addEmployees (data) {
+                this.surveyy = data
+                if (data.id) {
+                    this.importEmployeesDialog = true
+                    this.stakeholdergroup = null
+                }
+            },
+            async onUpload (event) {
+                var formData = new FormData()
+                formData.append('file', event.files[0])
+                return new Promise((resolve, reject) => {
+                    AxiosInstance.post(`/import-employees/${this.$route.params.EseaAccountId || 0}/${this.surveyy.id}/`, formData) // esea account // survey
+                    .then(response => {
+                        this.stakeholderupload = response.data
+                        console.log('...response:', response.data)
+                        this.importDialog = false
+                        this.$toast.add({ severity: 'success', summary: 'CSV uploaded', detail: 'Your csv was correctly uploaded.' })
+                        this.initialize()
+                    resolve()
+                    })
+                    .catch(err => { reject(err) })
                 })
-                .catch(err => { reject(err) })
-            })
-        },
-        async goToSurveyFill (data) {
-            this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
-        },
-        goToSurvey (methodid, surveyid) {
-            console.log(methodid)
-            this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: 0 } })
-        },
-        goToResults (data) {
-            console.log(data)
-            this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
+            },
+            async goToSurveyFill (data) {
+                this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
+            },
+            goToSurvey (methodid, surveyid) {
+                console.log(methodid)
+                this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: 0 } })
+            },
+            goToResults (data) {
+                console.log(data)
+                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
+            },
+            async removeEseaAccount () {
+                this.deleteEseaAccountDialog = false
+                await this.deleteEseaAccount({ oId: this.$route.params.OrganisationId, id: this.eseaAccount?.id || 0 })
+                this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Esea Account Deleted', life: 3000 })
+                this.$router.push({ name: 'organisationeseaaccounts' })
+            }
         }
     }
-}
 
         // <!-- <TabPanel header="surveys">
         //     <DataTable ref="dt" autoLayout="false" :value="surveys" v-model:selection="selectedRows" selectionMode="single" dataKey="id" :loading="loading" @row-select="goToSurvey"
@@ -261,7 +279,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-splitbutton {
-    width: 200px;
-}
+    .p-splitbutton {
+        width: 200px;
+    }
 </style>

@@ -19,7 +19,7 @@ export default {
     mutations: {
         setSurveys (state, { data }) {
 			for (const survey of data) {
-				survey.questions.sort()
+				console.log(survey) // survey.questions.sort()
 			}
             state.surveys = data
             state.debouncers = {}

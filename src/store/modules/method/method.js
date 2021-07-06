@@ -68,13 +68,18 @@ export default {
         // },
         deleteMethod (state, { id }) {
             state.methods = state.methods.filter(m => m.id !== id)
+            console.log(id, 'methods:', state.methods)
         },
         setError (state, { error }) {
-            state.error = error
+            state.error = error?.response.data || []
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {
         async fetchMethods ({ commit }, payload) {
+            commit('clearError')
             const { response, error } = await MethodService.get(payload)
             if (error) {
                 commit('setError', { error })
@@ -103,8 +108,8 @@ export default {
             .catch(err => { reject(err) })
             })
         },
-        async createMethod ({ commit, dispatch }) {
-            const { response, error } = await MethodService.post({ data: baseMethod })
+        async createMethod ({ commit, dispatch }, { data }) {
+            const { response, error } = await MethodService.post({ data: data || baseMethod })
             if (error) {
                 commit('setError', { error })
                 return
@@ -132,12 +137,12 @@ export default {
         //     commit('setMethod', response.data)
         // },
         async deleteMethod ({ commit, dispatch }, payload) {
-            const { response, error } = await MethodService.delete(payload)
+            const { error } = await MethodService.delete(payload)
             if (error) {
                 commit('setError', { error })
                 return
             }
-            commit('deleteMethod', { response })
+            commit('deleteMethod', payload)
             dispatch('setMethod', {})
         },
         setMethod ({ state, commit }, { id }) {

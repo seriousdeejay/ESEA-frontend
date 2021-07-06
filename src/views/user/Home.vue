@@ -1,7 +1,7 @@
 <template>
 <h3>Dashboard</h3>
 <div class="p-grid nested-grid p-mx-5 p-px-5">
-    <div class="p-col-8 p-py-5">
+    <div class="p-col-12 p-py-5">
         <div v-if="!tasks">
             <h4>All Done!</h4>
             <p>
@@ -14,7 +14,7 @@
             <div class="p-shadow-2 p-m-3 p-p-3 p-text-left"><span class="p-text-bold">Task 2:</span> Reply to network participation request on network 2.</div>
         </div>
     </div>
-    <div class="p-col-1"><Divider layout="vertical" /></div>
+    <!-- <div class="p-col-1"><Divider layout="vertical" /></div>
     <div class="p-col-3">
         <div class="p-grid">
             <div class="p-col-12">
@@ -50,7 +50,7 @@
                 <router-link to="/organisations" style="text-decoration: none; color: blue;">View all organisations</router-link>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 </template>
 

@@ -13,7 +13,7 @@
 
     <Dialog v-model:visible="removeDialog" style="width: 500px" header="Confirm Deletion" modal="true"  dismissableMask="true">
             Are you sure you want to <b>delete</b> the following organisation(s)?
-            <div v-for="organisation in selectedOrganisations" :key="organisation.id" class="p-shadow-1 p-p-3 p-m-5">{{organisation.name}}</div>
+            <div v-for="organisation in selectedOrganisations" :key="organisation.id" class="p-shadow-1 p-p-3 p-m-5">{{organisation}}</div>
         <template #footer>
         <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeDialog=false" />
         <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation()" />

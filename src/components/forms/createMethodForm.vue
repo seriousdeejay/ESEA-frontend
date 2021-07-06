@@ -1,22 +1,22 @@
 <template>
-    <form id="organisationform" @submit.prevent="createNewOrganisation" class="p-input-filled p-fluid p-text-left">
+    <form id="methodform" @submit.prevent="createNewMethod" class="p-input-filled p-fluid p-text-left">
         <div class="p-field">
             <label for="name">Name<span style="color:red">*</span></label>
-            <InputText id="name" v-model.trim="organisationForm.name" :class="{'p-invalid': v$.organisationForm.name.$error}" />
+            <InputText id="name" v-model.trim="methodForm.name" :class="{'p-invalid': v$.methodForm.name.$error}" />
             <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error">{{ error }}</div>
         </div>
         <div class="p-field">
             <label for="description">Description</label>
-            <Textarea id="description" v-model="organisationForm.description" :autoResize="true" rows="3" />
+            <Textarea id="description" v-model="methodForm.description" :autoResize="true" rows="3" />
             <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div>
         </div>
         <div class="p-field">
-            <label for="ispublic">Should this organisation be public? </label>
-            <SelectButton id="ispublic" v-model="organisationForm.ispublic" :options="ispublicbool" />
+            <label for="ispublic">Should this method be public? </label>
+            <SelectButton id="ispublic" v-model="methodForm.ispublic" :options="ispublicbool" />
         </div>
         <div class="p-d-flex p-jc-between">
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="closeDialog" style="width: 100px" />
-            <Button type="submit" form="organisationform" label="Save" icon="pi pi-check" class="p-button-text" :disabled="v$.organisationForm.$error" style="width: 100px" />
+            <Button type="submit" form="methodform" label="Save" icon="pi pi-check" class="p-button-text" :disabled="v$.methodForm.$error" style="width: 100px" />
         </div>
     </form>
 </template>
@@ -32,7 +32,7 @@ export default {
     data () {
         return {
             ispublicbool: [true, false],
-            organisationForm: {
+            methodForm: {
                 name: null,
                 description: '',
                 ispublic: true
@@ -40,33 +40,34 @@ export default {
         }
     },
     validations: {
-        organisationForm: {
+        methodForm: {
             name: { required, maxLength: maxLength(255) },
             description: { maxLength: maxLength(1000) },
             ispublic: { required }
         }
     },
     computed: {
-        ...mapState('organisation', ['organisation', 'error']),
+        ...mapState('method', ['method', 'error']),
         nameErrors () {
-            return HandleValidationErrors(this.v$.organisationForm.name, this.error.name)
+            return HandleValidationErrors(this.v$.methodForm.name, this.error.name)
         }
     },
     created () {
         this.initialize()
     },
     methods: {
-        ...mapActions('organisation', ['setOrganisation', 'createOrganisation']),
+        ...mapActions('method', ['setMethod', 'createMethod']),
         async initialize () {
-            this.setOrganisation({})
+            this.setMethod({})
         },
-        async createNewOrganisation () {
-            this.v$.organisationForm.$touch()
+        async createNewMethod () {
+            this.v$.methodForm.$touch()
             if (this.v$.$invalid) { return }
 
-            await this.createOrganisation({ data: this.organisationForm })
-            if (this.organisation?.id) {
-                this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
+            await this.createMethod({ data: this.methodForm })
+
+            if (this.method?.id) {
+                this.$router.push({ name: 'method-create', params: { id: this.network?.id || 0 } })
             }
         },
         closeDialog () {

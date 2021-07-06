@@ -11,7 +11,7 @@
     </Menubar>
     <my-bread-crumb />
     <!-- <h1>Breadcrumb with Chosen Network>Chosen Organisation>Chosen Method</h1> -->
-    <div style="margin-top: 30px;">
+    <div style="margin-top: 5px;">
       <router-view />
     </div>
   </div>

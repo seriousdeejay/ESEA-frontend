@@ -5,11 +5,11 @@
     </div>
     <div class="p-d-flex p-jc-between p-ai-center" style="height: 150px; width: 100%;">
         <div style="width: 50px;">
-            <div v-if="currentPage !== 1" class="scrollIcon p-d-flex" @click="itemsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
+            <div v-if="currentPage !== (0 && 1)" class="scrollIcon p-d-flex" @click="itemsScroll('left')"> <i class="pi pi-angle-left p-as-center" style="font-size: 3rem;" /> </div>
         </div>
         <ProgressSpinner v-if="loading && !failedLoad" class="p-ai-center" style="height: 100%;"/>
         <div v-else-if="loading && failedLoad" class="p-text-italic">{{name}} could not be retrieved!</div>
-        <div v-else ref="itemss" class="p-grid" style="width: 100%;">
+        <div v-else-if="items.length" ref="itemss" class="p-grid" style="width: 100%;">
             <div v-for="item, index in itemsbar" :key="item" @mouseover="item.hover=true" @mouseleave="item.hover=false" :class="'p-col'">
                 <div class="p-grid" :class="((item.hover && !item.placeholder) ? 'p-shadow-5 p-mx-0 p-text-bold' : 'p-shadow-1 p-mx-2')" style="height: 150px;" :style="[item.placeholder ? 'background-color: lightgrey' : 'background-color: #F3F3F3', (item.hover && !item.placeholder) ? 'background-color: white' : '']" @click.left="goToItem(item)">
                     <p v-if="item.name" class="p-as-center" style="width: 100%;">{{index + 1}}. {{item.name}}</p>
@@ -17,6 +17,7 @@
                 </div>
             </div>
         </div>
+        <h3 v-else class="p-text-italic p-text-light"> You have no {{name}}, <router-link v-if="itemslink" :to="{name: itemslink, params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">create or invite {{name}}!</router-link></h3>
         <div style="width: 50px;">
             <div v-if="currentPage !== itemPages" class="scrollIcon p-d-flex" @click="itemsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
         </div>
@@ -32,10 +33,7 @@ export default {
     },
     props: {
         items: {
-            type: Array,
-            default: function () {
-                return []
-            }
+            type: Array
         },
         name: {
             type: String,
@@ -63,7 +61,7 @@ export default {
     },
     watch: {
         items: function () {
-            if (this.items.length) {
+            if (this.items) {
                 this.checkWindowSize()
             }
         }
@@ -86,16 +84,20 @@ export default {
         },
         changeDisplayedItems () {
             this.itemsbar = this.items.slice(((this.currentPage - 1) * this.itemsPerPage), (this.currentPage * this.itemsPerPage))
+            console.log('itemsbar', this.itemsPerPage)
 
-            if (this.itemsbar.length % this.itemsPerPage !== 0) {
+            if (!this.itemsbar.length || (this.itemsbar.length % this.itemsPerPage !== 0)) {
                 const placeholderItems = this.itemsPerPage - (this.itemsbar.length % this.itemsPerPage)
                 for (let i = 0; i < placeholderItems; i++) {
                     this.itemsbar.push({ hover: false, placeholder: true })
                 }
             }
-            if (this.itemsbar.length === this.itemsPerPage) {
+            if (this.items) {
                 this.loading = false
             }
+            // if (this.itemsbar.length === this.itemsPerPage) {
+            //     this.loading = false
+            // }
             // setTimeout(() => { this.loading = false }, 500)
         },
         itemsScroll (direction) {

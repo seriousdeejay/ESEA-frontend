@@ -18,7 +18,7 @@
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
-                    <Textarea id="organisationdescription" v-model="organisation.description" class="p-text-italic" rows="3" cols="20" />
+                    <Textarea id="organisationdescription" v-model="organisation.description" class="p-text-italic" :autoResize="true" rows="3" />
                     <label for="organisationdescription">Description</label>
                 </span>
             </div>

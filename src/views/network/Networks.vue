@@ -3,6 +3,7 @@
         <h1>Networks Overview</h1>
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
+                <Button :label="(allNetworks ? 'All Networks' : 'My Networks')" class="p-mr-2" @click="allNetworks = !allNetworks"/>
                 <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
                 <Button label="Create Network" icon="pi pi-plus" class="p-button-success" @click="createNetworkDialog=true" />
             </div>
@@ -30,6 +31,7 @@ export default {
     },
     data () {
         return {
+            allNetworks: false,
             tableDisplay: false,
             search: '',
             loading: true,
@@ -37,19 +39,30 @@ export default {
         }
     },
     computed: {
-        ...mapState('network', ['networks'])
+        ...mapState('network', ['networks', 'network'])
+    },
+    watch: {
+        allNetworks () {
+            this.getNetworks()
+        }
     },
     async created () {
-        // setTimeout(() => { this.loading = false }, 4000)
-        await this.fetchNetworks({})
-        this.loading = false
+        this.getNetworks()
     },
     methods: {
         ...mapActions('network', ['fetchNetworks', 'setNetwork', 'createNetwork']),
+        async getNetworks () {
+            if (this.allNetworks) {
+                await this.fetchNetworks({ query: '?allnetworks=1' })
+            } else {
+            await this.fetchNetworks({})
+            }
+            this.loading = false
+        },
         async goToNetwork (network) {
             if (network.id) {
                 await this.setNetwork(network)
-                this.$router.push({ name: 'networkoverview', params: { NetworkId: network.id } })
+                this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
             }
         }
     }

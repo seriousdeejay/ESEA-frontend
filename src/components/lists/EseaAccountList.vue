@@ -15,6 +15,11 @@
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
             <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" />
+            <Column field="sufficient_responses" header="Sufficient Responses" headerStyle="width: 15rem">
+                <template #body="slotProps">
+                    <i class="p-text-center p-text-bold" style="width:100%; font-size: 20px;" :class="{'true-icon pi pi-check': slotProps.data.sufficient_responses, 'false-icon pi pi-times': !slotProps.data.sufficient_responses}" :style="(slotProps.data.sufficient_responses ? 'color: green;':'color: red;')"></i>
+                </template>
+            </Column>
         </Datatable>
     </div>
 </template>
