@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-m-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <div v-if="permission">
-            <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="createMethod" />
+            <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="goToMethodCreation()" />
             <Button :label="addMode ? 'Cancel Adding Mode' : 'Enable Adding Mode'" class="p-button-sm p-mr-2" @click="((addMode = !addMode) && (removeMode = false))" :class="addMode ? 'p-button-info' : 'p-button-success'"/>
             <Button :label="removeMode ? 'Cancel Removal Mode': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" @click="((removeMode = !removeMode) && (addMode = false))" />
         </div>
@@ -21,7 +21,7 @@
       </template>
     </Dialog>
 
-    <Dialog v-model:visible="removeDialog" style="width: 500px" header="Confirm Action" modal="true"  dismissableMask="true">
+    <!-- <Dialog v-model:visible="removeDialog" style="width: 500px" header="Confirm Action" modal="true"  dismissableMask="true">
             Are you sure you want to <span v-if="removeMode"><b>delete</b></span><span v-if="addMode"><b>Add</b></span> the following methods(s)?
             <div v-for="method in selectedMethods" :key="method.id" class="p-shadow-1 p-p-3 p-m-5">{{method}}</div>
         <template #footer>
@@ -54,7 +54,7 @@
                 <Button label="Invite Organisations" icon="pi pi-plus" @click="addOrganisations"/>
                 <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="inviteDialog=false" />
         </template>
-    </Dialog>
+    </Dialog> -->
 
 </template>
 
@@ -138,6 +138,9 @@ export default {
                 const newListOfMethods = this.network.methods.filter((item) => !this.selectedMethods.includes(item))
                 await this.patchNetwork({ methods: newListOfMethods })
             }
+        },
+        goToMethodCreation () {
+            this.$router.push({ name: 'methodcreation' })
         }
     }
 }
