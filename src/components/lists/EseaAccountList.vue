@@ -55,8 +55,8 @@ export default {
             columns: [
                 { field: 'method_name', header: 'Method' },
                 { field: 'year', header: 'Year' },
-                { field: 'campaign', header: 'Campaign' },
-                { field: 'network', header: 'Network' }
+                { field: 'campaign_name', header: 'Campaign' },
+                { field: 'network_name', header: 'Network' }
             ],
             failedLoad: false
         }

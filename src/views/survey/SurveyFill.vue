@@ -10,25 +10,23 @@
                 <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
             </div>
         </div>
-        {{surveyResponse}}
-        {{answers}}
         <div class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
-            <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections }}</div>
+            <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections.length }}</div>
             <div class="p-col-6 p-text-right">
                 <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
             <div class="p-col-12 p-text-left"><h3>Section: '{{currentSection.title}}'</h3></div>
             <section-component class="p-col-12 p-my-2"
-            tabindex="0"
-            v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
-            :key="item.id"
-            :item="item"
-            :answer="answers[item?.direct_indicator?.[0]?.id]"
-            :active="activeQuestion === (index)"
-            :refresh="refresh"
-            @input="updateAnswer(item.direct_indicator[0].id, $event)"
-            @focus="toggleActive(index)"
-            @focuschecking="toggleActive(index)"
-            @blur="toggleActive"
+                v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
+                tabindex="0"
+                :key="item.id"
+                :item="item"
+                :answer="answers[item?.direct_indicator?.[0]?.id]"
+                :active="activeQuestion === (index)"
+                :refresh="refresh"
+                @input="updateAnswer(item.direct_indicator[0].id, $event)"
+                @focus="toggleActive(index)"
+                @focuschecking="toggleActive(index)"
+                @blur="toggleActive"
             />
             <div class="p-grid p-col-12 p-m-0 p-px-0">
                 <div class="p-col-6 p-text-left p-pl-0">
@@ -38,7 +36,7 @@
                     <Button label="Save for Now" class="p-button-primary p-button-raised" @click="saveSurvey" />
                 </div>
                 <div class="p-col-3 p-text-right p-pr-0">
-                    <Button v-if="sectionNumber + 1 < totalSections" label="Next Section" class="p-button-raised" style="width: 100%;" @click="nextSection" />
+                    <Button v-if="sectionNumber + 1 < totalSections.length" label="Next Section" class="p-button-raised" style="width: 100%;" @click="nextSection" />
                     <Button v-else label="Finish Survey" class="p-col p-button-success p-button-raised p-button-sm" style="width: 100%;" @click="finishSurvey" />
                 </div>
             </div>
@@ -89,14 +87,19 @@ export default {
         ...mapState('eseaAccount', ['eseaAccount']),
         currentSection () {
             const section = this.survey.sections[this.sectionNumber]
-            const mergedQuestionsAndTextFragments = section.questions.concat(section.text_fragments)
+            const mergedQuestionsAndTextFragments = section?.questions.concat(section.text_fragments)
             const sortedComponents = mergedQuestionsAndTextFragments.sort((a, b) => (a.order > b.order) ? 1 : -1)
             section.mergedQuestionsAndTextFragments = sortedComponents
             return section
         },
         totalSections () {
-            const totalSections = this.survey?.sections.length // for (const section in this.survey?.sections) { totalSections = totalSections + this.survey?.topics[topic].sub_topics.length }
-            return totalSections
+            const sectionList = []
+            for (let i = 0; i < this.survey.sections.length; i++) {
+                sectionList.push(this.survey.sections[i].id)
+            }
+            // for (const section in this.survey?.sections) { totalSections = totalSections + this.survey?.topics[topic].sub_topics.length }
+
+            return sectionList
         },
         answers () {
             const answers = {}
@@ -110,7 +113,7 @@ export default {
         progress () {
             var progress
             if (this.sectionNumber === 0) { return 0 }
-            progress = ((this.sectionNumber + 1) / this.totalSections) * 100
+            progress = ((this.sectionNumber + 1) / this.totalSections.length) * 100
             return progress
         }
 
@@ -134,6 +137,7 @@ export default {
             await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
             console.log('++++', this.surveyResponse.question_responses)
             await this.fetchSurvey({ mId: this.surveyResponse.method, id: this.surveyResponse.survey })
+            console.log('__', this.survey)
             this.loading = false
             if (this.surveyResponse.finished) {
                 this.$router.push({ name: 'survey-thank-you' })
@@ -146,7 +150,7 @@ export default {
             }
         },
         nextSection () {
-            if (this.sectionNumber + 1 < this.totalSections) {
+            if (this.sectionNumber + 1 < this.totalSections.length) {
                 this.sectionNumber++
                 this.activeQuestion = null
             }
@@ -158,7 +162,8 @@ export default {
             } else { this.activeQuestion = null }
         },
         goToQuestion (question) {
-            this.sectionNumber = question.section - 1
+            console.log('question', question.section)
+            this.sectionNumber = this.totalSections.indexOf(question.section)
             console.log(this.sectionNumber)
             this.missedQuestionsDialog = false
         },

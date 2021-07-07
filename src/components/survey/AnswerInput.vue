@@ -5,7 +5,7 @@
 
     -->
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-input-filled">
-        <span class="p-mr-2"> {{indicator.pre_unit}} </span>
+        <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
             <div v-if="indicator.datatype === 'text'">
             </div>
@@ -45,7 +45,7 @@
             <div></div>
         </div>
 
-        <span class="p-ml-2">{{indicator.post_unit}}</span>
+        <span class="p-ml-2">{{indicator?.post_unit}}</span>
     </div>
 </template>
 
