@@ -4,7 +4,7 @@ import requestAuthInterceptor from '../utils/requestAuthInterceptor'
 
 const AxiosInstance = axios.create({
     baseURL: process.env.VUE_APP_ROOT_API, // 'https://esea-api.herokuapp.com/', // || 'http://127.0.0.1:8000', // process.env.baseURL || process.env.apiUrl ||
-    timeout: 1000
+    timeout: 10000
 })
 
 AxiosInstance.interceptors.request.use(...requestAuthInterceptor)
