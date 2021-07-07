@@ -1,5 +1,6 @@
 <template>
         <form ref="form" class="p-grid p-px-5 p-pt-5 p-fluid p-input-filled" :style="cssProps" >
+            {{lazyQuestion}}
             <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field">
                  <div class="p-col-4">
                     <span class="p-float-label">

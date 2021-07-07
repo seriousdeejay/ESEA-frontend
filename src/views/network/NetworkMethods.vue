@@ -130,6 +130,7 @@ export default {
                 const newMethods = this.network.methods.concat(this.selectedMethods)
                 await this.patchNetwork({ methods: newMethods })
             }
+            this.addMode = false
         },
         async removeMethods () {
             this.actionDialog = false
@@ -138,6 +139,7 @@ export default {
                 const newListOfMethods = this.network.methods.filter((item) => !this.selectedMethods.includes(item))
                 await this.patchNetwork({ methods: newListOfMethods })
             }
+            this.getMethods()
         },
         goToMethodCreation () {
             this.$router.push({ name: 'methodcreation' })

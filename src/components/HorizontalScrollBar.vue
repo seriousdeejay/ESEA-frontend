@@ -13,7 +13,7 @@
             <div v-for="item, index in itemsbar" :key="item" @mouseover="item.hover=true" @mouseleave="item.hover=false" :class="'p-col'">
                 <div class="p-grid" :class="((item.hover && !item.placeholder) ? 'p-shadow-5 p-mx-0 p-text-bold' : 'p-shadow-1 p-mx-2')" style="height: 150px;" :style="[item.placeholder ? 'background-color: lightgrey' : 'background-color: #F3F3F3', (item.hover && !item.placeholder) ? 'background-color: white' : '']" @click.left="goToItem(item)">
                     <p v-if="item.name" class="p-as-center" style="width: 100%;">{{index + 1}}. {{item.name}}</p>
-                    <h5 v-if="item.method" class="p-as-center" style="width: 100%;">{{item.method}}</h5>
+                    <h5 v-if="item.method" class="p-as-center" style="width: 100%;">{{item.method_name}}</h5>
                 </div>
             </div>
         </div>

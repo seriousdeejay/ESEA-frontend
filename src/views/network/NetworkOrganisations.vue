@@ -1,4 +1,5 @@
 <template>
+{{network}}
     <div class="p-d-flex p-m-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <div v-if="permission">
             <Button :label="'Invite Organisation'" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="addableOrganisations()" />
@@ -79,7 +80,7 @@ export default {
     },
     watch: {
         inviteDialog () {
-            if (!this.inviteDialog) { this.initialize() }
+            if (!this.inviteDialog) { this.getOrganisations() }
         }
     },
     async created () {
@@ -90,7 +91,7 @@ export default {
     methods: {
         ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
         ...mapActions('network', ['patchNetwork']),
-        async initialize () {
+        async getOrganisations () {
             this.loading = true
             await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
             this.loading = false
@@ -106,15 +107,17 @@ export default {
                 var newListOfOrganisations = this.network.organisations.concat(this.organisationsToInvite)
                 await this.patchNetwork({ organisations: newListOfOrganisations })
             }
-            this.initialize()
+            this.getOrganisations()
         },
         async removeOrganisation () {
+            console.log(this.selectedOrganisations)
             this.removeDialog = false
-            if (!this.selectedOrganisations.length) {
+            if (this.selectedOrganisations.length) {
                 var newListOfOrganisations = this.network.organisations.filter((item) => !this.selectedOrganisations.includes(item))
+                console.log('>>>', newListOfOrganisations)
                 await this.patchNetwork({ organisations: newListOfOrganisations })
             }
-            this.initialize()
+            this.getOrganisations()
         },
         async goToOrganisation (organisation) {
             if (this.removeMode) {

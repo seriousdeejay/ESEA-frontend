@@ -37,7 +37,7 @@
     <Dialog v-model:visible="destroyOrganisationDialog" :style="{width: '450px'}" header="Confirm Organisation Deletion" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
-            <span>Are you sure you want to delete <b>{{selectedOrganisation.name}}</b>?</span>
+            <span>Are you sure you want to completely delete the following Organisation: <b>{{selectedOrganisation.name}}</b>?</span>
         </div>
         <template #footer>
             <Button label="No" icon="pi pi-times" class="p-button-text" @click="destroyOrganisationDialog = false"/>
