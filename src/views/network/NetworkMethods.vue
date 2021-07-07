@@ -13,11 +13,11 @@
     <method-list v-if="!inviteDialog" :methods="methods" :search="search" :loading="loading" @clicked-method="goToMethod" />
 
     <Dialog v-model:visible="actionDialog" style="width: 500px" header="Confirm Deletion" modal="true"  dismissableMask="true">
-            Are you sure you want to <b>delete</b> the following methods(s)?
+            Are you sure you want to <span v-if="removeMode"><b>delete</b></span><span v-if="addMode"><b>Add</b></span> the following methods(s)?
             <div v-for="method in selectedMethods" :key="method.id" class="p-p-3 p-m-3" style="border: 1px solid lightgrey;">{{method}}</div>
         <template #footer>
         <Button label="No" icon="pi pi-times" class="p-button-text" @click="actionDialog=false" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeMethods()" />
+        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="addMode ? addMethods() : removeMethods()" />
       </template>
     </Dialog>
 
@@ -105,14 +105,13 @@ export default {
             this.loading = false
         },
         async goToMethod (method) {
-            this.selectedMethod = []
+            this.selectedMethods = []
             if (this.addMode) {
                 this.selectedMethods.push(method.name)
                 this.actionDialog = true
                 return
             }
             if (this.removeMode) {
-                this.selectedMethods = []
                 this.selectedMethods.push(method.name)
                 this.actionDialog = true
                 return
