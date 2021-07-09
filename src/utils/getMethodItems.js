@@ -4,7 +4,7 @@ const getChildren = (topic, topicQuestions, topicIndirectIndicators) => {
         children = topicQuestions[topic.id].map(question => ({
             ...question,
             objType: 'question',
-            showName: question.key,
+            showName: question.name,
             uniqueId: `question_${question.id}`
         }))
     }

@@ -10,7 +10,7 @@
                         <p class="p-text-italic">{{campaign.name}}</p>
                         <Divider />
                         <div class="p-text-left p-ml-3">
-                            <p>Method: <span class="p-text-bold">{{campaign.method}}</span></p> <!-- Should be method name instead of pk! -->
+                            <p>Method: <span class="p-text-bold">{{campaign.method_name}}</span></p> <!-- Should be method name instead of pk! -->
                             <p>Participating Organisations: <span class="p-text-bold">{{campaign.organisation_accounts.length}}</span></p>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                 styleObject: { backgroundColor: '#EFEEEE' },
                 columns: [
                     { field: 'name', header: 'Name' },
-                    { field: 'method', header: 'Method' },
+                    { field: 'method_name', header: 'Method' },
                     { field: 'organisation_accounts.length', header: 'Organisations' }
                 ],
                 failedLoad: false

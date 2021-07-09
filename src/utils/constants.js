@@ -13,25 +13,25 @@ const QUESTION_TYPES = { // can be removed in the future
 	CHECKBOX: 'CHECKBOX'
 }
 const DATA_TYPES = {
-    TEXT: 'Text',
-    INTEGER: 'Integer',
-    DOUBLE: 'Double',
-    DATE: 'Date',
-    BOOLEAN: 'Boolean',
-    SINGLECHOICE: 'SingleChoice',
-    MULTIPLECHOICE: 'MultipleChoice'
+    TEXT: 'text',
+    INTEGER: 'integer',
+    DOUBLE: 'double',
+    DATE: 'date',
+    BOOLEAN: 'boolean',
+    SINGLECHOICE: 'singlechoice',
+    MULTIPLECHOICE: 'multiplechoice'
 }
 const UI_COMPONENTS = {
     FIELD: 'field',
     LINE: 'line',
-    TEXTBOX: 'textbox',
-    DROPDOWN: 'dropdown',
-    RADIOBUTTON: 'radiobutton',
-    CHECKBOX: 'checkbox'
+    TEXTBOX: 'textBox',
+    DROPDOWN: 'dropDown',
+    RADIOBUTTON: 'radioButton',
+    CHECKBOX: 'checkBox'
 }
 const RESPONSE_TYPE = {
-    MULTIPLE: 'multiple',
-    SINGLE: 'single'
+    MULTIPLE: 'Multiple',
+    SINGLE: 'Single'
 }
 
 export { STATUS, API_URL, QUESTION_TYPES, DATA_TYPES, UI_COMPONENTS, RESPONSE_TYPE }

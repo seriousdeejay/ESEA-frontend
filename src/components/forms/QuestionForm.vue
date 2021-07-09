@@ -1,7 +1,6 @@
 <template>
         <form ref="form" class="p-grid p-px-5 p-py-5 p-fluid p-input-filled" :style="cssProps" style="background-color: #F1F1F1;" >
-            <!-- {{question}}<hr>
-            {{lazyQuestion}} -->
+            <!-- {{question}}<hr>-->
             <div class="p-col-12 p-m-0 p-field">
                 <span class="p-float-label">
                     <InputText id="questionname" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length}"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" />
@@ -66,8 +65,8 @@
                                 <label for="indicatordescription">Description</label>
                             </span>
                         </div>
-                        <div v-if="lazyQuestion.direct_indicator[0].datatype && datatypeWithoutOptions" class="p-col-12 p-grid p-m-0 p-p-0">
-                            {{datatypesWithoutOptions}}
+                        <div v-if="lazyQuestion.direct_indicator[0].datatype && !datatypeWithOptions" class="p-col-12 p-grid p-m-0 p-p-0">
+                            {{datatypesWithOptions}}
                             <div class="p-col-6">
                                 <span class="p-float-label">
                                     <InputText id="pre_unt" type="text" v-model="lazyQuestion.direct_indicator[0].pre_unit" />
@@ -81,7 +80,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div v-if="lazyQuestion.direct_indicator[0].datatype && !datatypeWithoutOptions" class="p-grid p-col-12 p-mx-0 p-px-0"> <!-- v-if="active && lazyQuestion.direct_indicator[0].options && lazyQuestion.direct_indicator[0].options.length" -->
+                        <div v-if="lazyQuestion.direct_indicator[0].datatype && datatypeWithOptions" class="p-grid p-col-12 p-mx-0 p-px-0"> <!-- v-if="active && lazyQuestion.direct_indicator[0].options && lazyQuestion.direct_indicator[0].options.length" -->
                             <option-form v-for="(option, index) in lazyQuestion.direct_indicator[0].options" :key="`option-${index}`" :option="option" @delete="deleteOption(option)" />
                             <Button label="Add Option" class="p-button-text" @click="newOption" />
                         </div>
@@ -167,8 +166,7 @@ export default {
             questionTypes: QUESTION_TYPES,
             dataTypes: DATA_TYPES,
             uiComponents: UI_COMPONENTS,
-            indicator: false,
-            datatypeWithoutOptions: false
+            indicator: false
         }
     },
     computed: {
@@ -181,6 +179,14 @@ export default {
         },
         questionType () {
             return this.questionTypesList.find(type => type.value === this.lazyQuestion.answertype).text
+        },
+        datatypeWithOptions () {
+            let datatypeWithOptions = false
+            if (this.lazyQuestion?.direct_indicator?.[0].datatype) {
+                const datatypesWithOptions = ['boolean', 'singlechoice', 'multiplechoice']
+                datatypeWithOptions = datatypesWithOptions.includes(this.lazyQuestion.direct_indicator[0].datatype)
+            }
+            return datatypeWithOptions
         },
         keyErrors () {
             return false
@@ -201,6 +207,10 @@ export default {
     },
     watch: {
         question (val) {
+            // if (val?.direct_indicator?.[0].datatype) {
+            //             const datatypesWithOptions = ['boolean', 'singlechoice', 'multiplechoice']
+            //             this.datatypeWithOptions = datatypesWithOptions.includes(val.direct_indicator[0].datatype)
+            //         }
             if (isEqual(this.lazyQuestion, val)) { return }
             console.log('reee')
             this.lazyQuestion = cloneDeep(val)
@@ -208,7 +218,6 @@ export default {
         lazyQuestion: {
             handler (val) {
                 setTimeout(() => {
-                    console.log('saving...', val)
                 // if (this.v$.$invalid) { return }
                 if (this.lazyQuestion.direct_indicator.length) {
                     if (this.lazyQuestion.direct_indicator?.[0].options.length) {
@@ -260,6 +269,7 @@ export default {
             this.v$.lazyQuestion.name.$touch()
         },
         changeQuestionType (e) {
+            console.log(e)
             this.lazyQuestion.answertype = e.value
             const typesWithOptions = ['RADIO', 'CHECKBOX']
             if (typesWithOptions.includes(e.value) && !this.lazyQuestion.options.length) {
@@ -276,18 +286,16 @@ export default {
             // const typesWithOptions.includes
         },
         changeDataTypeComponent (e) {
-            const datatypesWithOptions = ['Boolean', 'SingleChoice', 'MultipleChoice']
+            // console.log('++', e)
+            const datatypesWithOptions = ['boolean', 'singlechoice', 'multiplechoice']
             if (!datatypesWithOptions.includes(e.value)) {
-                this.datatypeWithoutOptions = true
+                // this.datatypeWithOptions = false
                 this.lazyQuestion.direct_indicator[0].options = []
-            } else if (datatypesWithOptions.includes(e.value)) {
-                this.datatypeWithoutOptions = false
-                if (!this.lazyQuestion.direct_indicator[0].options.length) {
+            } else if (!this.lazyQuestion.direct_indicator[0].options.length) {
                 this.lazyQuestion.direct_indicator[0].options = [
                     { text: 'Option 1', order: 1 },
                     { text: 'Option 2', order: 2 }
                 ]
-                }
             }
         },
         addIndicator () {

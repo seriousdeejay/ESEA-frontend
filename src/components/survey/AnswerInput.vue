@@ -7,16 +7,16 @@
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
-            <div v-if="indicator.datatype === 'Text'">
+            <div v-if="indicator.datatype === 'text'">
             </div>
-            <div v-if="indicator.datatype === 'Integer'" >
+            <div v-if="indicator.datatype === 'integer'" >
                 <InputNumber class="inputnumber" v-model="lazyValue" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
                 <!-- <input type="number" step="1" v-model="lazyValue" :disabled="readonly" required /> -->
             </div>
-            <div v-if="indicator.datatype === 'Double'">
+            <div v-if="indicator.datatype === 'double'">
                 <InputNumber class="inputnumber" v-model="lazyValue" mode="decimal" :minFractionDigits="2" :maxFractionDigits="5" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
             </div>
-            <div v-if="indicator.datatype === 'Date'">
+            <div v-if="indicator.datatype === 'date'">
                 <input type="date" v-model="lazyValue" :disabled="readonly" required />
             </div>
         </div>

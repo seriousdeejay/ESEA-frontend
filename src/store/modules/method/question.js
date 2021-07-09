@@ -18,6 +18,7 @@ export default {
 		topicQuestions: (state) => {
 			const filtered = {}
 			state.questions.forEach((question) => { filtered[question.topic] = !filtered[question.topic] ? [question] : [...filtered[question.topic], question] })
+            console.log('questions:', filtered)
 			return filtered
 		},
 		getValidQuestionKeyNumber: (state) => {
@@ -100,6 +101,7 @@ export default {
     actions: {
         async fetchQuestions ({ commit }, payload) {
 			const { response, error } = await QuestionService.get(payload)
+            console.log('-->', response?.data)
 			if (error) {
 				commit('setError', { error })
 				return

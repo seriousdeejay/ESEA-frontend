@@ -10,6 +10,8 @@
             </div>
         </div>
         <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
+            <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
+            <Divider />
             <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections.length }}</div>
             <div class="p-col-6 p-text-right">
                 <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
@@ -27,6 +29,7 @@
                 @focuschecking="toggleActive(index)"
                 @blur="toggleActive"
             />
+            <div v-if="(sectionNumber + 1) === totalSections.length" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.closing_text}}</h3></div>
             <div class="p-grid p-col-12 p-m-0 p-px-0">
                 <div class="p-col-6 p-text-left p-pl-0">
                     <Button label="Previous Section" class="p-button-raised" :disabled="sectionNumber === 0" @click="previousSection" />
