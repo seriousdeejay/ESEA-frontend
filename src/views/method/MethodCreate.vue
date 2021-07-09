@@ -110,6 +110,7 @@ export default {
         ...mapActions('method', ['fetchMethod', 'updateMethod', 'saveMethod']),
         ...mapActions('topic', ['fetchTopics', 'setTopic', 'updateTopic', 'addNewTopic', 'deleteTopic']),
         ...mapActions('question', ['fetchQuestions', 'setQuestion', 'addNewQuestion', 'deleteQuestion', 'updateQuestion']),
+        // ...mapActions('directIndicator', ['fetchDirectIndicators', 'setDirectIndicator', 'addNewDirectIndicator', 'updateDirectIndicator', 'deleteDirectIndicator']),
         ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'setIndirectIndicator', 'deleteIndirectIndicator']),
         async initialize () {
             const methodId = parseInt(this.$route.params.id, 10)
@@ -121,7 +122,8 @@ export default {
                 }
             }
             await this.fetchTopics({ mId: this.method.id })
-            await this.fetchQuestions({ mId: this.method.id })
+            await this.fetchQuestions({ mId: this.method.id, SuId: 0, SeId: 0 })
+            // await this.fetchDirectIndicators({ mId: this.method.id })
             await this.fetchIndirectIndicators({ mId: this.method.id })
             // this.toggleActive({ objType: 'topic' })
         },
@@ -161,6 +163,8 @@ export default {
         },
         saveActive (type, object) {
             console.log('!!', 'type:', type, 'object:', object)
+            if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
+            console.log('saving object...')
             if (type === 'topic') {
                 this.updateTopic({
                     mId: this.method.id,
@@ -168,12 +172,12 @@ export default {
                 })
             }
             if (type === 'question') {
-                if (object.key) {
                 this.updateQuestion({
                     mId: this.method.id,
+                    SuId: 0,
+                    SeId: 0,
                     question: object
                 })
-                }
             }
             if (type === 'calculation') {
                 this.updateIndirectIndicator({
@@ -190,7 +194,7 @@ export default {
                 this.deleteTopic({ mId: this.method.id, id })
             }
             if (objType === 'question') {
-                this.deleteQuestion({ mId: this.method.id, id })
+                this.deleteQuestion({ mId: this.method.id, SuId: 0, SeId: 0, id })
             }
             if (objType === 'calculation') {
                 this.deleteIndirectIndicator({ mId: this.method.id, id })

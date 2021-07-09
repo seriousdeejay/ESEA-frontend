@@ -1,7 +1,7 @@
 import { random, debounce, isInteger } from 'lodash'
 import QuestionService from '../../../services/QuestionService'
 
-const baseQuestion = { key: '', name: '', description: 'optional description', isMandatory: true, default: 0, answertype: 'NUMBER', options: [] }
+const baseQuestion = { name: 'your question', description: '', isMandatory: true, uiComponent: 'field', direct_indicator: [] }
 
 export default {
     namespaced: true,
@@ -22,7 +22,7 @@ export default {
 		},
 		getValidQuestionKeyNumber: (state) => {
 			const indicators = state.questions
-				.map(indicator => parseInt(indicator.key.match(/[^_]*$/), 10))
+				.map(indicator => parseInt(indicator.direct_indicators?.[0].key.match(/[^_]*$/), 10))
 				.filter(indicator => isInteger(indicator))
 			return indicators.length ? Math.max(...indicators) + 1 : 1
 		}
@@ -70,11 +70,13 @@ export default {
 		},
 		setDebouncer (state, { id, commit }) {
 			state.debouncers[id] = debounce(
-				async ({ mId, question }) => {
+				async ({ mId, SuId, SeId, question }) => {
+                    console.log('+++++', question)
 					const method = question.id > 0 ? 'put' : 'post'
 					const { response, error } = await QuestionService[method](
-						{ mId, id, data: question }
+						{ mId, SuId, SeId, id, data: question }
 					)
+                    console.log('Question----------', response?.data, error?.response?.data)
 					if (error) {
 						commit('setError', { error, id: question.id })
 						return
@@ -114,7 +116,7 @@ export default {
 			}
 			commit('deleteQuestion', payload)
         },
-        updateQuestion ({ state, commit }, { mId, question }) {
+        updateQuestion ({ state, commit }, { mId, SuId, SeId, question }) {
 			console.log('yeeeee')
 			if (!question || !mId) return
 			if (!state.debouncers[question.id]) {
@@ -124,8 +126,8 @@ export default {
 				commit('updateList', { id: question.id, data: question })
 			}
 			commit('setIsSaved', { id: question.id })
-			if (!question.name || !question.key) return
-			state.debouncers[question.id]({ mId, question })
+			if (!question.name) return
+			state.debouncers[question.id]({ mId, SuId, SeId, question })
 		},
 		setQuestion ({ state, commit }, { id } = {}) {
 			const data = state.questions.find(questions => questions.id === id)

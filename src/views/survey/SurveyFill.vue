@@ -1,5 +1,4 @@
 <template>
-
     <ProgressSpinner v-if="loading && !failedLoad" />
     <div v-else-if="loading && failedLoad" class="p-text-italic">THe Survey could not be loaded!</div>
     <div v-else-if="!surveyResponse.finished" class="p-d-flex p-grid p-jc-center p-m-0">
@@ -10,7 +9,7 @@
                 <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
             </div>
         </div>
-        <div class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
+        <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
             <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections.length }}</div>
             <div class="p-col-6 p-text-right">
                 <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
@@ -41,6 +40,7 @@
                 </div>
             </div>
         </div>
+         <h1 v-else>This survey has no sections to display!</h1>
      </div>
 
     <Dialog v-model:visible="missedQuestionsDialog" :style="{width: '450px'}" header="Missing Answers" :modal="true">
@@ -88,7 +88,7 @@ export default {
         currentSection () {
             const section = this.survey.sections[this.sectionNumber]
             const mergedQuestionsAndTextFragments = section?.questions.concat(section.text_fragments)
-            const sortedComponents = mergedQuestionsAndTextFragments.sort((a, b) => (a.order > b.order) ? 1 : -1)
+            const sortedComponents = mergedQuestionsAndTextFragments?.sort((a, b) => (a.order > b.order) ? 1 : -1)
             section.mergedQuestionsAndTextFragments = sortedComponents
             return section
         },
@@ -184,7 +184,8 @@ export default {
                 this.missedQuestionsDialog = true
             }
         },
-        async updateAnswer (id, answer) {
+        updateAnswer (id, answer) {
+            console.log(answer, id)
             const questionResponse = this.surveyResponse.question_responses.find(response => response.direct_indicator_id === id)
             if (!questionResponse) { return }
 
@@ -198,7 +199,7 @@ export default {
                 console.log('Not possible')
                 return
             }
-            await this.updateResponse()
+            this.updateResponse()
         },
         async updateResponse () {
             await this.updateSurveyResponse({

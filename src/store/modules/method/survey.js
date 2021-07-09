@@ -1,7 +1,7 @@
 import SurveyService from '../../../services/SurveyService'
 import { debounce, random } from 'lodash'
 
-const baseSurvey = { name: 'new Survey', description: '', welcome_text: '', closing_text: '', stakeholdergroup: [], min_threshold: 100, questions: [] }
+const baseSurvey = { name: 'new Survey', description: '', welcome_text: '', closing_text: '', min_threshold: 100, questions: [] }
 
 export default {
     namespaced: true,
@@ -59,9 +59,9 @@ export default {
 			})
 		},
 		addNewSurvey (state) {
-			console.log('yeees')
 			const survey = { ...baseSurvey, id: random(-1000000, -1) }
 			state.surveys.push(survey)
+            state.survey = survey
 		},
 		setIsSaved (state, { id, isSaved = false }) {
 			if (id) {
@@ -80,8 +80,7 @@ export default {
 						{ mId, id, data: survey }
 						)
 					if (error) {
-						console.log('OOO', survey)
-						console.log('---', error.response.data)
+						console.log('---', survey, error.response.data)
 						commit('setError', { error, id: survey.id })
 						return
 					}

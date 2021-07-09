@@ -18,7 +18,7 @@
             <div class="p-col-12 p-d-flex p-jc-start">
             <Button type="button" :label="isSaved[survey?.id] ? 'Saved' : 'Unsaved'" icon="pi pi-check" :class="isSaved[survey?.id] ? '' : 'p-button-warning'" />
             </div>
-            <survey-form :survey="survey" :items="items" :stakeholders="stakeholders" :errors="errors[survey.id] || {}" @goodinput="saveSurvey" />
+            <survey-form :survey="survey" :items="items" :questions="questions" :stakeholders="stakeholders" :errors="errors[survey.id] || {}" @goodinput="saveSurvey" />
         </Panel>
         </div>
         <Button label="Add Survey" icon="pi pi-plus" class="p-col-12 p-button-text p-text-left p-p-5" @click="addSurvey()" />
@@ -46,6 +46,7 @@ export default {
     computed: {
         ...mapState('method', ['method']),
         ...mapState('survey', ['surveys', 'error', 'errors', 'isSaved']),
+        ...mapState('question', ['questions']),
         ...mapGetters('topic', ['methodTopics', 'subTopics']),
         ...mapGetters('question', ['topicQuestions']),
         items () {
@@ -78,7 +79,7 @@ export default {
                 }
             }
             await this.fetchTopics({ mId: this.method.id })
-            await this.fetchQuestions({ mId: this.method.id })
+            await this.fetchQuestions({ mId: this.method.id, SuId: 0, SeId: 0 })
             await this.fetchIndirectIndicators({ mId: this.method.id })
             await this.fetchSurveys({ mId: this.method.id })
         },

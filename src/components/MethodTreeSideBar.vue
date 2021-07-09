@@ -48,7 +48,7 @@ export default {
                 for (const subtopic of topic.children) {
                     subtopic.label = subtopic.name
                     for (const indicator of subtopic.children) {
-                        indicator.label = indicator.key
+                        indicator.label = indicator.name
                         if (indicator.objType === 'calculation') {
                             indicator.icon = 'pi pi-percentage'
                         } else {

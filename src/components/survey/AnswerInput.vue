@@ -4,19 +4,19 @@
         datatype: Text, Integer, Double, Date, Boolean, SingleChoice, MultipleChoice
 
     -->
-    <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-input-filled">
+    <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
-            <div v-if="indicator.datatype === 'text'">
+            <div v-if="indicator.datatype === 'Text'">
             </div>
-            <div v-if="indicator.datatype === 'integer'" >
+            <div v-if="indicator.datatype === 'Integer'" >
                 <InputNumber class="inputnumber" v-model="lazyValue" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
                 <!-- <input type="number" step="1" v-model="lazyValue" :disabled="readonly" required /> -->
             </div>
-            <div v-if="indicator.datatype === 'double'">
+            <div v-if="indicator.datatype === 'Double'">
                 <InputNumber class="inputnumber" v-model="lazyValue" mode="decimal" :minFractionDigits="2" :maxFractionDigits="5" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
             </div>
-            <div v-if="indicator.datatype === 'date'">
+            <div v-if="indicator.datatype === 'Date'">
                 <input type="date" v-model="lazyValue" :disabled="readonly" required />
             </div>
         </div>
@@ -25,24 +25,24 @@
             <input type="text" v-model="lazyValue" :disabled="readonly" required style="width: 100%;" />
         </div>
 
-        <Textarea v-if="uiComponent === 'textBox'" id="description" v-model="lazyValue" :disabled="readonly" autoResize="true" rows="3" />
+        <Textarea v-if="uiComponent === 'textbox'" id="description" v-model="lazyValue" :disabled="readonly" autoResize="true" rows="3" />
 
-        <div v-if="uiComponent === 'radioButton'">
+        <div v-if="uiComponent === 'radiobutton'">
             <div v-for="(option, index) in indicator.options" :key="`${index}-option`" class="p-field-radiobutton">
                 <RadioButton :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required @focus="focusedField()" />
                 <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
             </div>
         </div>
 
-        <div v-if="uiComponent === 'checkBox'">
+        <div v-if="uiComponent === 'checkbox'">
             <div v-for="(option, index) in indicator.options" :key="`${index}-option`" class="p-field-checkbox">
                 <Checkbox :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required/>
                 <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
             </div>
         </div>
 
-        <div v-if="uiComponent === 'dropDown'">
-            <div></div>
+        <div v-if="uiComponent === 'dropdown'" style="width: 100%;">
+            <Dropdown v-model="lazyValue" :options="indicator.options"  optionLabel="text" optionValue="text" placeholder="Select option"  style="width: 100%" />
         </div>
 
         <span class="p-ml-2">{{indicator?.post_unit}}</span>
@@ -51,11 +51,15 @@
 
 <script>
     // import { QUESTION_TYPES } from '../../utils/constants'
+    import Dropdown from 'primevue/dropdown'
 
 export default {
     model: {
         prop: 'value',
         event: 'input'
+    },
+    components: {
+        Dropdown
     },
     props: {
         value: {
@@ -67,7 +71,8 @@ export default {
         //     default: false
         // },
         indicator: {
-            type: Object
+            type: Object,
+            default: () => { return { } }
         },
         uiComponent: {
             type: String
@@ -95,7 +100,7 @@ export default {
             this.getValues()
         },
         lazyValue (val) {
-            console.log('cheeeck')
+            console.log('cheeeck', val)
             if ((val === 'undefined') || (val === this.value)) {
                 console.log('value is undefined or same as this.value')
                 return

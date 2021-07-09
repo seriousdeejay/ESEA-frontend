@@ -7,8 +7,10 @@ import network from './modules/network'
 import organisation from './modules/organisation'
 import method from './modules/method/method'
 import survey from './modules/method/survey'
+import section from './modules/method/section'
 import topic from './modules/method/topic'
 import question from './modules/method/question'
+import directIndicator from './modules/method/direct_indicator'
 import indirectIndicator from './modules/method/indirect_indicator'
 import campaign from './modules/campaign'
 import eseaAccount from './modules/esea_account'
@@ -29,8 +31,10 @@ export default createStore({
     organisation,
     method,
     survey,
+    section,
     topic,
     question,
+    directIndicator,
     indirectIndicator,
     campaign,
     eseaAccount,
