@@ -70,6 +70,7 @@ export default {
 		...mapActions('question', ['fetchQuestions']),
 		...mapActions('indirectIndicator', ['fetchIndirectIndicators']),
 		...mapActions('survey', ['fetchSurveys', 'updateSurvey', 'addNewSurvey', 'deleteSurvey']),
+        ...mapActions('section', ['fetchSections']),
         async initialize () {
             const methodId = parseInt(this.$route.params.id, 10)
             if (this.method.id !== methodId) {
@@ -82,6 +83,7 @@ export default {
             await this.fetchQuestions({ mId: this.method.id, SuId: 0, SeId: 0 })
             await this.fetchIndirectIndicators({ mId: this.method.id })
             await this.fetchSurveys({ mId: this.method.id })
+            await this.fetchSections({ mId: parseInt(this.method.id), sId: 0 })
         },
         addSurvey () {
             this.addNewSurvey()

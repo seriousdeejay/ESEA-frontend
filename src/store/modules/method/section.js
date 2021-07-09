@@ -102,6 +102,7 @@ export default {
     actions: {
         async fetchSections ({ commit }, payload) {
             const { response, error } = await SectionService.get(payload)
+            console.log('my sections:', response?.data)
             if (error) {
                 commit('setError', { error })
                 return
