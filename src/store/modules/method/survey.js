@@ -52,7 +52,7 @@ export default {
 			delete state.errors[id]
 			delete state.isSaved[id]
 			}
-			data.questions.sort()
+			// data.questions?.sort()
 			state.surveys = state.surveys.map((item) => {
 				if (item.id !== id) return item
 				return Object.assign(item, data)

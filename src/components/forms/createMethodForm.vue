@@ -67,7 +67,7 @@ export default {
             await this.createMethod({ data: this.methodForm })
 
             if (this.method?.id) {
-                this.$router.push({ name: 'method-create', params: { id: this.network?.id || 0 } })
+                this.$router.push({ name: 'method-create', params: { id: this.method?.id || 0 } })
             }
         },
         closeDialog () {

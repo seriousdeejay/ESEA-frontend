@@ -1,7 +1,7 @@
 import { random, debounce, isInteger } from 'lodash'
 import QuestionService from '../../../services/QuestionService'
 
-const baseQuestion = { name: 'your question', description: '', isMandatory: true, uiComponent: 'field', direct_indicator: [] }
+const baseQuestion = { name: '', description: '', isMandatory: true, uiComponent: null, direct_indicator: [] }
 
 export default {
     namespaced: true,

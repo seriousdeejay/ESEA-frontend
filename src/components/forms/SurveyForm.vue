@@ -8,7 +8,7 @@
             <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div>
         </div>
         <div class="p-col-3">
-        <Dropdown v-model="lazySurvey.response_type" :options="responseTypeList"  optionLabel="text" optionValue="value" placeholder="Select response type" />
+        <Dropdown v-model="lazySurvey.response_type" :options="responseTypeList"  optionLabel="text" optionValue="value" placeholder="Select response type" :class="{'p-invalid': v$.lazySurvey.response_type.$error}"/>
         </div>
         <!-- <div class="p-col-8">
             <span class="p-float-label">
@@ -19,7 +19,7 @@
         </div> -->
         <div class="p-col-3">
             <span class="p-float-label">
-                <InputNumber id="surveyminthreshold" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.min_threshold" lazy />
+                <InputNumber id="surveyminthreshold" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.min_threshold" lazy :class="{'borderless': v$.lazySurvey.min_threshold.$error}" />
                 <label for="surveyresponserate">Minimal Response Threshold</label>
             </span>
         </div>
@@ -37,7 +37,7 @@
             <section-form v-for="section in surveySections[survey.id]" :key="section.id" :section="section" :questions="questions" @input="saveSection" @delete="removeSection" class="p-m-2" />
             <!-- <div v-for="section in survey.sections" :key="section.id">
             </div> -->
-             <Button label="Add New Section" icon="pi pi-plus" class="p-col-12 p-button-text p-text-left p-p-5" @click="addSection" />
+             <Button label="Add New Section" icon="pi pi-plus" class="p-col-12 p-button-text p-text-left p-p-5" @click="addSection" :disabled="(lazySurvey?.id < 0)" />
         </div>
         <Divider />
         <!-- <tree-select v-model="items"></tree-select> -->
@@ -206,7 +206,8 @@ export default {
         lazySurvey: {
             name: { required, maxLength: maxLength(120) },
             // stakeholdergroup: { required, minLength: minLength(4) },
-            min_threshold: { required, between: between(0, 100) }
+            min_threshold: { required, between: between(0, 100) },
+            response_type: { required }
             // questions: { required, minLength: minLength(1) }
         }
     },

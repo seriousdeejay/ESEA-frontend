@@ -14,7 +14,6 @@
                 <Button icon="pi pi-external-link" label="Download as PDF" class="p-button-info" @click="exportMethod($event)" />
             </div>
         </div>
-
         <TabView v-if="MethodDisplayToggleValue.value === 1" class="p-col-12 p-m-0">
             <TabPanel v-for="survey in method.surveys" :key="survey.id" :header="survey.name">
                 <h4 class="p-text-left">Name: <span class="p-text-light">{{survey.name}}</span></h4>
@@ -24,10 +23,11 @@
                 <h4 class="p-text-left">Response Type: <span class="p-text-light">{{survey.response_type}}</span></h4>
                 <h4 class="p-text-left">Anonymous: <i class="pi p-text-center" :class="{'true-icon pi-check-circle': survey.ispublic, 'false-icon pi-times-circle': !survey.ispublic}"></i></h4>
 
-                <h4 v-if="survey.welcome_text.length" class="p-text-left">Welcome Message: <span class="p-text-light">{{survey.welcome_text}}</span></h4>
-                <h4 v-if="survey.closing_text.length" class="p-text-left">Closing Message: <span class="p-text-light">{{survey.closing_text}}</span></h4>
+                <h4 v-if="survey.welcome_text?.length" class="p-text-left">Welcome Message: <span class="p-text-light">{{survey.welcome_text}}</span></h4>
+                <h4 v-if="survey.closing_text?.length" class="p-text-left">Closing Message: <span class="p-text-light">{{survey.closing_text}}</span></h4>
                 <h2>Sections</h2>
                 <Divider />
+                <div v-if="survey.sections?.length">
                 <div v-for="section in survey.sections" :key="section.id" class="p-shadow-2 p-p-3 p-my-5" style="background-color: #F1F1F1;">
                     <h3>{{section.title}}</h3>
                     <h4 class="p-text-left">Questions</h4>
@@ -100,6 +100,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </TabPanel>
         </TabView>
