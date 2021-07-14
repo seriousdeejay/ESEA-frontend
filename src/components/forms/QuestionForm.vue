@@ -232,10 +232,10 @@ export default {
             uiComponent: { required }
             // direct_indicator: {
             //     $each: {
-            //         key: { required },
+            //         key: { required },git a
             //         datatype: { required }
             //     }
-            }
+            // }
         }
     },
     methods: {
