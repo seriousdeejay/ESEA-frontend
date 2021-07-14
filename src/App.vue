@@ -3,6 +3,7 @@
     <main-topbar @sidebar="changeSidebar" />
     <div class="p-d-flex" style="min-width: 1400px; position: relative; min-height: 100%; padding-top: 70px; width: 100%;">
          <main-sidebar :sidebar="expandedSidebar" />
+         <!-- <sub-sidebar /> -->
     <!-- <Menubar :model="items" v-if="accessToken!=null" class="p-shadow-5" style="background-color: #EFEEEE; z-index: 1000;">
         <template #start>
             <i class="pi pi-bars" />
@@ -30,12 +31,14 @@ import { mapState } from 'vuex'
 // import MyBreadCrumb from './components/MyBreadCrumb'
 import MainSidebar from './components/MainSidebar'
 import MainTopbar from './components/MainTopbar.vue'
+// import SubSidebar from './components/SubSidebar'
 
 export default {
   components: {
    //  MyBreadCrumb,
     MainSidebar,
     MainTopbar
+    // SubSidebar
   },
   data () {
     return {

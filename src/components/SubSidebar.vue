@@ -3,7 +3,7 @@
         <div>
             <h3 v-if="false" class="p-text-bold">Patagonia</h3>
             <Divider />
-            <div v-for="item in navElements" :key="item" @click="goToPage(item.path)"> <!-- a href="#" -->
+            <div v-for="item in links" :key="item" @click="goToPage(item.path)"> <!-- a href="#" -->
                 <div class="sidebar-element p-d-flex p-ai-center" :style="((item.path === $route.name) ? 'background-color: #E1E7E4;':'')">
                     <a :class="(item.icon)" style="width: 50px" v-tooltip.right="item.name" />
                     <div v-if="false" class="p-d-flex p-ai-center p-jc-between p-px-3" style="width: 100%">
@@ -29,33 +29,6 @@ export default {
     },
     data () {
         return {
-            navElements: [
-                 {
-                    name: 'Overview',
-                    icon: 'pi pi-desktop',
-                    path: 'networkoverview'
-                },
-                {
-                    name: 'Organisations',
-                    icon: 'pi pi-globe',
-                    path: 'networkorganisations'
-                },
-                {
-                    name: 'Methods',
-                    icon: 'pi pi-file',
-                    path: 'networkmethods'
-                },
-                {
-                    name: 'Campaigns',
-                    icon: 'pi pi-calendar',
-                    path: 'networkcampaigns'
-                },
-                {
-                    name: 'Settings',
-                    icon: 'pi pi-cog',
-                    path: 'networksettings'
-                }
-            ]
         }
     },
     methods: {

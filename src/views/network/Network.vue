@@ -2,7 +2,7 @@
     <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
         <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
             <!-- <organisation-sidebar :links="links" :name="network.name" @reroute="goToPage"/> -->
-            <sub-sidebar />
+            <sub-sidebar :links="links" />
         </div>
         <div class="p-col">
             <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5">
@@ -26,14 +26,41 @@ export default {
     data () {
         return {
             links: [
-                { label: 'Overview', icon: 'home' },
-                { label: 'Organisations', icon: 'cloud' },
-                { label: 'Methods', icon: 'chart-bar' },
-                { label: 'Campaigns', icon: 'book' },
-                // { label: 'Stakeholders', icon: 'users' },
-                { label: 'Settings', icon: 'cog' }
-            ],
-            pagename: undefined
+                 {
+                    name: 'Overview',
+                    icon: 'pi pi-desktop',
+                    path: 'networkoverview'
+                },
+                {
+                    name: 'Organisations',
+                    icon: 'pi pi-globe',
+                    path: 'networkorganisations'
+                },
+                {
+                    name: 'Methods',
+                    icon: 'pi pi-file',
+                    path: 'networkmethods'
+                },
+                {
+                    name: 'Campaigns',
+                    icon: 'pi pi-calendar',
+                    path: 'networkcampaigns'
+                },
+                {
+                    name: 'Settings',
+                    icon: 'pi pi-cog',
+                    path: 'networksettings'
+                }
+            ]
+            // links: [
+            //     { label: 'Overview', icon: 'home' },
+            //     { label: 'Organisations', icon: 'cloud' },
+            //     { label: 'Methods', icon: 'chart-bar' },
+            //     { label: 'Campaigns', icon: 'book' },
+            //     // { label: 'Stakeholders', icon: 'users' },
+            //     { label: 'Settings', icon: 'cog' }
+            // ],
+            // pagename: undefined
         }
     },
     computed: {
