@@ -229,12 +229,12 @@ export default {
     validations: {
         lazyQuestion: {
             name: { required, maxLength: maxLength(120) },
-            uiComponent: { required },
-            direct_indicator: {
-                $each: {
-                    key: { required },
-                    datatype: { required }
-                }
+            uiComponent: { required }
+            // direct_indicator: {
+            //     $each: {
+            //         key: { required },
+            //         datatype: { required }
+            //     }
             }
         }
     },
