@@ -1,5 +1,5 @@
 <template>
-    <div class="p-px-5" style="width: 500px">
+    <div class="p-px-5" style="width: 500px;">
         <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
             <div class="p-col-12 p-field p-d-flex p-ai-center p-jc-center p-mb-5">
                 <img :src="network.image" alt="Network Image" style="width: 150px; height: 150px; border-radius: 50%;" format="image/jpeg">

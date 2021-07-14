@@ -1,5 +1,5 @@
 <template>
-    <div class="menubar p-shadow-10">
+    <div class="menubar p-shadow-2">
         <i class="bars pi pi-bars p-p-5" @click="expandedSidebar = !expandedSidebar" />
         <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search the ESEA App..." />
@@ -46,12 +46,12 @@ export default {
         justify-content: space-between;
         height: 70px;
         margin: 0px;
-        background-color: #486b3e;
-        background-image:
-            linear-gradient(
-                to right,
-            #486b3e, #355e3b
-            );
+        background-color: #00695C;
+        // background-image:
+        //     linear-gradient(
+        //         to right,
+        //     #486b3e, #355e3b
+        //     );
         // border-bottom: 1px solid lightgrey;
     }
     .notification {
@@ -80,5 +80,9 @@ export default {
         font-weight: bold;
         background-color: rgba($color: yellow, $alpha: 0.5);
         color: #323232;
+    }
+    .notification:hover {
+        color: rgba($color: orange, $alpha: 1);
+        font-weight: bold;
     }
 </style>

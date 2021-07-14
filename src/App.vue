@@ -130,7 +130,7 @@ export default {
 <style lang="scss">
 html, body, #app {
     overflow: auto;
-    background-color: #F7F7F7; // #F8F9FA;
+    background-color: white; // #F7F7F7; // #F8F9FA;
     margin: 0 0;
     padding: 0 0;
     height: 100%;

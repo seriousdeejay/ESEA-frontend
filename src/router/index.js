@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/user/Login'
 import Register from '../views/user/Register'
 import SurveyFill from '../views/survey/SurveyFill'
@@ -548,7 +548,7 @@ const routes = [
 ]
 
 const router = createRouter({
-history: createWebHashHistory(),
+history: createWebHistory(), // createWebHashHistory(),
 // base: process.env.BASE_url, (?) -------------------------
 routes
 })

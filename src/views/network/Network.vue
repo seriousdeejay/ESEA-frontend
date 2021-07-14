@@ -1,7 +1,8 @@
 <template>
-    <div class="p-grid" style="height: 100vh">
-        <div class="p-col-fixed" style="width: 50px">
-            <organisation-sidebar :links="links" :name="network.name" @reroute="goToPage"/>
+    <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
+        <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
+            <!-- <organisation-sidebar :links="links" :name="network.name" @reroute="goToPage"/> -->
+            <sub-sidebar />
         </div>
         <div class="p-col">
             <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5">
@@ -15,11 +16,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import OrganisationSidebar from '../../components/OrganisationSidebar'
+// import OrganisationSidebar from '../../components/OrganisationSidebar'
+import SubSidebar from '../../components/SubSidebar.vue'
 export default {
     components: {
-        OrganisationSidebar
-    },
+        // OrganisationSidebar,
+        SubSidebar
+        },
     data () {
         return {
             links: [

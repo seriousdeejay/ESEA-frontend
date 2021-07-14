@@ -1,11 +1,12 @@
 <template>
-    <div :style="(sidebar ? 'width: 350px':'width: 55px')" style="min-height: 100%" class="sidebar">
+    <div :style="(sidebar ? 'width: 350px':'width: 50px')" style="min-height: 100%" class="sidebar">
         <div>
             <div v-for="(item, index) in navElements" :key="item" > <!-- a href="#" -->
-                <div class="sidebar-element p-d-flex p-ai-center" :style="(($route.name?.startsWith(item.path.slice(0, -1))) ? 'background-color: #00453D;':'')">
-                    <a class="sidebar-icon" :class="(item.icon)" style="width: 50px" @click="goToPage(item.path)" v-tooltip.right="item.name" />
+                <div class="sidebar-element p-d-flex p-ai-center" :style="((item.path === $route.name) ? 'background-color: #b2b2b2;':'')">
+                    <a :class="(item.icon)" style="width: 50px" @click="goToPage(item.path)" />
                     <div v-if="sidebar" class="p-d-flex p-ai-center p-jc-between p-px-3" style="width: 100%"  @click="goToPage(index)">
                         <div> {{item.name}}</div>
+                        <i v-if="item.subElements" :class="(item.open ? 'pi pi-chevron-down':'pi pi-chevron-left')" />
                     </div>
                 </div>
                 <div v-if="sidebar && item.open">
@@ -16,10 +17,9 @@
                 </div>
             </div>
         </div>
-        <div  v-if="sidebar" class="p-py-5" >
+            <div  v-if="sidebar" class="p-py-5" >
             <div style="color: white;">Website <i class="pi pi-external-link" /></div>
-        </div>
-
+            </div>
     </div>
 </template>
 
@@ -43,22 +43,48 @@ export default {
                 {
                     name: 'Networks',
                     icon: 'pi pi-cloud',
-                    path: 'networks'
+                    path: 'networks',
+                    subElements:
+                        [
+                            { name: 'Networks List', icon: 'pi pi-list', path: 'networks' },
+                            { name: 'Add Network', icon: 'pi pi-plus', path: 'network-create' }
+                        ]
                 },
                 {
                     name: 'Organisations',
                     icon: 'pi pi-globe',
-                    path: 'organisations'
+                    path: 'organisations',
+                    subElements:
+                        [
+                            { name: 'Organisations List', icon: 'pi pi-list', path: 'organisations' },
+                            { name: 'Add Organisation', icon: 'pi pi-plus', path: 'organisation-create' }
+                        ]
                 },
                 {
                     name: 'Methods',
                     icon: 'pi pi-briefcase',
-                    path: 'methods'
+                    path: 'methods',
+                    subElements:
+                        [
+                            { name: 'Methods List', icon: 'pi pi-list', path: 'methods' },
+                            { name: 'Add Method', icon: 'pi pi-plus', path: 'methodcreation' }
+                        ]
                 },
                 {
                     name: 'Users',
                     icon: 'pi pi-users',
                     path: 'users'
+                },
+                {
+                    name: 'Account',
+                    icon: 'pi pi-user',
+                    path: 'userdetails',
+                    subElements:
+                        [
+                            { name: 'Profile', path: 'userdetails' },
+                            { name: 'Messages', path: '' },
+                            { name: 'Settings', path: '' }
+                        ]
                 },
                 {
                     name: 'Log out',
@@ -107,11 +133,11 @@ export default {
         margin: 0px 0px;
         padding: 0x 0px;
         text-decoration: none;
-        font-size: 20px;
+        font-size: 22px;
         cursor: pointer;
         color: #fefefe;
-        border-top: 1px solid rgba($color: lightgrey, $alpha: 0.1);
-        border-bottom: 1px solid rgba($color: lightgrey, $alpha: 0.1);
+        border-top: 1px solid rgba($color: lightgrey, $alpha: 0.2);
+        border-bottom: 1px solid rgba($color: lightgrey, $alpha: 0.2);
     }
 
     .subelement {
@@ -125,27 +151,18 @@ export default {
         background-color: rgba($color: lightgrey, $alpha: 0.1);
     }
     a {
-        border-right: 1px solid rgba($color: lightgrey, $alpha: 0.1);
+        border-right: 1px solid rgba($color: lightgrey, $alpha: 0.2);
         // border-bottom: 1px solid rgba($color: lightgrey, $alpha: 0.2);
         color: white;
         padding: 1em 1em;
         text-decoration: none;
         text-transform: uppercase;
-         height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
     .sidebar-element:hover {
         background-color: rgba($color: lightgrey, $alpha: 0.2);
-        font-size: 24px;
     }
-    .sidebar-element:hover .sidebar-icon {
-        font-size: 20px;
+    a:hover {
+        background-color: rgba($color: lightgrey, $alpha: 0.1);
     }
-    // .a {
-    //     background-color: rgba($color: lightgrey, $alpha: 0.1);
-    //     font-size: 22px;
-    // }
     }
 </style>
