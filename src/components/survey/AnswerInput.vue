@@ -143,11 +143,11 @@ export default {
                 if (this.indicator.datatype === 'double') {
                     this.lazyValue = parseFloat(this.value[1]) || null
                 }
-                const questionWithSingleChoices = ['singleChoice', 'boolean']
+                const questionWithSingleChoices = ['singlechoice', 'boolean']
                 if (questionWithSingleChoices.includes(this.indicator.datatype)) {
                     this.lazyValue = this.value[1] || null
                 }
-                if (this.indicator.datatype === 'multipleChoice') {
+                if (this.indicator.datatype === 'multiplechoice') {
                     this.lazyValue = this.value[0] || null
                 }
             }

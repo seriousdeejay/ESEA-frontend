@@ -13,7 +13,7 @@
 
     <Dialog v-model:visible="removeDialog" style="width: 500px" header="Confirm Deletion" modal="true"  dismissableMask="true">
             Are you sure you want to <b>delete</b> the following organisation(s)?
-            <div v-for="organisation in selectedOrganisations" :key="organisation.id" class="p-shadow-1 p-p-3 p-m-5">{{organisation}}</div>
+            <div v-for="organisation in selectedOrganisations" :key="organisation.id" class="p-shadow-1 p-p-3 p-m-5">{{organisation.name}}</div>
         <template #footer>
         <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeDialog=false" />
         <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation()" />
@@ -22,7 +22,7 @@
 
      <Dialog v-model:visible="inviteDialog" style="width: 500px" modal="true" dismissableMask="true" class="p-fluid">
          <div class="p-field">
-            <MultiSelect id="organisations" v-model="organisationsToInvite" :options="organisations" optionLabel="name" optionValue="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom">
+            <MultiSelect id="organisations" v-model="organisationsToInvite" :options="organisations" optionLabel="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom">
                 <template #value="slotProps">
                     <div v-for="option of slotProps.value" :key="option.id">
                         <div>{{option}}</div>
@@ -103,7 +103,9 @@ export default {
         async addOrganisations () {
             this.inviteDialog = false
             if (this.organisationsToInvite.length) {
-                var newListOfOrganisations = this.network.organisations.concat(this.organisationsToInvite)
+                console.log(this.organisationsToInvite)
+                const result = this.organisationsToInvite.map(a => a.id)
+                var newListOfOrganisations = this.network.organisations.concat(result)
                 await this.patchNetwork({ organisations: newListOfOrganisations })
             }
             this.getOrganisations()
@@ -112,7 +114,8 @@ export default {
             console.log(this.selectedOrganisations)
             this.removeDialog = false
             if (this.selectedOrganisations.length) {
-                var newListOfOrganisations = this.network.organisations.filter((item) => !this.selectedOrganisations.includes(item))
+                const result = this.selectedOrganisations.map(a => a.id)
+                var newListOfOrganisations = this.network.organisations.filter((item) => !result.includes(item))
                 console.log('>>>', newListOfOrganisations)
                 await this.patchNetwork({ organisations: newListOfOrganisations })
             }
@@ -121,7 +124,7 @@ export default {
         async goToOrganisation (organisation) {
             if (this.removeMode) {
                 this.selectedOrganisations = []
-                this.selectedOrganisations.push(organisation.name)
+                this.selectedOrganisations.push(organisation)
                 this.removeDialog = true
             } else {
             await this.setOrganisation({ ...organisation })

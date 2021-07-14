@@ -1,10 +1,14 @@
 <template>
 <div class="p-grid nested-grid p-px-5" style="min-height: 70vh;">
     <div class="p-col-12">
-        <div class="p-col-12 p-text-justify"><h4 class="p-text-bold">Description</h4>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis.
+        <div class="p-p-3" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
+        <div class="p-text-justify"><p class="p-text-bold">Description</p>
+                {{network.description}}
+                <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis. -->
         </div>
-         <div class="p-col-12 p-p-5 p-my-5" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
+        </div>
+        <Divider />
+        <!-- <div class="p-col-12 p-p-5 p-my-5" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
             <div v-if="Tasks">
                 <h4>No tasks!</h4>
                 <p class="p-text-italic">
@@ -12,18 +16,18 @@
                 </p>
             </div>
             <div v-else>
-                <!-- <h4 class="p-mb-0">The following tasks require your attention.</h4>
+                <h4 class="p-mb-0">The following tasks require your attention.</h4>
                 <div v-for="survey, index in surveys" :key="survey.id" class="p-p-5">
                     <Button :label="`Survey ${index+1}: As ${survey.stakeholders} of ${network.name} you are asked to fill in the following survey deployed by network 1: '${survey.name}'.`" class="p-button-text p-shadow-3 p-p-4" @click="goToSurvey(survey.method.id, survey.id)"/>
                     <br><br>
                     <Button label="Task 2: As manager of organisation 2 you are asked to fill in the survey of network 1." class="p-button-text p-shadow-1" />
                 </div>
-                <br> -->
+                <br>
                 <Button label="Task 1: Organisation is requesting network membership." class="p-button-secondary p-shadow-1" />
                 <br><br>
                 <Button label="Task 2: Survey responserate threshold has been achieved for method BIA." class="p-button-secondary p-shadow-1" />
             </div>
-        </div>
+        </div> -->
         <div class="p-m-5">
         <horizontal-scroll-bar :items="methods" name="Methods" itemslink="networkmethods"  @clicked-item="goToItem" />
         <horizontal-scroll-bar :items="organisations" name="Organisations" itemslink="networkorganisations"  @clicked-item="goToItem" />

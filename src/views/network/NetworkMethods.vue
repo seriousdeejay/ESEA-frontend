@@ -14,7 +14,7 @@
 
     <Dialog v-model:visible="actionDialog" style="width: 500px" header="Confirm Action" modal="true"  dismissableMask="true">
             Are you sure you want to <span v-if="removeMode"><b>delete</b></span><span v-if="addMode"><b>Add</b></span> the following methods(s)?
-            <div v-for="method in selectedMethods" :key="method.id" class="p-p-3 p-m-3" style="border: 1px solid lightgrey;">{{method}}</div>
+            <div v-for="method in selectedMethods" :key="method.id" class="p-p-3 p-m-3" style="border: 1px solid lightgrey;">{{method.name}}</div>
         <template #footer>
         <Button label="No" icon="pi pi-times" class="p-button-text" @click="actionDialog=false" />
         <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="addMode ? addMethods() : removeMethods()" />
@@ -107,12 +107,12 @@ export default {
         async goToMethod (method) {
             this.selectedMethods = []
             if (this.addMode) {
-                this.selectedMethods.push(method.name)
+                this.selectedMethods.push(method)
                 this.actionDialog = true
                 return
             }
             if (this.removeMode) {
-                this.selectedMethods.push(method.name)
+                this.selectedMethods.push(method)
                 this.actionDialog = true
                 return
             }
@@ -127,7 +127,8 @@ export default {
             if (this.addMode && this.removeMode) { return }
             if (this.selectedMethods.length && this.addMode) {
                 console.log('check')
-                const newMethods = this.network.methods.concat(this.selectedMethods)
+                const result = this.selectedMethods.map(a => a.id)
+                const newMethods = this.network.methods.concat(result)
                 await this.patchNetwork({ methods: newMethods })
             }
             this.addMode = false
@@ -136,7 +137,8 @@ export default {
             this.actionDialog = false
             if (this.addMode && this.removeMode) { return }
             if (this.selectedMethods.length && this.removeMode) {
-                const newListOfMethods = this.network.methods.filter((item) => !this.selectedMethods.includes(item))
+                const result = this.selectedMethods.map(a => a.id)
+                const newListOfMethods = this.network.methods.filter((item) => !result.includes(item))
                 await this.patchNetwork({ methods: newListOfMethods })
             }
             this.getMethods()

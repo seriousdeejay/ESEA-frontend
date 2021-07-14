@@ -1,6 +1,8 @@
 <template>
-<h3>Dashboard</h3>
-<div class="p-grid nested-grid p-mx-5 p-px-5">
+<div class="p-m-5">
+<h1>Dashboard</h1>
+</div>
+<div class="p-grid nested-grid p-m-5 p-jc-center">
     <div class="p-col-12 p-py-5">
         <div v-if="!tasks">
             <h4>All Done!</h4>
@@ -13,6 +15,7 @@
             <div class="p-shadow-2 p-m-3 p-p-3 p-text-left"><span class="p-text-bold">Task 1:</span> Fill in the survey of network 1.</div>
             <div class="p-shadow-2 p-m-3 p-p-3 p-text-left"><span class="p-text-bold">Task 2:</span> Reply to network participation request on network 2.</div>
         </div>
+        <img alt="logo" src="../../assets/tasklist.png" class="p-m-5" style="height: 400px;">
     </div>
     <!-- <div class="p-col-1"><Divider layout="vertical" /></div>
     <div class="p-col-3">
@@ -58,6 +61,8 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
+    components: {
+    },
     data () {
         return {
             org: [],

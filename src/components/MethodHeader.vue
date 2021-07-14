@@ -1,12 +1,11 @@
 <template>
     <div class="p-d-flex p-ai-center p-jc-between p-px-5" style="height: 80px; background-color: #f1f1f1;">
-        {{$route.name}}
         <div class="p-d-flex p-ai-center">
             <i class="pi pi-arrow-left p-px-5" style="font-size: 30px;" @click="goToMethods()"></i>
             <h2>{{ title }} <span class="p-text-italic p-text-light p-ml-5"><small><template v-if="upToDate">All changes saved</template><template v-else>...</template></small></span></h2>
         </div>
         <div class="p-d-flex p-ai-center" style="height: 100%;">
-        <div v-for="step in steps" :key="step.text" class="p-d-flex p-ai-center" @mouseover="step.hover = true" @mouseleave="step.hover = false" :style="[(step.to.name === $route.name) ? 'background-color: lightblue;' :'', step.hover ? styleObject : '', ]" style="height: 100%;">
+        <div v-for="step in steps" :key="step.text" class="p-d-flex p-ai-center" @mouseover="step.hover = true" @mouseleave="step.hover = false" :style="[(step.to.name === $route.name) ? 'background-color: #486b3e; color: white;' :'', step.hover ? styleObject : '', ]" style="height: 100%;">
             <div class="p-text-light p-p-5" @click="goToPage(step.to)"  style="text-align: center;">{{step.text}}</div>
         </div>
         </div>
@@ -25,7 +24,7 @@ export default {
             { text: 'Create Surveys', to: { name: 'survey-create' } },
             { text: 'Finish method', to: { name: '' } }
             ],
-        styleObject: { 'background-color': 'skyblue' }
+        styleObject: { 'background-color': 'rgba(72, 106, 66, 0.7)' }
         }
     },
     computed: {

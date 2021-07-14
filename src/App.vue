@@ -1,7 +1,11 @@
 <template>
-  <div v-if="accessToken!=null"> <!--style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;"-->
-    <Menubar :model="items" v-if="accessToken!=null" class="p-shadow-5" style="background-color: #EFEEEE; position: fixed; width: 100%; z-index: 1000;">
+  <div class="myapp" v-if="accessToken!=null" style="position: relative; height: 100%;"> <!--style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
+    <main-topbar @sidebar="changeSidebar" />
+    <div class="p-d-flex" style="min-width: 1400px; position: relative; min-height: 100%; padding-top: 70px; width: 100%;">
+         <main-sidebar :sidebar="expandedSidebar" />
+    <!-- <Menubar :model="items" v-if="accessToken!=null" class="p-shadow-5" style="background-color: #EFEEEE; z-index: 1000;">
         <template #start>
+            <i class="pi pi-bars" />
             <img alt="logo" src="./assets/logo.png" height="40" class="p-mr-5">
         </template>
         <template #end>
@@ -9,10 +13,11 @@
           <Menu id="profile_menu" ref="menu" :model="profile" :popup="true" />
         </template>
     </Menubar>
-    <my-bread-crumb />
-    <!-- <h1>Breadcrumb with Chosen Network>Chosen Organisation>Chosen Method</h1> -->
-    <div style="margin-top: 5px;">
-      <router-view />
+   <my-bread-crumb />
+    <h1>Breadcrumb with Chosen Network>Chosen Organisation>Chosen Method</h1> -->
+        <div style="width: 100%;">
+        <router-view />
+        </div>
     </div>
   </div>
   <div v-else class="centered">
@@ -22,14 +27,19 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import MyBreadCrumb from './components/MyBreadCrumb'
+// import MyBreadCrumb from './components/MyBreadCrumb'
+import MainSidebar from './components/MainSidebar'
+import MainTopbar from './components/MainTopbar.vue'
 
 export default {
   components: {
-    MyBreadCrumb
+   //  MyBreadCrumb,
+    MainSidebar,
+    MainTopbar
   },
   data () {
     return {
+        expandedSidebar: false,
       items: [
         {
           label: 'Home',
@@ -99,7 +109,10 @@ export default {
   methods: {
    toggle (event) {
             this.$refs.menu.toggle(event)
-        }
+        },
+    changeSidebar (value) {
+        this.expandedSidebar = value
+    }
   },
   computed: {
     ...mapState('authentication', ['accessToken', 'currentuser'])
@@ -115,10 +128,12 @@ export default {
 </script>
 
 <style lang="scss">
-body, html, #app {
-  min-height: 100%;
-  background-color: #F8F9FA;
-  margin: 0 0;
+html, body, #app {
+    overflow: auto;
+    background-color: #F7F7F7; // #F8F9FA;
+    margin: 0 0;
+    padding: 0 0;
+    height: 100%;
   }
 
 #app {
@@ -130,8 +145,6 @@ body, html, #app {
 }
 
 #nav {
-  padding: 30px;
-
   a {
     font-weight: bold;
     color: #2c3e50;

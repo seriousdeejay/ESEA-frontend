@@ -1,5 +1,5 @@
 <template>
-    <div style="min-width: 1000px;">
+    <div class="p-m-5" style="min-width: 1000px;">
         <h1>Organisations Overview</h1>
         <div class="p-d-flex p-jc-between p-m-5">
             <div>

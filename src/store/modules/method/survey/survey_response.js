@@ -57,7 +57,7 @@ export default {
 			console.log(id)
 			state.debouncers[id] = debounce(
 				async ({ oId, eaId, surveyResponse }) => {
-					console.log('-----------', surveyResponse)
+					console.log('-----------', token, surveyResponse)
 					const { response, error } = await SurveyResponseService.put(
 						{ oId, eaId, id: token, data: surveyResponse }
 					)

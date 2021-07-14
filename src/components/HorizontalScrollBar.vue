@@ -1,4 +1,5 @@
 <template>
+<div class="p-p-3 p-m-3 p-shadow-2" style="border: 1px solid #e2e2e2;">
     <div class="p-d-flex p-jc-between">
         <h3 class="p-text-left"><router-link v-if="itemslink" :to="{name: itemslink, params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">{{name}}</router-link><span v-else>{{name}}</span></h3>
         <h3>Page {{currentPage}} of {{itemPages}}</h3>
@@ -22,7 +23,7 @@
             <div v-if="currentPage !== itemPages" class="scrollIcon p-d-flex" @click="itemsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
         </div>
     </div>
-    <Divider />
+    </div>
 </template>
 
 <script>

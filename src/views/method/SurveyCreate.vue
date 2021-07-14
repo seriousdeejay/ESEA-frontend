@@ -1,7 +1,7 @@
 <template>
 <method-header />
 
-<div class="p-shadow-10">
+<div class="p-shadow-10 p-d-flex p-jc-center">
     <div class="p-shadow-5 p-m-5 p-p-5" style="width: 80%">
         <div class="p-d-flex p-ai-center p-jc-between">
         <h1>Stakeholder Survey</h1> <Button label="Create Survey" class="p-button-info p-button-lg" @click="addSurvey()" />

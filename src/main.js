@@ -41,6 +41,7 @@ import InputText from 'primevue/inputtext'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 import Sidebar from 'primevue/sidebar'
+import BadgeDirective from 'primevue/badgedirective'
 
 // const eventsHub = createApp
 
@@ -96,5 +97,6 @@ app.component('InputText', InputText)
 app.component('RadioButton', RadioButton)
 app.component('Checkbox', Checkbox)
 app.component('Sidebar', Sidebar)
+app.directive('badge', BadgeDirective)
 
 app.mount('#app')

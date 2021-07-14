@@ -16,8 +16,8 @@
     <br>
     <br>
     <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id" class="p-m-5">
-        <ProgressBar :value="survey.current_response_rate * 100 + 1" :showValue="true">
-            '{{survey.name}}' - Response Rate: {{survey.current_response_rate * 100}}%
+        <ProgressBar :value="survey.current_response_rate + 1" :showValue="true">
+            '{{survey.name}}' - Response Rate: {{survey.current_response_rate }}%
         </ProgressBar>
     </div>
     <TabView>
@@ -45,12 +45,12 @@
             <Column field="responses" header="Responses" sortable />
             <Column field="current_response_rate" header="Response Rate" sortable>
                 <template #body="{data}">
-                    <ProgressBar :value="(data.current_response_rate) * 100" :showValue="true" />
+                    <ProgressBar :value="(data.current_response_rate)" :showValue="true" />
                 </template>
             </Column>
             <Column field="required_response_rate" header="Response Rate Threshold" sortable>
                 <template #body='{data}'>
-                    {{data.required_response_rate*100}}%
+                    {{data.required_response_rate}}%
                 </template>
             </Column>
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">

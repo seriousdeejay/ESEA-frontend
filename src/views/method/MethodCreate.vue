@@ -21,7 +21,7 @@
         </div>
         <Button label="Add New Topic" icon="pi pi-plus" class="p-col-12 p-button-text p-text-left p-p-5" @click="addTopic" />
     </div>
-    <div class="p-d-flex p-ai-center" style="width: 100px; background-color: #fcfcfc; border-top: 5px solid lightgrey;">
+    <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 35%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
         <div>
             <div v-for="option in addBar" :key="option.choice" class="p-d-flex p-jc-center p-ai-center" style="height: 100px; width: 100px; border: 1px solid lightgrey" :style="(option.hover ? 'background-color: lightgrey;' : '')" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="addBarMethod(option.choice)">
                 <div>

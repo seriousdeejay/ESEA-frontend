@@ -21,10 +21,10 @@
                 tabindex="0"
                 :key="item.id"
                 :item="item"
-                :answer="answers[item?.direct_indicator?.[0]?.id]"
+                :answer="answers[item.id]"
                 :active="activeQuestion === (index)"
                 :refresh="refresh"
-                @input="updateAnswer(item.direct_indicator[0].id, $event)"
+                @input="updateAnswer(item.direct_indicator[0].id, item.id, $event)"
                 @focus="toggleActive(index)"
                 @focuschecking="toggleActive(index)"
                 @blur="toggleActive"
@@ -106,9 +106,9 @@ export default {
         },
         answers () {
             const answers = {}
-            if (this.surveyResponse?.id !== this.survey.id && this.surveyResponse.question_responses) {
+            if (this.surveyResponse.question_responses) {
                 this.surveyResponse.question_responses.forEach((answer) => {
-                    answers[answer.direct_indicator_id] = [answer.values, answer.value]
+                    answers[answer.question] = [answer.values, answer.value]
                 })
             }
             return answers
@@ -174,11 +174,14 @@ export default {
             // TODO // popup Dialog: Survey is automatically saved.
         },
         async finishSurvey () {
+            console.log('cc')
             await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
 
+            console.log('eee')
             this.checkRequiredQuestions = true
             this.missedQuestions = []
             await this.checkMandatoryFields()
+            console.log('reee')
             if (!this.missedQuestions.length) {
             this.surveyResponse.finished = true
             await this.updateResponse()
@@ -187,10 +190,13 @@ export default {
                 this.missedQuestionsDialog = true
             }
         },
-        updateAnswer (id, answer) {
-            console.log(answer, id)
-            const questionResponse = this.surveyResponse.question_responses.find(response => response.direct_indicator_id === id)
-            if (!questionResponse) { return }
+        updateAnswer (id, questionId, answer) {
+            console.log(answer, id, questionId)
+            let questionResponse = this.surveyResponse.question_responses.find(response => response.question === questionId)
+            if (!questionResponse) {
+                questionResponse = { question: questionId, direct_indicator_id: id, values: [], value: null }
+            }
+            // if (!questionResponse) { return }
 
             questionResponse.value = answer.answer[0] || ''
             this.surveyResponse.question_responses = [questionResponse]
@@ -205,10 +211,11 @@ export default {
             this.updateResponse()
         },
         async updateResponse () {
+            console.log('dddd')
             await this.updateSurveyResponse({
                 oId: this.eseaAccount?.organisation,
                 eaId: this.eseaAccount?.id,
-                token: parseInt(this.$route.params.uniquetoken),
+                token: this.$route.params.uniquetoken,
                 surveyResponse: {
                     ...this.surveyResponse
                 }
@@ -218,9 +225,9 @@ export default {
             for (let i = 0; i < this.survey.sections.length; i++) {
                 for (let j = 0; j < this.survey.sections[i].questions.length; j++) {
                     if (this.survey.sections[i].questions[j].isMandatory) {
-                        const answer = this.surveyResponse.question_responses.find(response => response.direct_indicator_id === this.survey.sections[i].questions[j].direct_indicator[0].id)
-                        console.log(answer)
-                        if (!answer.values.length && !answer.value) {
+                        const answer = this.surveyResponse.question_responses.find(response => response.question === this.survey.sections[i].questions[j].id)
+
+                        if (!answer || (!answer.values.length && !answer.value)) {
                             this.survey.sections[i].questions[j].required = true
                             this.missedQuestions.push(this.survey.sections[i].questions[j])
                         }
