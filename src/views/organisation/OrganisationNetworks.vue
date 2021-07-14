@@ -11,6 +11,42 @@
     </div>
     <Divider />
     <network-list :networks="networks" :table="tableDisplay" :search="search" :loading="loading" @clicked-network="goToNetwork"/>
+    <div v-if="memberships.length" class="p-p-3 p-shadow-3" style="background-color: rgba(0, 105, 92, 0.4); margin: 100px; border-radius: 5px;">
+        <div class="p-d-flex p-jc-between p-ai-center">
+             <h3 class="p-text-left p-text-bold">Network Invitations</h3>
+             <div>
+            <Button icon="pi pi-check" label="Accept all" class="p-button-success p-button-sm p-mr-2" @click="reactOnAllRequests('accepted')" />
+            <Button icon="pi pi-check" label="Decline all" class="p-button-danger p-button-sm" @click="reactOnAllRequests('denied')" />
+            </div>
+        </div>
+        <DataTable :value="memberships" datakey="id" selectionMode="single" @row-select="goToOrganisation" showGridlines autoLayout
+        :paginator="true" :rows="5" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
+
+            <!-- <Column field="ispublic" header="Public" headerStyle="width: 5rem">
+                <template #body="slotProps">
+                    <i class="pi p-text-center p-text-bold" style="width:100%; font-size: 20px;" :class="{'true-icon pi-check': slotProps.data.ispublic, 'false-icon pi-times': !slotProps.data.ispublic}" :style="(slotProps.data.ispublic ? 'color: green;':'color: red;')"></i>
+                </template>
+            </Column> -->
+            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" /> <!-- text-align: center; overflow: visible  contentStyle="width: 500px;" -->
+            <!-- <Column field="created_by" header="Creator">
+                <template #body="slotProps">
+                    <div v-if="slotProps.data.created_by !== currentuser">{{slotProps.data.created_by}}</div> <div v-else class="p-text-bold">You</div>
+                </template>
+            </Column> -->
+            <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="{data}">
+                    <div class="p-d-flex">
+                        <Button icon="pi pi-check" class="p-button-success p-button-sm p-mr-2" @click="reactOnRequest(data, 'accepted')" style="width: 50px" />
+                        <Button icon="pi pi-times" class="p-button-danger p-button-sm" @click="reactOnRequest(data, 'denied')" style="width: 50px" />
+                    </div>
+                </template>
+            </Column>
+        </Datatable>
+    </div>
+    <div v-else>
+        <h3 class="p-m-5 p-text-left p-text-bold">No current invites</h3>
+    </div>
 
     <Dialog v-model:visible="requestParticipationDialog" class="p-fluid" style="width: 500px" :header="`Network: ${selectedNetwork?.name}`" :modal="true" :dismissableMask="true">
         <div class="p-field">
@@ -40,18 +76,28 @@ export default {
             search: '',
             loading: true,
             requestParticipationDialog: false,
-            selectedNetwork: null
+            selectedNetwork: null,
+            columns: [
+                    { field: 'network_name', header: 'Name' },
+                    { field: 'network_description', header: 'Description' }
+                ]
         }
     },
     computed: {
-        ...mapState('network', ['networks'])
+        ...mapState('network', ['networks']),
+        ...mapState('membership', ['memberships'])
     },
     async created () {
-        await this.fetchNetworks({ query: `?organisation=${this.$route.params.OrganisationId}` })
-        this.loading = false
+       this.initialize()
     },
     methods: {
         ...mapActions('network', ['fetchNetworks']),
+        ...mapActions('membership', ['fetchMemberships', 'createMembership', 'updateMembership']),
+        async initialize () {
+             await this.fetchNetworks({ query: `?organisation=${this.$route.params.OrganisationId}` })
+             await this.fetchMemberships({ query: `?organisation=${this.$route.params.OrganisationId}` })
+             this.loading = false
+        },
         async joinableNetworks () {
             this.joinButton = !this.joinButton
             if (this.joinButton) {
@@ -60,9 +106,21 @@ export default {
                 await this.fetchNetworks({ query: `?organisation=${this.$route.params.OrganisationId}` })
             }
         },
-        requestNetworkParticipation () {
+        async requestNetworkParticipation () {
+            await this.createMembership({ network: this.selectedNetwork.id, organisation: this.$route.params.OrganisationId, requester: 'organisation' })
             this.requestParticipationDialog = false
             console.log('Requesting Network Participation...')
+        },
+        async reactOnAllRequests (action) {
+            for (const request of this.memberships) {
+                await this.updateMembership({ id: request.id, data: { network: request.network, organisation: this.$route.params.OrganisationId, requester: 'network', status: action } })
+            }
+            this.initialize()
+        },
+        async reactOnRequest (request, action) {
+            console.log(action, request)
+            await this.updateMembership({ id: request.id, data: { network: request.network, organisation: this.$route.params.OrganisationId, requester: 'network', status: action } })
+            this.initialize()
         },
         goToNetwork (network) {
             if (this.joinButton) {

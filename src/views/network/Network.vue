@@ -47,6 +47,11 @@ export default {
                     path: 'networkcampaigns'
                 },
                 {
+                    name: 'Team',
+                    icon: 'pi pi-users',
+                    path: 'networkteam'
+                },
+                {
                     name: 'Settings',
                     icon: 'pi pi-cog',
                     path: 'networksettings'

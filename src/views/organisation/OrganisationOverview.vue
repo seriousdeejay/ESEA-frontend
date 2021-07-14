@@ -1,15 +1,28 @@
 <template>
 <div class="p-grid nested-grid p-px-2" style="min-height: 60vh;">
     <div class="p-col-9">
+        <div class="p-p-3 p-shadow-2" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
+            <div class="p-text-justify"><p class="p-text-bold">Organisation Manager</p>
+                <router-link :to="{name: 'userdetails', params: { id: organisation.created_by_id } }" style="text-decoration: none; color: blue;">{{organisation.created_by}}</router-link>
+            </div>
+            <div class="p-text-justify"><p class="p-text-bold">Description</p>
+                    {{organisation.description}}
+                    <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis. -->
+            </div>
+        </div>
+        <Divider />
         <!-- <div class="p-grid">
             <div class="p-col-12 p-d-flex p-jc-end">
                 <Button label="Edit Organisation" icon="pi pi-user-plus" class="p-button-secondary p-mr-2" @click="editOrganisationDialog = true"/>
                 <Button label="Delete Organisation" icon="pi pi-trash" class="p-button-danger" @click="confirmDeletion" />
             </div>
         </div> -->
-        <div class="p-col-12 p-text-justify"><h4 class="p-text-bold">Description</h4>
-                <span v-if="organisation.description.length">{{organisation.description}}</span><span v-else>This organisation has no description</span>
+        <!-- <div class="p-col-12 p-text-justify"><h4 class="p-text-bold">Description</h4>
+         <div class="p-text-justify"><p class="p-text-bold">Organisation Manager</p>
+            <router-link :to="{name: 'userdetails', params: { id: organisation.created_by_id } }" style="text-decoration: none; color: blue;">{{organisation.created_by}}</router-link>
         </div>
+                <span v-if="organisation.description.length">{{organisation.description}}</span><span v-else>This organisation has no description</span>
+        </div> -->
          <div class="p-col-12 p-p-5 p-m-5" style="border: 1px solid lightgray">
             <div v-if="!surveys.length">
                 <h4>All Done!</h4>

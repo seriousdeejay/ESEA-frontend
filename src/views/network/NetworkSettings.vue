@@ -1,5 +1,6 @@
 <template>
     <div class="p-px-5" style="width: 500px;">
+        {{network}}
         <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
             <div class="p-col-12 p-field p-d-flex p-ai-center p-jc-center p-mb-5">
                 <img :src="network.image" alt="Network Image" style="width: 150px; height: 150px; border-radius: 50%;" format="image/jpeg">
@@ -24,12 +25,13 @@
             </div>
             <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
                 <span>Network Status</span>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" />
+                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" optionValue="value" /> <!-- @focus="ispublicDialog = true" -->
+                {{boolChoice}} --
             </div>
             <small class="p-text-italic">*Public Networks are visible to anyone. Explicitly granted access is still required for cetain operations.</small>
         </form>
         <div class="p-col-12 p-d-flex p-jc-between">
-            <Button type="submit" form="settingsform" :label="loading?'Save...' : 'Save Details'" :loading="loading" class="p-button-primary" style="width: 150px;" :disabled="v$.$invalid" />
+            <Button type="submit" form="settingsform" :label="loading? 'Save...' : 'Save Details'" :loading="loading" class="p-button-primary" style="width: 150px;" :disabled="v$.$invalid" />
             <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
         </div>
 
@@ -68,21 +70,32 @@ export default {
                 { name: 'Public', value: true },
                 { name: 'Private', value: false }
                 ],
-            boolChoice: null,
             ispublicDialog: false,
             deleteNetworkDialog: false,
+            boolChoice: null,
             file: false
         }
     },
-    // watch: {
-    //     boolChoice () {
-    //         // this.boolChoice = { name: 'Public', value: this.network.ispublic }
-    //         this.network.ispublic = this.boolChoice.value
-    //     }
-    // },
+    watch: {
+        boolChoice (val) {
+            // this.boolChoice = { name: 'Public', value: this.network.ispublic }
+            this.network.ispublic = this.boolChoice
+        }
+    },
     computed: {
         ...mapState('network', ['network']),
         ...mapState('authentication', ['currentuser'])
+    //     boolChoice () {
+    //         if (this.network?.ispublic) {
+    //             return { name: 'Public', value: true }
+    //         }
+    //         return { name: 'Private', value: false }
+    //     }
+    // },
+    // watch: {
+    //     boolChoice (val) {
+    //         this.network.ispublic = val.value
+    //     }
     },
     setup: () => ({ v$: useVuelidate() }),
     validations: {
@@ -102,26 +115,31 @@ export default {
     methods: {
         ...mapActions('network', ['fetchNetwork', 'updateNetwork', 'deleteNetwork']),
         initialize () {
-            this.boolChoice = { name: 'Public', value: true }
+            this.boolChoice = this.network.ispublic
+            // if (this.network?.ispublic) {
+            // /   this.boolChoice = this.network.ispublic // { name: 'Public', value: true }
+            // // } else {
+            // //     this.boolChoice = false // { name: 'Private', value: false }
+            // // }
         },
         async validateImage (e) {
             this.file = await imageValidator(e)
         },
         async updateDetails () {
-            console.log('---->', this.network.name.length)
+            console.log('---->', this.network)
             if (this.v$.network.$invalid) { return }
             this.loading = true
             var formData = new FormData()
             for (var key in this.network) {
-                console.log('>>>', this.network[key])
-                if (key !== 'image' && this.network[key].length && !Array.isArray(this.network[key])) {
+                console.log('>>>', key, this.network[key])
+                if (key !== 'image' && !Array.isArray(this.network[key])) {
                     formData.append(key, this.network[key])
                 }
             }
             if (this.file) {
                 formData.append('image', this.file)
             }
-            console.log('======', formData)
+            console.log('======', this.network)
             await this.updateNetwork(formData)
             await this.fetchNetwork({ id: this.$route.params.NetworkId })
             this.loading = false

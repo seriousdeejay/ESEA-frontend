@@ -1,5 +1,6 @@
 <template>
         <form ref="form" class="p-grid p-px-5 p-py-5 p-fluid p-input-filled" :style="cssProps" style="background-color: #F1F1F1;" >
+            {{keyError}} ddd
             <div class="p-col-12 p-m-0 p-field">
                 <span class="p-float-label">
                     <InputText ref="questionname" id="questionname" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" /> <!-- nameErrors.length -->
@@ -143,12 +144,12 @@ export default {
             return datatypeWithOptions
         },
         keyErrors () {
-            if (this.lazyQuestion.direct_indicator.length) {
-                console.log('ée;')
-                for (const v in this.v$.lazyQuestion.direct_indicator.$each?.$iter) {
-                    return HandleValidationErrors(v.key, this.errors.direct_indicator?.[0].key)
-                }
-            }
+            // if (this.lazyQuestion.direct_indicator.length) {
+            //     console.log('ée;')
+            //     for (const v in this.v$.lazyQuestion.direct_indicator.$each?.$iter) {
+            //         return HandleValidationErrors(v.key, this.errors.direct_indicator?.[0].key)
+            //     }
+            // }
             return false
         },
         nameErrors () {
@@ -183,15 +184,17 @@ export default {
                 if (val.direct_indicator.length) {
                     if (!val.direct_indicator[0].key) {
                         this.keyError = true
+                        return
+                    } else {
+                        this.keyError = false
                     }
                     if (!val.direct_indicator[0].datatype) {
                         this.datatypeError = true
-                    }
-                    if (this.datatypeError || this.keyError) {
                         return
+                    } else {
+                        this.datatypeError = false
                     }
                 }
-                this.keyError = false
                 if (this.v$.$invalid) { return }
                 if (this.lazyQuestion.direct_indicator.length) {
                     if (this.lazyQuestion.direct_indicator?.[0].options.length) {

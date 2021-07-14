@@ -33,6 +33,11 @@ export default {
                     path: 'organisationoverview'
                 },
                 {
+                    name: 'Networks',
+                    icon: 'pi pi-cloud',
+                    path: 'organisationnetworks'
+                },
+                {
                     name: 'Esea Accounts',
                     icon: 'pi pi-book',
                     path: 'organisationeseaaccounts'
@@ -42,20 +47,20 @@ export default {
                     icon: 'pi pi-chart-bar',
                     path: 'organisationreports'
                 },
+                // {
+                //     name: 'Surveys',
+                //     icon: 'pi pi-book',
+                //     path: 'organisationsurveys'
+                // },
+                // {
+                //     name: 'Stakeholders',
+                //     icon: 'pi pi-users',
+                //     path: 'organisationstakeholders'
+                // },
                 {
-                    name: 'Surveys',
-                    icon: 'pi pi-book',
-                    path: 'organisationsurveys'
-                },
-                {
-                    name: 'Stakeholders',
+                    name: 'Team',
                     icon: 'pi pi-users',
-                    path: 'organisationstakeholders'
-                },
-                {
-                    name: 'Networks',
-                    icon: 'pi pi-cloud',
-                    path: 'organisationnetworks'
+                    path: 'organisationteam'
                 },
                 {
                     name: 'Settings',

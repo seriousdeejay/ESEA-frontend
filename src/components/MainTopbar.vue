@@ -8,12 +8,13 @@
             <div class="notification pi pi-bell"><span class="badge">69</span></div>
             <div class="profile p-d-flex p-ai-center p-pr-5" @click="goToProfile()">
             <i class="pi pi-user p-p-1 p-mx-4" style="border: 1px solid lightgrey; border-radius: 50%; font-size: 25px; color: lightgrey;"/>
-            <h3 class="p-text-light" style="color: white;">Admin</h3>
+            <h3 class="p-text-light" style="color: white;">{{ currentuser }}</h3>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 
 export default {
     data () {
@@ -21,6 +22,9 @@ export default {
             expandedSidebar: false,
             search: ''
         }
+    },
+    computed: {
+        ...mapState('authentication', ['currentuser'])
     },
     watch: {
         expandedSidebar (val) {

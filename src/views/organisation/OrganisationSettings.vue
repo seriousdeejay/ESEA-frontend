@@ -24,7 +24,7 @@
             </div>
             <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
                 <span>Organisation Status</span>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" />
+                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" optionValue="value" />
             </div>
             <small class="p-text-italic">*Public organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
         </form>
@@ -80,6 +80,11 @@ export default {
         ...mapState('organisation', ['organisation']),
         ...mapState('authentication', ['currentuser'])
     },
+    watch: {
+        boolChoice (val) {
+            this.organisation.ispublic = val
+        }
+    },
     setup: () => ({ v$: useVuelidate() }),
     validations: {
         organisation: {
@@ -97,7 +102,7 @@ export default {
     methods: {
         ...mapActions('organisation', ['fetchOrganisation', 'updateOrganisation', 'deleteOrganisation']),
         initialize () {
-            this.boolChoice = { name: 'Public', value: true }
+            this.boolChoice = this.organisation.ispublic
         },
         async validateImage (e) {
             this.file = await imageValidator(e)

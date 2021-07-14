@@ -29,7 +29,7 @@
                             <div class="p-error p-text-italic" v-for="error in emailErrors" :key="error"><small>{{error}}</small></div>
                         </div>
                         <div class="p-col-6 p-text-bold"> Account Creation </div>
-                        <div class="p-col-6"> {{ user.date_joined.slice(0, 10) }} </div> <!-- Date should be fixed to DD-MM-YYYY! -->
+                        <div class="p-col-6"> {{ user?.date_joined?.slice(0, 10) }} </div> <!-- Date should be fixed to DD-MM-YYYY! -->
                         <div class="p-col-12" >
                             <div class="p-text-bold p-mb-2" >Bio</div>
                             <textarea id="bio" v-if="editablefields.bio" type="text" rows="5" @blur="editablefields.bio=false" @keyup.enter="editablefields.bio=false" class="p-inputtext" />
@@ -115,7 +115,8 @@ export default {
             // bio: {}
         }
     },
-    created () {
+    async created () {
+        await this.fetchUser({ id: this.$route.params.id })
         this.initialize()
     },
     mounted  () {
@@ -153,7 +154,7 @@ export default {
         },
         async deleteAccount () {
             if (this.currentuser === this.user.username) {
-                // await this.deleteUser({ ...this.user })
+                await this.deleteUser({ id: this.user.id })
                 this.$router.push({ name: 'logout' })
             }
         },
