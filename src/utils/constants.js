@@ -21,14 +21,21 @@ const DATA_TYPES = [
     { text: 'SINGLE CHOICE', value: 'singlechoice', possibleUI: ['radiobutton', 'dropdown'] },
     { text: 'MULTIPLECHOICE', value: 'multiplechoice', possibleUI: ['checkbox'] }
     ]
-const UI_COMPONENTS = {
-    FIELD: 'field',
-    LINE: 'line',
-    TEXTBOX: 'textbox',
-    DROPDOWN: 'dropdown',
-    RADIOBUTTON: 'radiobutton',
-    CHECKBOX: 'checkbox'
-}
+const UI_COMPONENTS = [
+    { text: 'FIELD', value: 'field', possibleDataTypes: ['text', 'integer', 'double', 'date'] },
+    { text: 'LINE', value: 'line', possibleDataTypes: ['text'] },
+    { text: 'TEXTBOX', value: 'textbox', possibleDataTypes: ['text'] },
+    { text: 'CHECKBOX', value: 'checkbox', possibleDataTypes: ['multiplechoice'] },
+    { text: 'RADIOBUTTON', value: 'radiobutton', possibleDataTypes: ['boolean', 'singlechoice'] },
+    { text: 'DROPDOWN', value: 'dropdown', possibleDataTypes: ['boolean', 'msinglechoice'] }
+    // { text: 'FIELD', value: 'field', possibleDataType: ['field', 'line', 'textbox'] },
+    // FIELD: 'field',
+    // LINE: 'line',
+    // TEXTBOX: 'textbox',
+    // DROPDOWN: 'dropdown',
+    // RADIOBUTTON: 'radiobutton',
+    // CHECKBOX: 'checkbox'
+]
 const RESPONSE_TYPE = {
     MULTIPLE: 'multiple',
     SINGLE: 'single'

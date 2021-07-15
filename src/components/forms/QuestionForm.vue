@@ -1,7 +1,7 @@
 <template>
-        <form ref="form" class="p-grid p-px-5 p-py-5 p-fluid p-input-filled" :style="cssProps" style="background-color: #F1F1F1;" >
-            {{keyError}} ddd
-            <div class="p-col-12 p-m-0 p-field">
+        <form ref="form" class="p-grid p-px-5 p-py-5 p-fluid p-input-filled" :style="[(lazyQuestion.id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.5);']" >
+            {{lazyQuestion}}
+            <div class="p-col-12 p-mx-0 p-field">
                 <span class="p-float-label">
                     <InputText ref="questionname" id="questionname" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" /> <!-- nameErrors.length -->
                     <label for="questionname">Question</label>
@@ -9,12 +9,19 @@
                 <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
             </div>
 
-            <div class="p-grid p-col-12 p-mx-0 p-px-0" >
+            <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field" >
                 <div class="p-col-4">
-                    <ToggleButton v-model="lazyQuestion.isMandatory" onLabel="Requires Answer" offLabel="Optional Answer" :disabled="!active" /> <!--  onIcon="pi pi-check" offIcon="pi pi-times" -->
+                    <!-- <ToggleButton v-model="lazyQuestion.isMandatory" onLabel="Requires Answer" offLabel="Optional Answer" :disabled="!active" />  onIcon="pi pi-check" offIcon="pi pi-times" -->
+                    <span class="p-float-label">
+                        <Dropdown id="questionismandatory" v-model="lazyQuestion.isMandatory" :options="requiredList" optionLabel="name" optionValue="value" :class="{'p-invalid': v$.lazyQuestion.isMandatory.$error}" :disabled="!active" />
+                        <label for="questionismandatory">Select whether answer is needed...</label>
+                    </span>
                 </div>
                 <div class="p-col">
-                    <Dropdown v-model="lazyQuestion.uiComponent" :options="uiComponentsList" optionLabel="text" optionValue="value" placeholder="Select ui Component..." :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
+                    <span class="p-float-label">
+                        <Dropdown id="questionuicomponent" v-model="lazyQuestion.uiComponent" :options="uiComponentsList" optionLabel="text" optionValue="value" :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
+                        <label for="questionuicomponent">Select ui Component...</label>
+                    </span>
                 </div>
                 <div v-if="!lazyQuestion.description?.length && !lazyQuestion.instruction?.length" class="p-col-4"><Button :label="(additionalInfo ? 'hide extra Info': 'show additional Info')" class="p-button" @click="additionalInfo = !additionalInfo" /></div>
             </div>
@@ -122,18 +129,24 @@ export default {
             indicator: false,
             additionalInfo: false,
             keyError: false,
-            datatypeError: false
+            datatypeError: false,
+            requiredList: [{ name: 'Required', value: true }, { name: 'Optional', value: 'false' }]
         }
     },
     computed: {
         ...mapGetters('question', ['getValidQuestionKeyNumber']),
         dataTypesList () {
-                const acceptedDataTypes = this.dataTypes.reduce((result, option) => option.possibleUI.includes(this.lazyQuestion.uiComponent) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)}))
-                return acceptedDataTypes
-            // return Object.entries(this.dataTypes).map(([text, value]) => ({ text, value }))
+                // const acceptedDataTypes = this.dataTypes.reduce((result, option) => option.possibleUI.includes(this.lazyQuestion.uiComponent) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)}))
+                // return acceptedDataTypes
+            return this.dataTypes // Object.entries(this.dataTypes).map((element) => ({ text, value }))
         },
         uiComponentsList () {
-            return Object.entries(this.uiComponents).map(([text, value]) => ({ text, value }))
+            if (this.lazyQuestion.direct_indicator?.[0]?.datatype) {
+                const acceptedUIComponents = this.uiComponents.reduce((result, option) => option.possibleDataTypes.includes(this.lazyQuestion.direct_indicator[0].datatype) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)}))
+                console.log(acceptedUIComponents)
+                return acceptedUIComponents
+            }
+            return this.uiComponents // return Object.entries(this.uiComponents).map(([text, value]) => ({ text, value }))
         },
         datatypeWithOptions () {
             let datatypeWithOptions = false
@@ -181,6 +194,10 @@ export default {
             handler (val) {
                 setTimeout(() => {
                     console.log('refs:', this.$refs)
+                if (!this.uiComponentsList.find(element => element.value === this.lazyQuestion.uiComponent)) {
+                    this.lazyQuestion.uiComponent = null
+                }
+                this.v$.lazyQuestion.$touch()
                 if (val.direct_indicator.length) {
                     if (!val.direct_indicator[0].key) {
                         this.keyError = true
@@ -232,7 +249,8 @@ export default {
     validations: {
         lazyQuestion: {
             name: { required, maxLength: maxLength(120) },
-            uiComponent: { required }
+            uiComponent: { required },
+            isMandatory: { required }
             // direct_indicator: {
             //     $each: {
             //         key: { required },git a
@@ -277,7 +295,7 @@ export default {
         },
         addIndicator () {
             this.lazyQuestion.direct_indicator = []
-            const baseDirectIndicator = { key: '', name: 'new direct indicator', description: '', isMandatory: true, pre_unit: '', post_unit: '', options: [] }
+            const baseDirectIndicator = { key: '', name: 'new direct indicator', description: '', isMandatory: '', pre_unit: '', post_unit: '', options: [] }
             this.lazyQuestion.direct_indicator.push(baseDirectIndicator)
         },
         async deleteIndicator () {
