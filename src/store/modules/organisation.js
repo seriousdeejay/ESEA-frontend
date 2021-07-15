@@ -89,14 +89,14 @@ export default {
         },
         async patchOrganisation ({ state, commit }, payload) {
             const id = state.organisation.id
-            const data = payload.data
-            const { response, error } = await OrganisationService.patch({ id, data, headers: { 'Content-Type': 'application/json' } })
+            const { response, error } = await OrganisationService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
+            console.log(response?.data, error?.response?.data)
             if (error) {
                 commit('setError', { error })
                 return
             }
-            commit('updateNetwork', { ...response, id })
-            commit('setNetwork', response)
+            commit('updateOrganisation', { ...response, id })
+            commit('setOrganisation', response)
         },
         setOrganisation ({ state, commit }, { id }) {
             if (id) {

@@ -8,6 +8,20 @@ export default {
         // organisationParticipants: [],
         error: []
     },
+    getters: {
+        requestsByNetwork: (state) => {
+            let requests = []
+            requests = state.memberships.filter(m => m.requester === 'network')
+            console.log('net:', requests)
+            return requests
+        },
+        requestsByOrganisation: (state) => {
+            let requests = []
+            requests = state.memberships.filter(m => m.requester === 'organisation')
+            console.log('org:', requests)
+            return requests
+        }
+    },
     mutations: {
         setMemberships (state, { data }) {
             state.memberships = data
@@ -66,7 +80,7 @@ export default {
                 commit('setError', { error })
                 return
             }
-            await dispatch('fetchMemberships', {})
+            // await dispatch('fetchMemberships', {})
             dispatch('setMembership', response.data)
         },
         async updateMembership ({ state, commit }, { id, data }) {
