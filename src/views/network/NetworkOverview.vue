@@ -1,16 +1,15 @@
 <template>
-<div class="p-grid nested-grid p-px-5" style="min-height: 70vh;">
-    <div class="p-col-12">
-        <div class="p-p-3 p-shadow-2" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
-        <div class="p-text-justify"><p class="p-text-bold">Network Manager</p>
-            <router-link :to="{name: 'userdetails', params: { id: network.created_by_id } }" style="text-decoration: none; color: blue;">{{network.created_by}}</router-link>
+<div class="p-grid nested-grid" style="min-height: 70vh;">
+    <div class="p-col-12 p-m-0 p-p-0">
+        <div class="p-p-3 p-shadow-2" style="border: 1px solid lightgray; background-color: white;">
+            <div class="p-text-justify"><p class="p-text-bold">Network Manager</p>
+                <router-link :to="{name: 'userdetails', params: { id: network.created_by_id } }" style="text-decoration: none; color: blue;">{{network.created_by}}</router-link>
+            </div>
+            <div class="p-text-justify"><p class="p-text-bold">Description</p>
+                    {{network.description}}
+                    <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis. -->
+            </div>
         </div>
-        <div class="p-text-justify"><p class="p-text-bold">Description</p>
-                {{network.description}}
-                <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis mi sit amet faucibus malesuada. Vestibulum fringilla sed dui bibendum laoreet. Donec suscipit sit amet leo et mattis. Aenean mattis tempus turpis a vulputate. Nunc bibendum pulvinar neque, nec mattis nisl tincidunt ut. Nam a quam id justo dictum pulvinar. Sed luctus dictum ligula, id sagittis tellus aliquam id. Vestibulum auctor vestibulum turpis. -->
-        </div>
-        </div>
-        <Divider />
         <!-- <div class="p-col-12 p-p-5 p-my-5" style="border: 1px solid lightgray; background-color: white; border-radius: 5px;">
             <div v-if="Tasks">
                 <h4>No tasks!</h4>

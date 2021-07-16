@@ -1,11 +1,11 @@
 <template>
-    <div class="p-grid" style="height: 100vh;">
-        <div class="p-col-fixed" style="width: 50px;">
+    <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
+        <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
             <!-- <organisation-sidebar :links="links" :name="organisation.name" @reroute="goToPage" /> -->
             <sub-sidebar :links="links" />
         </div>
-        <div class="p-col p-px-5">
-            <div class="p-col-12 p-text-left p-text-italic p-m-0">
+        <div class="p-col">
+            <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5">
                 <p>{{organisation.name}}</p>
                 <h3>{{pagename || this.$route.meta.breadcrumb[this.$route.meta.breadcrumb.length-1].label}}</h3>
             </div>
