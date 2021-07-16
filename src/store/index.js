@@ -4,6 +4,7 @@ import authentication from './modules/authentication'
 import general from './modules/general'
 import user from './modules/user'
 import network from './modules/network'
+import networkTeam from './modules/network_team'
 import organisation from './modules/organisation'
 import membership from './modules/membership'
 import method from './modules/method/method'
@@ -29,6 +30,7 @@ export default createStore({
     general,
     user,
     network,
+    networkTeam,
     organisation,
     membership,
     method,

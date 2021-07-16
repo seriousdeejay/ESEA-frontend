@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/user/Login'
 import Register from '../views/user/Register'
+import AccountRecovery from '@/views/user/AccountRecovery'
 import SurveyFill from '../views/survey/SurveyFill'
 import SurveyThankYou from '../views/survey/SurveyThankYou'
 
@@ -54,6 +55,13 @@ const routes = [
         path: '/logout',
         name: 'logout',
         component: () => import('../views/user/Logout.vue')
+    },
+    {
+        path: '/account-recovery',
+        name: 'accountrecovery',
+        components: {
+        loginview: AccountRecovery
+        }
     },
     {
         path: '/',
@@ -191,6 +199,19 @@ const routes = [
                 { label: 'Networks', to: '/networks' },
                 { label: '', to: { name: 'networkoverview', params: { id: '' } } },
                 { label: 'Organisations', to: { name: 'networkorganisations' } }
+            ]
+            }
+        },
+        {
+            path: 'team',
+            name: 'networkteam',
+            component: () => import('../views/network/NetworkTeam'),
+            meta: {
+            requiresLogin: true,
+            breadcrumb: [
+                { label: 'Networks', to: '/networks' },
+                { label: '', to: { name: 'networkoverview', params: { id: '' } } },
+                { label: 'Team', to: { name: 'networkteam' } }
             ]
             }
         },

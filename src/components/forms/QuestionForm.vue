@@ -328,7 +328,6 @@ export default {
 }
 .borderless {
     border-bottom: 1px solid red;
-
 }
 </style>
 <!-- <div v-else class="p-grid p-jc-center p-ai-center p-px-5" :style="cssProps">

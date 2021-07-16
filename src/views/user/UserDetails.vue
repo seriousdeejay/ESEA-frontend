@@ -1,11 +1,31 @@
 <template>
+    <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
+        <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
+            <!-- <organisation-sidebar :links="links" :name="network.name" @reroute="goToPage"/> -->
+            <sub-sidebar :links="links" />
+        </div>
+        <div class="p-col">
+            <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5">
+            </div>
+            <router-view />
+        </div>
+    </div>
 <!-- <input v-if="usernameedit && editing" v-model="user.username" @focus="usernameedit" @blur="usernameedit=false && console.log('check')" @keyup.enter="usernameedit=false" class="p-col-12 p-inputtext" />
                             <div v-else @click="usernameedit=true">{{user.username}}</div> --> <!--@focusin="true" @focusout="usernameedit=false" -->
-    <div class="p-d-flex p-jc-center p-p-5">
-        <div>
-            <h1> {{user.username}}'s Profile</h1>
-            <Divider />
-            <form id="userform" v-on:submit.prevent="updateProfile" class="p-grid p-fluid p-p-5" style="width: 1000px">
+    <div class="p-d-flex p-jc-center" style="width: 100%; height: 100%;">
+        <div style="width: 100%;">
+            <!-- <h1> {{user.username}}'s Profile</h1> -->
+            <!-- <Divider /> -->
+            <TabView class="p-shadow-2" style="height: 80%;">
+                <TabPanel header="Contact Information" style="height: 80%;">'
+                    a'
+                </TabPanel>
+                <TabPanel header="User Settings">
+                </TabPanel>
+                <TabPanel header="Permissions and Teams">
+                </TabPanel>
+            </TabView>
+            <!-- <form id="userform" v-on:submit.prevent="updateProfile" class="p-grid p-fluid p-p-5" style="width: 1000px">
                 <div class="p-col-7 p-grid p-ai-center p-text-left p-p-3">
                         <div class="p-col-6 p-text-bold"> Username </div>
                         <div class="p-col-6">
@@ -29,7 +49,7 @@
                             <div class="p-error p-text-italic" v-for="error in emailErrors" :key="error"><small>{{error}}</small></div>
                         </div>
                         <div class="p-col-6 p-text-bold"> Account Creation </div>
-                        <div class="p-col-6"> {{ user?.date_joined?.slice(0, 10) }} </div> <!-- Date should be fixed to DD-MM-YYYY! -->
+                        <div class="p-col-6"> {{ user?.date_joined?.slice(0, 10) }} </div>
                         <div class="p-col-12" >
                             <div class="p-text-bold p-mb-2" >Bio</div>
                             <textarea id="bio" v-if="editablefields.bio" type="text" rows="5" @blur="editablefields.bio=false" @keyup.enter="editablefields.bio=false" class="p-inputtext" />
@@ -49,13 +69,12 @@
                         <div class="p-col-12">{{file.name}}</div>
                     </div>
                 </div>
-                <!-- <div class="p-col-4 p-shadow-1" style="border-style: solid; border-color: #f2f2f2; border-width: thin; opacity: 0.6"> -->
             </form>
             <Divider />
             <div v-if="currentuser === user.username" class="p-d-flex p-jc-start">
                 <Button type="submit" form="userform" label="Save Profile" class="p-button-raised p-button-primary p-mr-2" :loading="loading" />
                 <Button label="Delete Account" class="p-button-raised p-button-danger" @click="deleteAccountDialog = true" />
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -78,8 +97,12 @@ import { required, minLength, maxLength, email } from 'vuelidate/lib/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { mapActions, mapState } from 'vuex'
 import imageValidator from '../../utils/imageValidator'
+import SubSidebar from '@/components/SubSidebar'
 
 export default {
+    components: {
+        SubSidebar
+    },
     data () {
         return {
             deleteAccountDialog: false,
@@ -93,7 +116,19 @@ export default {
                 email: false,
                 accountcreation: false,
                 bio: false
+                },
+            links: [
+                 {
+                    name: 'Contact Information',
+                    icon: 'pi pi-user',
+                    path: 'profileoverview'
+                },
+                {
+                    name: 'User Settings',
+                    icon: 'pi pi-cog',
+                    path: 'profilesettings'
                 }
+            ]
         }
     },
     computed: {
@@ -189,3 +224,5 @@ export default {
   cursor: pointer;
 }
 </style>
+
+// <div class="p-col-4 p-shadow-1" style="border-style: solid; border-color: #f2f2f2; border-width: thin; opacity: 0.6"></div>
