@@ -3,9 +3,9 @@
         <h1>Organisations Overview</h1>
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
-                <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-mr-2" @click="allOrganisations = !allOrganisations"/>
-                <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success" @click="createOrganisationDialog=true" />
+                <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-button-sm p-mr-2" @click="allOrganisations = !allOrganisations"/>
+                <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+                <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createOrganisationDialog=true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />

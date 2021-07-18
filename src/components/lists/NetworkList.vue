@@ -76,7 +76,7 @@
         },
         data () {
             return {
-                styleObject: { backgroundColor: '#EFEEEE' },
+                styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
                 columns: [
                     { field: 'name', header: 'Name' },
                     { field: 'description', header: 'Description' },

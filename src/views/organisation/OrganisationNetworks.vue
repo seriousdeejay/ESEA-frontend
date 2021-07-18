@@ -1,9 +1,9 @@
 <template>
     <div class="p-d-flex p-jc-between p-ai-center p-m-5">
         <div>
-            <Button label="Change Display" @click="tableDisplay = !tableDisplay" />
-            <Button :label="joinButton? 'Show own Networks' : 'Join Network'" :icon="joinButton? '' : 'pi pi-plus'" :class="joinButton? 'p-button-warning' : 'p-button-success'" class="p-mx-2" @click="joinableNetworks" />
-            <Button :label="removeMode ? 'Select the networks to remove': 'Enable Remove Mode'" icon="pi pi-trash" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!networks.length" @click="removeMode = !removeMode" />
+            <Button label="Change Display" class="p-button-sm" @click="tableDisplay = !tableDisplay" />
+            <Button :label="joinButton? 'Show own Networks' : 'Join Network'" :icon="joinButton? '' : 'pi pi-plus'" :class="joinButton? 'p-button-warning' : 'p-button-success'" class="p-mx-2 p-button-sm" @click="joinableNetworks" />
+            <Button :label="removeMode ? 'Select the networks to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!networks.length" @click="removeMode = !removeMode" />
         </div>
         <h3 v-if="joinButton" class="p-m-0"> Click Network you would like to join. </h3>
         <span class="p-input-icon-left">

@@ -3,9 +3,9 @@
         <h1>Networks Overview</h1>
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
-                <Button :label="(allNetworks ? 'All Networks' : 'My Networks')" class="p-mr-2" @click="allNetworks = !allNetworks"/>
-                <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create Network" icon="pi pi-plus" class="p-button-success" @click="createNetworkDialog=true" />
+                <Button :label="(allNetworks ? 'All Networks' : 'My Networks')" class="p-button-sm p-mr-2" @click="allNetworks = !allNetworks"/>
+                <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+                <Button label="Create Network" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createNetworkDialog=true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Networks..." />

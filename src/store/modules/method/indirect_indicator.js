@@ -62,6 +62,7 @@ export default {
             state.indirectIndicator = indirectIndicator
         },
         setDebouncer (state, { id, commit }) {
+            console.log('checkk')
             state.debouncers[id] = debounce(
                 async ({ mId, indirectIndicator }) => {
                     const method = indirectIndicator.id > 0 ? 'put' : 'post'
@@ -82,6 +83,7 @@ export default {
             }
         },
         setError (state, { error, id }) {
+            console.log(error?.response?.data)
             if (id && error?.response?.data) {
                 state.errors = { ...state.errors, [id]: error?.response?.data }
                 return
@@ -101,6 +103,8 @@ export default {
         },
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
             delete state.errors[indirectIndicator.id]
+            console.log('eeee')
+            indirectIndicator.formula = '[woman_staff] + 1'
           if (!indirectIndicator || !mId) { return }
           if (!state.debouncers[indirectIndicator.id]) {
               commit('setDebouncer', { id: indirectIndicator.id, commit })
@@ -112,7 +116,7 @@ export default {
               })
           }
           commit('setIsSaved', { id: indirectIndicator.id })
-          if (!indirectIndicator.name || !indirectIndicator.formula) { return }
+          if (!indirectIndicator.name) { return }
           state.debouncers[indirectIndicator.id]({ mId, indirectIndicator })
         },
         async deleteIndirectIndicator ({ commit }, payload) {

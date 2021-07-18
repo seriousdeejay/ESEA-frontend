@@ -46,7 +46,7 @@
         },
         data () {
             return {
-                styleObject: { backgroundColor: '#EFEEEE' },
+                styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
                 columns: [
                     { field: 'username', header: 'Username' },
                     { field: 'email', header: 'E-mail' },

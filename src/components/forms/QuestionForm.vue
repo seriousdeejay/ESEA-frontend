@@ -1,58 +1,54 @@
 <template>
-        <form ref="form" class="p-grid p-px-5 p-py-5 p-fluid p-input-filled" :style="[(lazyQuestion.id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.5);']" >
-            {{lazyQuestion}}
-            <div class="p-col-12 p-mx-0 p-field">
+        <form ref="form" class="p-grid p-m-0 p-p-5 p-fluid p-input-filled" :style="[(!v$.lazyQuestion.$invalid && lazyQuestion.id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
+
+            <div class="p-col-8 p-m-0 p-my-1 p-field">
                 <span class="p-float-label">
                     <InputText ref="questionname" id="questionname" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" /> <!-- nameErrors.length -->
                     <label for="questionname">Question</label>
                 </span>
                 <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
             </div>
-
-            <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field" >
-                <div class="p-col-4">
-                    <!-- <ToggleButton v-model="lazyQuestion.isMandatory" onLabel="Requires Answer" offLabel="Optional Answer" :disabled="!active" />  onIcon="pi pi-check" offIcon="pi pi-times" -->
-                    <span class="p-float-label">
-                        <Dropdown id="questionismandatory" v-model="lazyQuestion.isMandatory" :options="requiredList" optionLabel="name" optionValue="value" :class="{'p-invalid': v$.lazyQuestion.isMandatory.$error}" :disabled="!active" />
-                        <label for="questionismandatory">Select whether answer is needed...</label>
-                    </span>
-                </div>
-                <div class="p-col">
-                    <span class="p-float-label">
-                        <Dropdown id="questionuicomponent" v-model="lazyQuestion.uiComponent" :options="uiComponentsList" optionLabel="text" optionValue="value" :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
-                        <label for="questionuicomponent">Select ui Component...</label>
-                    </span>
-                </div>
-                <div v-if="!lazyQuestion.description?.length && !lazyQuestion.instruction?.length" class="p-col-4"><Button :label="(additionalInfo ? 'hide extra Info': 'show additional Info')" class="p-button" @click="additionalInfo = !additionalInfo" /></div>
+            <div class="p-col-4">
+                <span class="p-float-label">
+                    <Dropdown id="questionuicomponent" v-model="lazyQuestion.uiComponent" :options="uiComponentsList" optionLabel="text" optionValue="value" :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
+                    <label v-if="active" for="questionuicomponent">Select ui Component...</label>
+                </span>
             </div>
+
             <template v-if="active" class="p-grid p-col-12">
-                <template v-if="(lazyQuestion.description?.length || lazyQuestion.instruction?.length || additionalInfo)">
-                    Additional Question Information
-                <div class="p-col-12 p-m-1 p-field">
-                    <span class="p-float-label">
-                        <InputText id="questiondescription" type="text" v-model="lazyQuestion.description" :disabled="!active" />
-                        <label for="questiondescription">Description</label>
-                    </span>
+
+                    <div class="p-col-12 p-m-1 p-field">
+                        <span class="p-float-label">
+                            <InputText id="questiondescription" type="text" v-model="lazyQuestion.description" :disabled="!active" />
+                            <label for="questiondescription">Description</label>
+                        </span>
+                    </div>
+
+                    <div class="p-col-12 p-m-1 p-field">
+                        <span class="p-float-label">
+                            <InputText id="questioninstruction" type="text" v-model="lazyQuestion.instruction" :disabled="!active" />
+                            <label for="questioninstruction">Instruction</label>
+                        </span>
+                    </div>
+
+                <Divider />
+                <div class="p-col-12 p-d-flex p-ai-center p-jc-end">
+                    <Button v-if="!lazyQuestion.direct_indicator.length" label="Add Indicator" class="p-button-outlined p-col" @click="addIndicator" />
+                    <div class="p-d-flex p-ai-center p-ml-5"><p class="p-mr-2">Required</p> <InputSwitch v-model="lazyQuestion.isMandatory" style="" /></div>
+                    <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red;" />
+                    <i class="pi pi-ellipsis-v" style="font-size: 25px;" />
                 </div>
-                <div class="p-col-12 p-m-1 p-field">
-                    <span class="p-float-label">
-                        <InputText id="questioninstruction" type="text" v-model="lazyQuestion.instruction" :disabled="!active" />
-                        <label for="questioninstruction">Instruction</label>
-                    </span>
-                </div>
-                </template>
-                <div v-if="!lazyQuestion.direct_indicator.length" class="p-col"><Button  label="Add Indicator" class="p-button-outlined p-col-6" @click="addIndicator" /></div>
-                <div v-else class="p-col-12 p-pt-5" style="border: 1px solid lightgrey;">
-                    <!-- <p class="p-col-12 p-text-bold p-text-center">Direct Indicator</p> style="border: 1px solid lightgrey; background-color: #F7F7F7;"-->
-                    <div class="p-grid p-col-12 p-pb-3" >
-                        <div class="p-col-5">
+
+                <div v-if="lazyQuestion.direct_indicator.length" class="p-grid p-col-12" :style="[(lazyQuestion.direct_indicator[0].id > 0) ? 'border: 1px solid lightgrey;': 'border: 1px solid rgba(255, 0, 0, 0.3);']">
+                    <h3 class="p-col-12 p-text-bold p-text-center">Direct Indicator</h3>
+                        <div class="p-col-5 p-m-1 p-field">
                             <span class="p-float-label">
                                 <InputText id="questionkey" type="text" v-model="lazyQuestion.direct_indicator[0].key"  :class="{'borderless': keyError}"  @blur="questionKeyFilter(lazyQuestion.direct_indicator[0].key)" :disabled="!active" />
                                 <label for="questionkey">Question Key</label>
                             </span>
                             <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error"><small>{{error}}</small></div>
                         </div>
-                        <div class="p-col-5">
+                        <div class="p-col-5 p-m-1 p-field">
                             <Dropdown v-model="lazyQuestion.direct_indicator[0].datatype" :options="dataTypesList" optionLabel="text" optionValue="value" placeholder="Select datatype..." :class="{'p-invalid': datatypeError }" @change="changeDataTypeComponent" :disabled="!active" />
                         </div>
                         <Button label="Delete Indicator" class="p-col p-button-danger p-button-text" @click="deleteIndicator" />
@@ -87,7 +83,6 @@
                             <option-form v-for="(option, index) in lazyQuestion.direct_indicator[0].options" :key="`option-${index}`" :option="option" @delete="deleteOption(option)" />
                             <Button label="Add Option" class="p-button-text" @click="newOption" />
                         </div>
-                    </div>
                 </div>
             </template>
         </form>
@@ -101,11 +96,13 @@ import { isEqual, cloneDeep } from 'lodash'
 import { required, maxLength } from '../../utils/validators'
 import Dropdown from 'primevue/dropdown'
 import OptionForm from '../../components/forms/OptionForm'
+import InputSwitch from 'primevue/inputswitch'
 
 export default {
     components: {
         OptionForm,
-        Dropdown
+        Dropdown,
+        InputSwitch
     },
     props: {
         question: {
@@ -379,3 +376,14 @@ export default {
     </span>
     <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error"><small>{{error}}</small></div>
 </div> -->
+
+<!--
+            <div class="p-grid p-col-12 p-mx-0 p-px-0 p-field" >
+                <div class="p-col-4">
+                    <ToggleButton v-model="lazyQuestion.isMandatory" onLabel="Requires Answer" offLabel="Optional Answer" :disabled="!active" />  onIcon="pi pi-check" offIcon="pi pi-times"
+                    <span class="p-float-label">
+                        <Dropdown id="questionismandatory" v-model="lazyQuestion.isMandatory" :options="requiredList" optionLabel="name" optionValue="value" :class="{'p-invalid': v$.lazyQuestion.isMandatory.$error}" :disabled="!active" />
+                        <label for="questionismandatory">Select whether answer is needed...</label>
+                    </span>
+                </div>
+            </div> -->

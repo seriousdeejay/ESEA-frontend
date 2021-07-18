@@ -42,17 +42,22 @@ export default {
 				this.subTopics,
 				this.topicQuestions,
 				this.topicIndirectIndicators)
-
-            for (const topic of data) {
-                topic.label = topic.name
-                for (const subtopic of topic.children) {
-                    subtopic.label = subtopic.name
-                    for (const indicator of subtopic.children) {
-                        indicator.label = indicator.name
-                        if (indicator.objType === 'calculation') {
-                            indicator.icon = 'pi pi-percentage'
-                        } else {
-                            indicator.icon = 'pi pi-pencil'
+            if (data?.length) {
+                for (const topic of data) {
+                    topic.label = topic.name
+                    if (topic?.children?.length) {
+                        for (const subtopic of topic?.children) {
+                            subtopic.label = subtopic.name
+                            if (subtopic?.children?.length) {
+                            for (const indicator of subtopic?.children) {
+                                indicator.label = indicator.name
+                                if (indicator.objType === 'calculation') {
+                                    indicator.icon = 'pi pi-percentage'
+                                } else {
+                                    indicator.icon = 'pi pi-pencil'
+                                }
+                            }
+                            }
                         }
                     }
                 }

@@ -1,10 +1,10 @@
 <template>
-    <div class="p-m-5" style="min-width: 1000px;">
+    <div class="p-m-1" style="min-width: 1000px;">
     <h1>Manage Users</h1>
     <div class="p-d-flex p-jc-between p-m-5">
         <div>
-            <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-            <Button label="Send Message" icon="pi pi-plus" class="p-button-success p-mr-2" @click="messageDialog = true" />
+            <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+            <Button label="Send Message" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="messageDialog = true" />
         </div>
         <span class="p-input-icon-left">
             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Users..." />

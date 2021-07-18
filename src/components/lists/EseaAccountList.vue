@@ -51,7 +51,7 @@ export default {
     },
     data () {
         return {
-            styleObject: { backgroundColor: '#EFEEEE' },
+            styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
             columns: [
                 { field: 'method_name', header: 'Method' },
                 { field: 'year', header: 'Year' },

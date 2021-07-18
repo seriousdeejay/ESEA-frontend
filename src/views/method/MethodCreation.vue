@@ -1,14 +1,14 @@
 <template>
-    <div class="p-grid p-text-center p-p-5 p-m-5">
-        <h1>Method Creation Options</h1>
-        <Divider />
-        <div v-for="option in creationOptions" :key="option.action" class="p-col-4 p-m-3" style="width: 400px; height: 250px;">
-            <div :class="option.hover ? 'p-shadow-10' : 'p-shadow-5'" style="background-color: #F1F1F1; border: 1px solid lightgrey; height: 100%;" :style="option.hover ? 'background-color: white': ''" @mouseover="option.hover=true" @mouseleave="option.hover=false">
+    <div class="p-grid p-jc-center p-text-center p-p-5">
+        <h1 class="p-col-12">Method Creation Options</h1>
+                <Divider />
+        <div v-for="option in creationOptions" :key="option.action" class="p-col-4 p-jc" style="width: 400px; height: 250px;">
+            <div :class="option.hover ? 'p-shadow-10 p-p-1' : 'p-shadow-3 p-m-1'" style="background-color: #F1F1F1; border: 1px solid lightgrey; height: 100%;" :style="option.hover ? 'background-color: white; cursor: pointer;': 'background-color: #EDEDED;'" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="createNewMethod(option.action)">
                 <div style="height: 50%;">
                     <h3>{{option.title}}</h3>
                     <p class="p-m-5 p-text-justify">{{option.description}}</p>
                 </div>
-                <Button :label="option.button" @click="createNewMethod(option.action)" class="p-button-lg p-button-outlined p-m-5" style="width: 80%;" />
+                <!-- <Button :label="option.button" @click="createNewMethod(option.action)" class="p-button-lg p-button-outlined p-m-5" style="width: 80%;" /> -->
             </div>
         </div>
     </div>

@@ -2,16 +2,16 @@
 <method-header />
 <method-form :method="method" @input="updateMethod($event)" />
 <div class="p-d-flex">
-    <div style="width: 300px; border-top: 5px solid lightgrey;">
+    <div style="height: 100%; width: 300px; border: 1px solid lightgrey;">
         <Button label="Open ESEA Method Creation Guide" class="p-button-info p-button-lg p-p-5" />
         <method-tree-sidebar />
     </div>
-    <div class="p-col p-m-0 p-p-0 p-text-left p-fluid" style="min-width: 800px; border: 5px solid lightgrey;">
-        <div v-for="(topic, topicIndex) in items" :key="`topic-${topicIndex}`" class="" style="background-color: #fcfcfc;"> <!-- #f7f7f7 #e6f3ff-->
+    <div class="p-col p-mx-5 p-p-0 p-text-left p-fluid" style="max-width: 1300px;">
+        <div v-for="(topic, topicIndex) in items" :key="`topic-${topicIndex}`" style="background-color: #fcfcfc; border: 1px solid lightgrey;"> <!-- #f7f7f7 #e6f3ff-->
             <topic-form ref="items" :topic="topic" :active="activeItem.objType === topic.objType && activeItem.id === topic.id" @input="saveActive('topic', $event)" @click="toggleActive(topic)" /> <!-- @click.native="toggleActive(topic)" -->
             <div v-for="(topicChild, index) in topic.children" :key="`topicChild-${index}`" >
-                <div class="p-shadow-5 p-m-5 p-pb-2" style="background-color: #fcfcfc;">
-                    <component :is="`${topicChild.objType}-form`" ref="items" :topic="topicChild" :question="topicChild" :errors="errors[topicChild.objType] && errors[topicChild.objType][topicChild.id]" :indirect-indicator="topicChild" :active="activeItem.objType === topicChild.objType && activeItem.id === topicChild.id" @input="saveActive(topicChild.objType, $event)" @click="toggleActive(topicChild)" />
+                <div class="p-m-5" :class="(topicChild?.children?.length ? 'p-pb-2': 'p-p-0')" style="background-color: #fcfcfc; border: 1px solid lightgrey;">
+                    <component :is="`${topicChild.objType}-form`" ref="items" :topic="topicChild" :question="topicChild" :errors="errors[topicChild.objType] && errors[topicChild.objType][topicChild.id]" :indirect-indicator="topicChild" :active="activeItem.objType === topicChild.objType && activeItem.id === topicChild.id" @input="saveActive(topicChild.objType, $event)" @click="toggleActive(topicChild)"/>
                     <div v-for="(subTopicChild, index) in topicChild.children" :key="`subTopicChild-${index}`">
                         <component :is="`${subTopicChild.objType}-form`" ref="items" :topic="subTopicChild" :question="subTopicChild" :indirect-indicator="subTopicChild" :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]" :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id" @input="saveActive(subTopicChild.objType, $event)" @click="toggleActive(subTopicChild)" class="p-m-5" />
                     </div>
@@ -180,6 +180,7 @@ export default {
                 })
             }
             if (type === 'calculation') {
+                console.log(';reee')
                 this.updateIndirectIndicator({
                     mId: this.method.id,
                     indirectIndicator: object

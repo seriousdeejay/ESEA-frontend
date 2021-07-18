@@ -2,8 +2,8 @@
     <div style="min-width: 1000px;">
         <div class="p-d-flex p-m-5 p-jc-between">
             <div>
-            <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-            <Button v-if="permission" label="New Campaign" icon="pi pi-plus" class="p-button-success" @click="createCampaignDialog=true" />
+            <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+            <Button v-if="permission" label="New Campaign" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createCampaignDialog=true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Campaigns..." />

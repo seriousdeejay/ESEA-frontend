@@ -2,8 +2,8 @@
     <div style="min-width: 1000px;">
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
-                <Button label="Change Display" class="p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create ESEA Account" icon="pi pi-plus" class="p-button-success" @click="createEseaAccountDialog = true" />
+                <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+                <Button label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createEseaAccountDialog = true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Esea Accounts..." />

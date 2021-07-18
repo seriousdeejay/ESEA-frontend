@@ -1,7 +1,8 @@
 <template>
-    <div class="p-grid p-d-flex p-ai-center" :style="cssProps">
-        <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i>
-        <form ref="form" class="p-grid p-col-11 p-pt-5 p-pr-5 p-fluid p-input-filled">
+    <div class="p-grid p-m-0 p-p-2 p-d-flex p-ai-center" :style="cssProps">
+        <!-- <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i> -->
+        <form ref="form" class="p-grid p-col-12 p-fluid p-input-filled">
+            <h3 class="p-col-12 p-text-bold p-text-center">Indirect Indicator</h3>
             <div class="p-grid p-col-12 p-mx-0 p-px-0 p-pt-5 p-field">
                 <div class="p-col-4">
                     <span class="p-float-label">
@@ -24,13 +25,20 @@
                     <label for="calculationdescription">Description</label>
                 </span>
             </div>
-            <div class="p-col-12 p-field">
+
+    <div class="p-col-12">
+        <p>Formula</p>
+        <Divider />
+        <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
+    </div>
+    <div><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div>
+            <!-- <div class="p-col-12 p-field">
                 <span class="p-float-label">
                     <InputText id="calculationformula" ref="calculationinput" type="text" v-model="lazyIndirectIndicator.formula" :class="{'borderless': formulaErrors.length}" @blur="updateFormula" :disabled="!active" />
                     <label for ="calculationformula">Formula</label>
                 </span>
                 <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
-            </div>
+            </div> -->
         </form>
     </div>
 </template>
@@ -41,8 +49,14 @@ import useVuelidate from '@vuelidate/core'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { required, maxLength } from '../../utils/validators'
 import { isEqual, cloneDeep } from 'lodash'
+import FormulaForm from '@/components/forms/FormulaForm'
+import Dropdown from 'primevue/dropdown'
 
 export default {
+    components: {
+        FormulaForm,
+        Dropdown
+    },
     props: {
         indirectIndicator: {
             type: Object,
@@ -61,14 +75,20 @@ export default {
     validations: {
         lazyIndirectIndicator: {
             name: { required, maxLength: maxLength(255) },
-            formula: { required },
+            // formula: { required },
             key: { required }
         }
     },
     data () {
         return {
             tab: null,
-            lazyIndirectIndicator: { ...this.indirectIndicator } // cloneDeep(this.indirectIndicator) || {} //
+            lazyIndirectIndicator: { ...this.indirectIndicator }, // cloneDeep(this.indirectIndicator) || {} //,
+            formulaType: 'Conditionals',
+            formulaTypeOptions: [
+                { type: 'Conditionals' },
+                { type: 'Average' },
+                { type: 'Sum' }
+                ]
         }
     },
     computed: {
