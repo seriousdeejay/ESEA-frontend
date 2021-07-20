@@ -5,7 +5,7 @@
             <div>
                 <Button :label="(allNetworks ? 'All Networks' : 'My Networks')" class="p-button-sm p-mr-2" @click="allNetworks = !allNetworks"/>
                 <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create Network" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createNetworkDialog=true" />
+                <Button v-if="admin" label="Create Network" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createNetworkDialog=true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Networks..." />
@@ -35,11 +35,13 @@ export default {
             tableDisplay: false,
             search: '',
             loading: true,
-            createNetworkDialog: false
+            createNetworkDialog: false,
+            admin: false
         }
     },
     computed: {
-        ...mapState('network', ['networks', 'network'])
+        ...mapState('network', ['networks', 'network']),
+        ...mapState('authentication', ['currentuser', 'authenticatedUser'])
     },
     watch: {
         allNetworks () {
@@ -49,13 +51,18 @@ export default {
     async created () {
         this.getNetworks()
     },
+    mounted () {
+        if (this.authenticatedUser.is_superuser) {
+            this.admin = true
+        }
+    },
     methods: {
         ...mapActions('network', ['fetchNetworks', 'setNetwork', 'createNetwork']),
         async getNetworks () {
             if (this.allNetworks) {
                 await this.fetchNetworks({ query: '?allnetworks=1' })
             } else {
-            await this.fetchNetworks({})
+            await this.fetchNetworks({ query: '?mynetworks=1' })
             }
             this.loading = false
         },

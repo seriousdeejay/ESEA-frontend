@@ -59,8 +59,8 @@ export default {
             commit('setNetworkMember', response)
             // commit('setOrganisationParticipants', response)
         },
-        async createNetworkMember ({ commit, dispatch }, data) {
-            const { response, error } = await NetworkTeamService.post({ data: data, headers: { 'Content-Type': 'multipart/form-data' } })
+        async createNetworkMember ({ commit, dispatch }, { nId, data }) {
+            const { response, error } = await NetworkTeamService.post({ nId, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return
@@ -68,8 +68,8 @@ export default {
             // await dispatch('fetchMemberships', {})
             dispatch('setNetworkMember', response.data)
         },
-        async updateNetworkMember ({ state, commit }, { id, data }) {
-            const { response, error } = await NetworkTeamService.put({ id: id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
+        async updateNetworkMember ({ commit }, { nId, id, data }) {
+            const { response, error } = await NetworkTeamService.put({ nId, id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return

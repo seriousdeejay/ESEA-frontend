@@ -11,6 +11,11 @@
             <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div>
         </div>
         <div class="p-field">
+            <label for="networkadmin">Network Admin<span style="color:red">*</span></label>
+            <Dropdown id="name" v-model="networkForm.networkadmin" :options="users" optionLabel="username" optionValue="id" :class="{'p-invalid': v$.networkForm.networkadmin.$error}" />
+            <div class="p-error p-text-italic" v-if="v$.networkForm.networkadmin.$error">Network requires a network admin.</div>
+        </div>
+        <div class="p-field">
             <label for="ispublic">Should this network be public? </label>
             <SelectButton id="ispublic" v-model="networkForm.ispublic" :options="ispublicbool" />
         </div>
@@ -26,9 +31,13 @@ import { mapState, mapActions } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
+import Dropdown from 'primevue/dropdown'
 
 export default {
     setup: () => ({ v$: useVuelidate() }),
+    components: {
+        Dropdown
+    },
     data () {
         return {
             ispublicbool: [true, false],
@@ -43,11 +52,14 @@ export default {
         networkForm: {
             name: { required, maxLength: maxLength(255) },
             description: { maxLength: maxLength(1000) },
-            ispublic: { required }
+            ispublic: { required },
+            networkadmin: { required }
         }
     },
     computed: {
         ...mapState('network', ['network', 'error']),
+        ...mapState('user', ['users']),
+        ...mapState('authentication', ['authenticatedUser']),
         nameErrors () {
             return HandleValidationErrors(this.v$.networkForm.name, this.error.name)
         }
@@ -57,8 +69,12 @@ export default {
     },
     methods: {
         ...mapActions('network', ['setNetwork', 'createNetwork']),
+        ...mapActions('user', ['fetchUsers']),
+        ...mapActions('networkTeam', ['createNetworkMember']),
         async initialize () {
-            this.setNetwork({})
+            await this.setNetwork({})
+            await this.fetchUsers({})
+            this.networkForm.networkadmin = this.authenticatedUser.id
         },
         async createNewNetwork () {
             this.v$.networkForm.$touch()
@@ -66,6 +82,7 @@ export default {
 
             await this.createNetwork({ data: this.networkForm })
             if (this.network?.id) {
+                // await this.createNetworkMember({ nId: this.network.id, data: { user: this.networkForm.networkadmin, role: 2 } })
                 this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
             }
         },

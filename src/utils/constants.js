@@ -1,4 +1,8 @@
 const API_URL = process.env.VUE_APP_ROOT_API // process.env.baseURL || process.env.apiUrl ||
+const NETWORK_ROLES = {
+    NETWORK_ADMIN: 'network admin',
+    GUEST: 'guest'
+}
 const STATUS = {
     IDLE: 'idle',
     IN_PROGRESS: 'in progress',
@@ -41,4 +45,4 @@ const RESPONSE_TYPE = {
     SINGLE: 'single'
 }
 
-export { STATUS, API_URL, QUESTION_TYPES, DATA_TYPES, UI_COMPONENTS, RESPONSE_TYPE }
+export { NETWORK_ROLES, STATUS, API_URL, QUESTION_TYPES, DATA_TYPES, UI_COMPONENTS, RESPONSE_TYPE }

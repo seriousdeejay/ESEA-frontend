@@ -362,6 +362,19 @@ const routes = [
             }
         },
         {
+            path: 'team',
+            name: 'organisationteam',
+            component: () => import('../views/organisation/OrganisationTeam'),
+            meta: {
+            requiresLogin: true,
+            breadcrumb: [
+                { label: 'Organisations', to: '/organisations' },
+                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                { label: 'Team', to: { name: 'organisationteam' } }
+            ]
+            }
+        },
+        {
             path: 'settings',
             name: 'organisationsettings',
             component: () => import('../views/organisation/OrganisationSettings'),
