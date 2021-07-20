@@ -1,26 +1,25 @@
 <template>
 
     <div v-if="assignment" class="p-px-2">
-        <div v-if="(active || v$.conditionalValues.$invalid)" class="p-d-flex p-ai-center conditional"  @mouseleave="formulaEditableFields.first_then=false">
+        <div v-if="(active || v$.AssignmentValue.$invalid)" class="p-d-flex p-ai-center conditional">
             <span class="p-mr-2">{{indicator}} = </span>
-            <InputText type="text" v-model="conditionalValues.right_value" style="width: 150px;" :class="{'p-invalid': v$.conditionalValues.right_value.$error}" />
+            <InputText type="text" v-model="AssignmentValue.right_value" style="width: 150px;" :class="{'p-invalid': v$.AssignmentValue.right_value.$error}" />
             <i class="pi pi-check Icon" style="color: green;" @click="changeActive(false)" />
             <i class="pi pi-times Icon" @click="deleteConditional()"/>
             </div>
-        <div v-else class="conditional" @click="active=true">( {{indicator}} = {{conditionalValues.right_value}} )</div>
+        <div v-else class="conditional" @click="active=true">( {{indicator}} = {{AssignmentValue.right_value}} )</div>
     </div>
-    <div v-else style="display: inline-block;" class="p-px-2">
-        {{assignment}}
-        <div v-if="(active || v$.conditionalValues.$invalid)" class="conditional">
+    <div v-else style="display: inline-block;">
+        <div v-if="(active || v$.conditionalValues.$invalid)" class="conditional" style="height: 50px; margin: 0px 10px;">
             <div><Dropdown id="first_if" class="p-ml-2" v-model="conditionalValues.left_value" :options="indicatorList" placeholder="Select Indicator" :class="{'p-invalid': v$.conditionalValues.left_value.$error}"  /></div>
             <Dropdown class="p-m-2" v-model="conditionalValues.operator" :options="OperatorsList" style="width: 70px;" :class="{'p-invalid': v$.conditionalValues.operator.$error}" />
             <!-- <span id="text"><InputText type="text" v-model="conditionalValues.right_value" :style="widthStyl" /></span> -->
-            <input id="txt" v-model="conditionalValues.right_value" class="p-inputtext" type="text" onkeypress="this.style.width = (((this.value.length + 1) * 8) + 40) + 'px'" style="min-width: 50px;" :class="{'border': v$.conditionalValues.right_value.$error}">
+            <input id="txt" v-model="conditionalValues.right_value" class="p-inputtext" type="text" onkeypress.enter="this.style.width = (((this.value.length + 1) * 8) + 40) + 'px'" style="min-width: 50px;" :class="{'border': v$.conditionalValues.right_value.$error}">
 
             <i class="pi pi-check Icon" style="color: green;" @click="changeActive(false)" />
             <i class="pi pi-times Icon" @click="deleteConditional()"/>
         </div>
-        <span v-else @click="active=true" style="background-color: #ededed; padding: 10px 10px; border-radius: 10px">( {{conditionalValues.left_value}}  {{conditionalValues.operator}}  {{conditionalValues.right_value}} )</span>
+        <p v-else @click="active=true" style="background-color: #ededed; padding: 15px 20px; margin: 0px 10px; height: 50px; border-radius: 10px">( {{conditionalValues.left_value}}  {{conditionalValues.operator}}  {{conditionalValues.right_value}} )</p>
     </div>
 </template>
 
@@ -34,6 +33,16 @@ export default {
         Dropdown
     },
     props: {
+        mykey: {
+            type: String
+        },
+        index: {
+            type: Number
+        },
+        nested: {
+            type: Boolean,
+            default: false
+        },
         indicator: {
             type: String
         },
@@ -47,6 +56,9 @@ export default {
             left_value: { required },
             operator: { required },
             right_value: { required }
+        },
+        AssignmentValue: {
+            right_value: { required }
         }
     },
     data () {
@@ -56,6 +68,7 @@ export default {
             OperatorsList: ['<', '<=', '=', '!=', '>', '>='],
             indicatorList: ['Indicator 1', 'Indicator 2', 'Indicator 3', 'Indicator 4'],
             conditionalValues: { left_value: null, operator: null, right_value: null },
+            AssignmentValue: { right_value: null },
             widthStyle: 'width: 100px;'
         }
     },
@@ -70,20 +83,40 @@ export default {
                 // if (val.right_value?.length > 6) {
                 //     this.widthStyle = `width: ${((val.right_value?.length + 1) * 10 + 20)}px;`
                 // }
-                if (this.v$.$invalid) { return }
+                if (!this.assignment) {
+                    if (this.v$.conditionalValues.$invalid) {
+                    this.active = true
+                }
+                }
                 console.log('return Conditional...')
+            },
+            deep: true
+        },
+        AssigmentValue: {
+            handler (val) {
+                if (this.assignment) {
+                    if (this.v$.AssignmentValue.$invalid) {
+                        this.active = true
+                    }
+                }
+                this.$emit('update', this.AssigmentValue)
             },
             deep: true
         }
     },
     methods: {
         changeActive (value) {
-            this.v$.conditionalValues.$touch()
+            if (this.assignment) {
+                console.log('-----', this.assigment)
+                this.v$.AssignmentValue.$touch()
+            } else {
+                this.v$.conditionalValues.$touch()
+            }
             this.active = value || false
         },
         deleteConditional () {
             console.log('Remove Conditional')
-            this.$emit('delete')
+            this.$emit('delete', this.index, this.mykey, this.nested)
         }
     }
 }

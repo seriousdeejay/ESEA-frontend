@@ -30,8 +30,10 @@
         <p>Formula</p>
         <Divider />
         <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
+        <formula-form-2 class="p-m-2"/>
     </div>
-    <div><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div>
+
+    <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div>
             <!-- <div class="p-col-12 p-field">
                 <span class="p-float-label">
                     <InputText id="calculationformula" ref="calculationinput" type="text" v-model="lazyIndirectIndicator.formula" :class="{'borderless': formulaErrors.length}" @blur="updateFormula" :disabled="!active" />
@@ -50,11 +52,13 @@ import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { required, maxLength } from '../../utils/validators'
 import { isEqual, cloneDeep } from 'lodash'
 import FormulaForm from '@/components/forms/FormulaForm'
+import FormulaForm2 from '@/components/forms/FormulaForm2'
 import Dropdown from 'primevue/dropdown'
 
 export default {
     components: {
         FormulaForm,
+        FormulaForm2,
         Dropdown
     },
     props: {
