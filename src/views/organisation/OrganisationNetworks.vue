@@ -2,8 +2,8 @@
     <div class="p-d-flex p-jc-between p-ai-center p-m-5">
         <div>
             <Button label="Change Display" class="p-button-sm" @click="tableDisplay = !tableDisplay" />
-            <Button :label="joinButton? 'Show own Networks' : 'Join Network'" :icon="joinButton? '' : 'pi pi-plus'" :class="joinButton? 'p-button-warning' : 'p-button-success'" class="p-mx-2 p-button-sm" @click="joinableNetworks" />
-            <Button :label="removeMode ? 'Select the networks to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!networks.length" @click="removeMode = !removeMode" />
+            <Button v-if="permission" :label="joinButton? 'Show own Networks' : 'Join Network'" :icon="joinButton? '' : 'pi pi-plus'" :class="joinButton? 'p-button-warning' : 'p-button-success'" class="p-mx-2 p-button-sm" @click="joinableNetworks" />
+            <Button v-if="permission" :label="removeMode ? 'Select the networks to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!networks.length" @click="removeMode = !removeMode" />
         </div>
         <h3 v-if="joinButton" class="p-m-0"> Click Network you would like to join. </h3>
         <span class="p-input-icon-left">
@@ -13,7 +13,7 @@
     <Divider />
     <network-list :networks="networks" :table="tableDisplay" :search="search" :loading="loading" @clicked-network="goToNetwork"/>
 
-    <invitation-window parenttype="organisation" @refresh="refreshData()" />
+    <invitation-window v-if="permission" parenttype="organisation" @refresh="refreshData()" />
     <!-- <div v-if="memberships.length" class="p-p-3 p-shadow-3" style="background-color: rgba(0, 105, 92, 0.4); margin: 100px; border-radius: 5px;">
         <div class="p-d-flex p-jc-between p-ai-center">
              <h3 class="p-text-left p-text-bold">Network Invitations</h3>
@@ -102,7 +102,17 @@ export default {
     computed: {
         ...mapState('network', ['networks']),
         ...mapState('organisation', ['organisation']),
-        ...mapState('membership', ['memberships'])
+        ...mapState('membership', ['memberships']),
+        permission () {
+            if (this.organisation.accesLevel) {
+                const accesLevel = this.organisation.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'organisation admin') {
+                    return true
+                }
+            }
+            return false
+        }
+        // this.permission = this.network.created_by === this.currentuser
     },
     async created () {
        this.refreshData()

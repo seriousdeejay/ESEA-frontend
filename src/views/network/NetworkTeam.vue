@@ -1,6 +1,5 @@
 <template>
-{{network}}
-     <div class="p-d-flex p-m-5" :class="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin') ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
+     <div class="p-d-flex p-mb-5 p-mx-5" :class="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin') ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <Button v-if="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin')" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog" />
         <span class="p-input-icon-left">
             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Team members..." />

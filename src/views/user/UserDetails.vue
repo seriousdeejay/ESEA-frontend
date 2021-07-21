@@ -124,6 +124,11 @@ export default {
                     path: 'profileoverview'
                 },
                 {
+                    name: 'Socials',
+                    icon: 'pi pi-comments',
+                    path: 'profilesocials'
+                },
+                {
                     name: 'User Settings',
                     icon: 'pi pi-cog',
                     path: 'profilesettings'

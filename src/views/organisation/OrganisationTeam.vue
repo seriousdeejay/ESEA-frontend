@@ -1,8 +1,8 @@
 <template>
-{{organisation}}
-     <div class="p-d-flex p-m-5" :class="organisation?.accesLevel ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
+{{organisation}} {{permission}}
+     <div class="p-d-flex p-mb-5 p-mx-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <div>
-            <Button label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog()" />
+            <Button v-if="permission" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog()" />
         </div>
         <span class="p-input-icon-left">
             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Team members..." />
@@ -69,7 +69,8 @@ export default {
                 { field: 'invitation', header: 'Invitation' }
             ],
             roles: [
-                { role_name: 'organisation admin', role: 2 },
+                { role_name: 'organisation admin', role: 3 },
+                { role_name: 'esea accountant', role: 2 },
                 { role_name: 'guest', role: 1 }
             ]
         }
@@ -77,7 +78,16 @@ export default {
     computed: {
         ...mapState('organisationTeam', ['organisationmembers']),
         ...mapState('organisation', ['organisation']),
-        ...mapState('user', ['users'])
+        ...mapState('user', ['users']),
+        permission () {
+            if (this.organisation.accesLevel) {
+                const accesLevel = this.organisation.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'organisation admin') {
+                    return true
+                }
+            }
+            return false
+        }
     },
     created () {
         this.getData()

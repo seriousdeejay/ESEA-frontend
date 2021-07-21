@@ -56,7 +56,7 @@ export default {
             if (this.allOrganisations) {
                 await this.fetchOrganisations({ query: '?allorganisations=1' })
             } else {
-            await this.fetchOrganisations({})
+            await this.fetchOrganisations({ query: '?myorganisations=1' })
             }
             this.loading = false
         },

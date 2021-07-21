@@ -3,7 +3,7 @@
         <div class="p-d-flex p-jc-between p-m-5">
             <div>
                 <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createEseaAccountDialog = true" />
+                <Button v-if="permission" label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createEseaAccountDialog = true" />
             </div>
             <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Esea Accounts..." />
@@ -37,7 +37,17 @@ export default {
         }
     },
     computed: {
-        ...mapState('eseaAccount', ['eseaAccounts'])
+        ...mapState('eseaAccount', ['eseaAccounts']),
+        ...mapState('organisation', ['organisation']),
+        permission () {
+            if (this.organisation.accesLevel) {
+                const accesLevel = this.organisation.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'organisation admin') {
+                    return true
+                }
+            }
+            return false
+        }
     },
     async created () {
         await this.fetchEseaAccounts({ oId: this.$route.params.OrganisationId })
