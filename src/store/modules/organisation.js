@@ -99,6 +99,7 @@ export default {
             commit('setOrganisation', response)
         },
         setOrganisation ({ state, commit }, { id }) {
+            console.log('>>', id)
             if (id) {
                 const data = state.organisations.find(o => o.id === id)
                 commit('setOrganisation', { data: data })

@@ -48,11 +48,31 @@ import Tooltip from 'primevue/tooltip'
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresLogin)) {
-      if (!store.getters['authentication/loggedIn']) {
-        next({ name: 'login' })
-      } else {
-        next()
-      }
+        console.log(to.params, store.state.network.network.id)
+        if (!store.getters['authentication/loggedIn']) {
+            next({ name: 'login' })
+        } else {
+            if (to.params?.NetworkId || to.params?.OrganisationId) {
+                if (to.params?.NetworkId) {
+                    if (parseInt(to.params.NetworkId) !== store.state.network.network.id) {
+                        console.log('ss')
+                        next({ name: 'networks' })
+                    } else {
+                        next()
+                    }
+                }
+                if (to.params?.OrganisationId) {
+                    if (parseInt(to.params.OrganisationId) !== store.state.organisation.organisation.id) {
+                        console.log('cc')
+                        next({ name: 'organisations' })
+                    } else {
+                        next()
+                    }
+                }
+            } else {
+                next()
+        }
+        }
     } else {
       next()
     }

@@ -1,18 +1,9 @@
 <template>
     <div class="p-m-1" style="min-width: 1000px;">
         <h1>Organisations Overview</h1>
-        <div class="p-d-flex p-jc-between p-m-5">
-            <div>
-                <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-button-sm p-mr-2" @click="allOrganisations = !allOrganisations"/>
-                <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createOrganisationDialog=true" />
-            </div>
-            <span class="p-input-icon-left">
-                <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
-            </span>
-        </div>
-        <Divider />
-        <organisation-list :organisations="organisations" :table="tableDisplay" :search="search" :loading="loading" @clicked-organisation="goToOrganisation" />
+        <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm p-d-flex p-m-5" @click="createOrganisationDialog=true" />
+        <organisation-list :organisations="organisations">
+        </organisation-list>
     </div>
     <Dialog v-model:visible="createOrganisationDialog" style="width: 500px" header="Organisation Details" :modal="true" :dismissableMask="true">
         <organisation-form @closedialog="createOrganisationDialog=false" />
@@ -20,7 +11,6 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
 import OrganisationList from '../../components/lists/OrganisationList'
 import OrganisationForm from '../../components/forms/OrganisationForm'
 
@@ -32,40 +22,25 @@ export default {
     },
     data () {
         return {
-            allOrganisations: false,
-            tableDisplay: false,
-            search: '',
-            loading: true,
             createOrganisationDialog: false
-        }
-    },
-    computed: {
-        ...mapState('organisation', ['organisations'])
-    },
-    watch: {
-        allOrganisations (val) {
-            this.getOrganisations()
-        }
-    },
-    async created () {
-        this.getOrganisations()
-    },
-    methods: {
-        ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
-        async getOrganisations () {
-            if (this.allOrganisations) {
-                await this.fetchOrganisations({ query: '?allorganisations=1' })
-            } else {
-            await this.fetchOrganisations({ query: '?myorganisations=1' })
-            }
-            this.loading = false
-        },
-        async goToOrganisation (organisation) {
-            if (organisation.id) {
-                await this.setOrganisation(organisation)
-                this.$router.push({ name: 'organisationoverview', params: { OrganisationId: organisation.id } })
-            }
         }
     }
 }
+// <div class="p-d-flex p-jc-between p-m-5">
+//     <div>
+//         <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-button-sm p-mr-2" @click="allOrganisations = !allOrganisations"/>
+//         <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
+//         <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createOrganisationDialog=true" />
+//     </div>
+//     <span class="p-input-icon-left">
+//         <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
+//     </span>
+// </div>
+// <Divider />
+// async goToOrganisation (organisation) {
+//     if (organisation.id) {
+//         await this.setOrganisation(organisation)
+//         this.$router.push({ name: 'organisationoverview', params: { OrganisationId: organisation.id } })
+//     }
+// }
 </script>

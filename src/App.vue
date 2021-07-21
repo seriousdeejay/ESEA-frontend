@@ -15,6 +15,15 @@
             <h3 style="color: white; font-size: 60px;">Open ESEA</h3>
             <router-view name="loginview" />
         </div>
+        <div class="p-d-flex p-text-center" style="position: absolute; bottom: 0px; left: 0; right: 0; margin-left: auto; margin-right: auto; width: 580px; color: lightgrey;">
+            <div>
+                <router-link to="/login" class="link">Terms of Service</router-link>
+                <span> | </span>
+                <router-link to="/login" class="link">Privacy Policy</router-link>
+                <span> | </span>
+                <span style="color: lightgrey; font-size: 14px;">Copyright 2021 ESEA Team. All rights reserved.</span>
+                </div>
+            </div>
   </div>
     <div v-if="accesToken === null">
     <router-view class="anonymous view" name="anonymousview"/>
@@ -79,6 +88,14 @@ html, body, #app {
       color: #42b983;
     }
   }
+}
+.link {
+    text-decoration: None;
+    color: lightgrey;
+    font-size: 14px;
+}
+.link:hover {
+    text-decoration: underline;
 }
 
 .centered {

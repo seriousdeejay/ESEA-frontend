@@ -78,13 +78,15 @@ export default {
             if (this.parenttype === 'network') {
                 return [
                     { field: 'organisation_name', header: 'Name' },
-                    { field: 'organisation_description', header: 'Description' }
+                    { field: 'organisation_description', header: 'Description' },
+                    { field: 'status', header: 'Status' }
                 ]
             }
             if (this.parenttype === 'organisation') {
                 return [
                     { field: 'network_name', header: 'Name' },
-                    { field: 'network_description', header: 'Description' }
+                    { field: 'network_description', header: 'Description' },
+                    { field: 'status', header: 'Status' }
                 ]
             }
             return [{ field: 'id', header: 'id' }]
@@ -93,13 +95,15 @@ export default {
             if (this.parenttype === 'network') {
                 return [
                     { field: 'organisation_name', header: 'Name' },
-                    { field: 'organisation_description', header: 'Description' }
+                    { field: 'organisation_description', header: 'Description' },
+                    { field: 'status', header: 'Status' }
                 ]
             }
             if (this.parenttype === 'organisation') {
                 return [
                     { field: 'network_name', header: 'Name' },
-                    { field: 'network_description', header: 'Description' }
+                    { field: 'network_description', header: 'Description' },
+                    { field: 'status', header: 'Status' }
                 ]
             }
             return [{ field: 'id', header: 'Id' }]

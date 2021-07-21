@@ -71,6 +71,7 @@ export default {
             console.log(id, 'methods:', state.methods)
         },
         setError (state, { error }) {
+            console.log(error?.response?.data)
             state.error = error?.response?.data || []
         },
         clearError (state) {

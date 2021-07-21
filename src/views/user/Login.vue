@@ -21,11 +21,11 @@
     <div class="p-grid p-mt-5" style="color: white;">
         <router-link to="/account-recovery" class="link p-col-12">Can't Login?</router-link>
         <router-link to="/register" class="link p-col-12">Sign up for an Account</router-link>
-        <Divider />
+        <!-- <Divider />
         <div class="p-text-left" style="color: lightgrey;">
             <small>Add assessments, get peer reviews, share and find out what your organisations
                 needs now and in the future!</small>
-        </div>
+        </div> -->
     </div>
 </template>
 

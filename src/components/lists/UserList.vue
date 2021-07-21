@@ -1,8 +1,11 @@
 <template>
+    <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allOrganisations" :includecheckbox="false" v-model:search="customSearch" name="Organisations">
+        <slot></slot>
+    </list-bar>
     <ProgressSpinner v-if="loading && !failedLoad" />
     <div v-else-if="loading && failedLoad" class="p-text-italic">Users could not be retrieved!</div>
     <div v-else-if="users.length">
-        <div v-if="table" class="p-grid p-m-5">
+        <div v-if="tableDisplay" class="p-grid p-m-5">
             <div v-for="user in filteredUsers" :key="user.id" class="p-col-12 p-md-6 p-lg-4" style="width: 220px; height: auto;">
                 <div class="p-p-3" :class="user.hover ? 'p-shadow-1 p-m-0' : 'p-m-0'" :style="(user.hover ? styleObject: '')" @mouseover="user.hover = true" @mouseleave="user.hover = false" @click="goToUser(user)">
                     <img :src="user.image" alt="Profile Avatar" style="max-width: 100px; max-height: 100px; border-radius: 50%;" format="PNG">
@@ -21,43 +24,41 @@
 
 <script>
     import ProgressSpinner from 'primevue/progressspinner'
+    import ListBar from '@/components/lists/ListBar'
 
     export default {
         components: {
-            ProgressSpinner
+            ProgressSpinner,
+            ListBar
         },
         props: {
             users: {
                 type: Array,
                 default: () => []
             },
-            search: {
-                type: String,
-                default: ''
-            },
             loading: {
-                type: Boolean,
-                default: false
-            },
-            table: {
                 type: Boolean,
                 default: false
             }
         },
         data () {
             return {
+                tableDisplay: false,
+                customSearch: '',
+                // loading: true,
+                failedLoad: false,
+                allOrganisations: false,
                 styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
                 columns: [
                     { field: 'username', header: 'Username' },
                     { field: 'email', header: 'E-mail' },
                     { field: 'first_name', header: 'First Name' }
-                ],
-                failedLoad: false
+                ]
             }
         },
         computed: {
             filteredUsers () {
-                return this.users.filter(user => { return user.username.toLowerCase().includes(this.search.toLowerCase()) })
+                return this.users.filter(user => { return user.username.toLowerCase().includes(this.customSearch.toLowerCase()) })
             }
         },
         created () {

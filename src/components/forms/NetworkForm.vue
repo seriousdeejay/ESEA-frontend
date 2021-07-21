@@ -17,7 +17,7 @@
         </div>
         <div class="p-field">
             <label for="ispublic">Should this network be public? </label>
-            <SelectButton id="ispublic" v-model="networkForm.ispublic" :options="ispublicbool" />
+            <SelectButton id="ispublic" v-model="networkForm.ispublic"  optionLabel="display" optionValue="value" :options="ispublicbool" />
         </div>
         <div class="p-d-flex p-jc-between">
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="closeDialog" style="width: 100px" />
@@ -40,7 +40,10 @@ export default {
     },
     data () {
         return {
-            ispublicbool: [true, false],
+            ispublicbool: [
+                { display: 'Public', value: true },
+                { display: 'Private', value: false }
+            ],
             networkForm: {
                 name: null,
                 description: '',
@@ -70,7 +73,6 @@ export default {
     methods: {
         ...mapActions('network', ['setNetwork', 'createNetwork']),
         ...mapActions('user', ['fetchUsers']),
-        ...mapActions('networkTeam', ['createNetworkMember']),
         async initialize () {
             await this.setNetwork({})
             await this.fetchUsers({})
@@ -82,7 +84,6 @@ export default {
 
             await this.createNetwork({ data: this.networkForm })
             if (this.network?.id) {
-                // await this.createNetworkMember({ nId: this.network.id, data: { user: this.networkForm.networkadmin, role: 2 } })
                 this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
             }
         },

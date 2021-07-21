@@ -1,7 +1,6 @@
 <template>
     <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
         <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
-            <!-- <organisation-sidebar :links="links" :name="network.name" @reroute="goToPage"/> -->
             <sub-sidebar :links="links" />
         </div>
         <div class="p-col">
@@ -16,11 +15,9 @@
 
 <script>
 import { mapState } from 'vuex'
-// import OrganisationSidebar from '../../components/OrganisationSidebar'
 import SubSidebar from '../../components/SubSidebar.vue'
 export default {
     components: {
-        // OrganisationSidebar,
         SubSidebar
         },
     data () {
@@ -57,20 +54,10 @@ export default {
                     path: 'networksettings'
                 }
             ]
-            // links: [
-            //     { label: 'Overview', icon: 'home' },
-            //     { label: 'Organisations', icon: 'cloud' },
-            //     { label: 'Methods', icon: 'chart-bar' },
-            //     { label: 'Campaigns', icon: 'book' },
-            //     // { label: 'Stakeholders', icon: 'users' },
-            //     { label: 'Settings', icon: 'cog' }
-            // ],
-            // pagename: undefined
         }
     },
     computed: {
-        ...mapState('network', ['network']),
-        ...mapState('authentication', ['currentuser'])
+        ...mapState('network', ['network'])
     },
     methods: {
         goToPage (name) {

@@ -12,7 +12,7 @@
         </div>
         <div class="p-field">
             <label for="ispublic">Should this organisation be public? </label>
-            <SelectButton id="ispublic" v-model="organisationForm.ispublic" :options="ispublicbool" />
+            <SelectButton id="ispublic" v-model="organisationForm.ispublic" optionLabel="display" optionValue="value" :options="ispublicbool" />
         </div>
         <div class="p-d-flex p-jc-between">
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="closeDialog" style="width: 100px" />
@@ -31,7 +31,10 @@ export default {
     setup: () => ({ v$: useVuelidate() }),
     data () {
         return {
-            ispublicbool: [true, false],
+             ispublicbool: [
+                { display: 'Public', value: true },
+                { display: 'Private', value: false }
+            ],
             organisationForm: {
                 name: null,
                 description: '',

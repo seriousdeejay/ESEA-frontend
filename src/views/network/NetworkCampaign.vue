@@ -236,7 +236,7 @@ export default {
     methods: {
         ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount', 'createEseaAccount', 'deleteEseaAccount']),
         ...mapActions('method', ['fetchMethod']),
-        ...mapActions('organisation', ['fetchOrganisations']),
+        ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
         dateFixer,
         async initialize () {
             this.boolChoice = { name: 'Public', value: true }
@@ -275,6 +275,7 @@ export default {
         },
         async goToReport (event) {
             await this.setEseaAccount(event.data)
+            await this.setOrganisation({ id: event.data.organisation })
             this.$router.push({ name: 'esea-account-report', params: { OrganisationId: `${event.data.organisation}`, EseaAccountId: event.data.id } })
             console.log(event.data)
         },

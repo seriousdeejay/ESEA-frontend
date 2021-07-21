@@ -1,7 +1,6 @@
 <template>
     <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
         <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
-            <!-- <organisation-sidebar :links="links" :name="organisation.name" @reroute="goToPage" /> -->
             <sub-sidebar :links="links" />
         </div>
         <div class="p-col">
@@ -16,12 +15,10 @@
 
 <script>
 import { mapState } from 'vuex'
-// import OrganisationSidebar from '../../components/OrganisationSidebar'
 import SubSidebar from '../../components/SubSidebar'
 
 export default {
     components: {
-    // OrganisationSidebar,
     SubSidebar
     },
     data () {
@@ -47,16 +44,6 @@ export default {
                     icon: 'pi pi-chart-bar',
                     path: 'organisationreports'
                 },
-                // {
-                //     name: 'Surveys',
-                //     icon: 'pi pi-book',
-                //     path: 'organisationsurveys'
-                // },
-                // {
-                //     name: 'Stakeholders',
-                //     icon: 'pi pi-users',
-                //     path: 'organisationstakeholders'
-                // },
                 {
                     name: 'Team',
                     icon: 'pi pi-users',
@@ -68,17 +55,6 @@ export default {
                     path: 'organisationsettings'
                 }
             ]
-            // links: [
-            //     { label: 'Overview', icon: 'home' },
-            //     // { label: 'Methods', icon: 'chart-bar' },
-            //     { label: 'EseaAccounts', icon: 'book' },
-            //     { label: 'Reports', icon: 'chart-bar' },
-            //     { label: 'Surveys', icon: 'book' },
-            //     { label: 'Stakeholders', icon: 'users' },
-            //     { label: 'Networks', icon: 'cloud' },
-            //     { label: 'Settings', icon: 'cog' }
-            // ],
-            // pagename: undefined
         }
     },
     computed: {
@@ -91,4 +67,14 @@ export default {
         }
     }
 }
+// {
+//     name: 'Surveys',
+//     icon: 'pi pi-book',
+//     path: 'organisationsurveys'
+// },
+// {
+//     name: 'Stakeholders',
+//     icon: 'pi pi-users',
+//     path: 'organisationstakeholders'
+// },
 </script>

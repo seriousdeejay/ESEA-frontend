@@ -1,12 +1,12 @@
 <template>
-     <div class="p-d-flex p-mb-5 p-mx-5" :class="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin') ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
-        <Button v-if="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin')" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog" />
+     <div class="p-d-flex p-mb-5 p-mx-5" :class="(permission) ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
+        <Button v-if="permission" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog" />
         <span class="p-input-icon-left">
             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Team members..." />
         </span>
     </div>
     <Divider />
-    <DataTable :value="networkmembers"  dataKey="id" :loading="loading" selectionMode="single" @row-select="goToNetwork" showGridlines autoLayout
+    <DataTable :value="filteredMembers"  dataKey="id" :loading="loading" selectionMode="single" @row-select="goToUser" showGridlines autoLayout
     :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
     :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
@@ -23,7 +23,8 @@
             </template>
         </Column>
     </Datatable>
-    <Dialog v-model:visible="changeDialog" style="width: 500px" :header="`Change ${member?.user_name}'s role`" modal="true"  dismissableMask="true">
+
+    <Dialog v-model:visible="changeDialog" style="width: 500px" :header="`Change ${member?.user_name}'s role`" :modal="true"  :dismissableMask="true">
         <div class="p-d-flex p-jc-between">
             <Dropdown v-model="member.role" :options="roles" optionLabel="role_name" optionValue="role" placeholder="Select a Role" style="width: 100%;" />
         </div>
@@ -32,14 +33,25 @@
              <Button label="Save Member" icon="pi pi-check" class="p-button-text" @click="updateRole()" />
         </template>
     </Dialog>
-    <Dialog v-model:visible="inviteDialog" style="width: 1000px" header="Invite Users" modal="true"  dismissableMask="true">
+
+    <Dialog v-model:visible="inviteDialog" style="width: 1000px" header="Invite Users" :modal="true" :dismissableMask="true">
         <invite-users :users="users" @inviteduser="inviteUser" />
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="inviteDialog=false" />
         </template>
     </Dialog>
-    <Dialog  v-model:visible="messageDialog" modal="true"  dismissableMask="true">
+
+    <Dialog  v-model:visible="messageDialog" style="width: 500px" :modal="true"  :dismissableMask="true">
         Can't perform this action because this network requires atleast one network admin. Promote someone else before you continue with this action.
+    </Dialog>
+
+    <Dialog v-model:visible="deleteDialog" style="width: 500px" header="Confirm Action" :modal="true"  :dismissableMask="true">
+            Are you sure you want to remove the following network member?
+            <div class="p-shadow-1 p-p-3 p-m-5">{{this.member.user_name}}</div>
+        <template #footer>
+        <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteDialog=false" />
+        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteUser()" />
+      </template>
     </Dialog>
 </template>
 
@@ -58,7 +70,9 @@ export default {
             inviteDialog: false,
             changeDialog: false,
             messageDialog: false,
+            deleteDialog: false,
             member: null,
+            search: '',
             columns: [
                 { field: 'user_name', header: 'User' },
                 { field: 'role_name', header: 'Role' },
@@ -73,14 +87,32 @@ export default {
     computed: {
         ...mapState('networkTeam', ['networkmembers']),
         ...mapState('network', ['network']),
-        ...mapState('user', ['users'])
+        ...mapState('user', ['users']),
+        permission () {
+            if (this.network.accesLevel) {
+                const accesLevel = this.network.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                    return true
+                }
+            }
+            return false
+        },
+        filteredMembers () {
+            return this.networkmembers.filter(member => {
+                return (
+                    member.user_name.toLowerCase().includes(this.search.toLowerCase()) ||
+                    member.role_name.toLowerCase().includes(this.search.toLowerCase()) ||
+                    member.invitation.toLowerCase().includes(this.search.toLowerCase())
+                )
+            })
+        }
     },
     created () {
         this.getData()
     },
     methods: {
         ...mapActions('networkTeam', ['fetchNetworkMembers', 'createNetworkMember', 'updateNetworkMember', 'deleteNetworkMember']),
-        ...mapActions('user', ['fetchUsers']),
+        ...mapActions('user', ['fetchUsers', 'setUser']),
         ...mapActions('network', ['fetchNetwork']),
         async getData () {
             await this.fetchNetworkMembers({ nId: this.$route.params.NetworkId })
@@ -115,17 +147,29 @@ export default {
             this.getData()
             this.changeDialog = false
         },
-        async deleteRole (data) {
-            if (this.checkNetworkAdminCount(data)) {
-                await this.deleteNetworkMember({ nId: this.$route.params.NetworkId, id: data.id })
+        deleteRole (data) {
+            this.member = data
+            this.deleteDialog = true
+        },
+        async deleteUser () {
+            if (this.checkNetworkAdminCount(this.member)) {
+                await this.deleteNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id })
                 this.fetchNetwork({ id: this.$route.params.NetworkId })
+                this.deleteDialog = false
             } else {
+                this.deleteDialog = false
                 this.messageDialog = true
             }
         },
         closeInvitationDialog () {
             this.inviteDialog = false
             this.getData()
+        },
+        async goToUser (user) {
+            if (user?.data?.id) {
+                await this.setUser(user)
+                this.$router.push({ name: 'userdetails', params: { id: user.data.id } })
+            }
         }
     }
 }

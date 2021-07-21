@@ -1,5 +1,4 @@
 <template>
-{{organisation}} {{permission}}
      <div class="p-d-flex p-mb-5 p-mx-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <div>
             <Button v-if="permission" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog()" />
@@ -52,10 +51,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import InviteUsers from '@/components/dialogs/InviteUsers'
+import Dropdown from 'primevue/dropdown'
 
 export default {
     components: {
-        InviteUsers
+        InviteUsers,
+        Dropdown
     },
     data () {
         return {

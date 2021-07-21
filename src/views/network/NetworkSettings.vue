@@ -24,8 +24,8 @@
             </div>
             <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
                 <span>Network Status</span>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" optionValue="value" /> <!-- @focus="ispublicDialog = true" -->
-                {{boolChoice}} --
+                <SelectButton id="ispublic" v-model="network.ispublic" :options="ispublicbool" optionLabel="name" optionValue="value" />
+                {{network.ispublic}}
             </div>
             <small class="p-text-italic">*Public Networks are visible to anyone. Explicitly granted access is still required for cetain operations.</small>
         </form>
@@ -71,30 +71,12 @@ export default {
                 ],
             ispublicDialog: false,
             deleteNetworkDialog: false,
-            boolChoice: null,
             file: false
-        }
-    },
-    watch: {
-        boolChoice (val) {
-            // this.boolChoice = { name: 'Public', value: this.network.ispublic }
-            this.network.ispublic = this.boolChoice
         }
     },
     computed: {
         ...mapState('network', ['network']),
         ...mapState('authentication', ['currentuser'])
-    //     boolChoice () {
-    //         if (this.network?.ispublic) {
-    //             return { name: 'Public', value: true }
-    //         }
-    //         return { name: 'Private', value: false }
-    //     }
-    // },
-    // watch: {
-    //     boolChoice (val) {
-    //         this.network.ispublic = val.value
-    //     }
     },
     setup: () => ({ v$: useVuelidate() }),
     validations: {
@@ -104,28 +86,17 @@ export default {
         }
     },
     created () {
-        if (this.network.created_by !== this.currentuser) {
+        if (this.network.accesLevel !== 'admin' || this.accesLevel !== 'network admin') {
             console.log('You may not change settings!')
             this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
-            return
         }
-        this.initialize()
     },
     methods: {
         ...mapActions('network', ['fetchNetwork', 'updateNetwork', 'deleteNetwork']),
-        initialize () {
-            this.boolChoice = this.network.ispublic
-            // if (this.network?.ispublic) {
-            // /   this.boolChoice = this.network.ispublic // { name: 'Public', value: true }
-            // // } else {
-            // //     this.boolChoice = false // { name: 'Private', value: false }
-            // // }
-        },
         async validateImage (e) {
             this.file = await imageValidator(e)
         },
         async updateDetails () {
-            console.log('---->', this.network)
             if (this.v$.network.$invalid) { return }
             this.loading = true
             var formData = new FormData()
@@ -164,46 +135,46 @@ export default {
 </style>
 
 <!--
-        <div class="p-fluid p-text-left p-my-5">
-             <form id="networkeditingform" @submit="checkform">
-             <div class="p-field">
-                <label for="name">Name</label>
-                <InputText id="name" v-model.trim="network.name" required="true" autofocus :class="{'p-invalid': submitted && !network.name}" class="p-text-italic" />
-                <small class="p-error" v-if="!network.name">Name is required.</small>
-            </div>
+    <div class="p-fluid p-text-left p-my-5">
+            <form id="networkeditingform" @submit="checkform">
             <div class="p-field">
-                <label for="description">Description</label>
-                <Textarea id="description" v-model="network.description" class="p-text-italic" required="false" rows="3" cols="20" />
-            </div>
-            <div class="p-field">
-                <label for="ispublic">Should this network be public? </label>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" :disabled="true" class="p-mb-3" />
-                <small class="p-text-italic">*Public networks and their organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
-            </div>
+            <label for="name">Name</label>
+            <InputText id="name" v-model.trim="network.name" required="true" autofocus :class="{'p-invalid': submitted && !network.name}" class="p-text-italic" />
+            <small class="p-error" v-if="!network.name">Name is required.</small>
         </div>
-            </form>
-        <div class="p-d-flex p-jc-between">
-            <Button label="Save Network Details" class="p-button-primary" @click="editNetwork" :disabled="false"/>
-            <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
+        <div class="p-field">
+            <label for="description">Description</label>
+            <Textarea id="description" v-model="network.description" class="p-text-italic" required="false" rows="3" cols="20" />
+        </div>
+        <div class="p-field">
+            <label for="ispublic">Should this network be public? </label>
+            <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" @focus="ispublicDialog = true" :disabled="true" class="p-mb-3" />
+            <small class="p-text-italic">*Public networks and their organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
         </div>
     </div>
+        </form>
+    <div class="p-d-flex p-jc-between">
+        <Button label="Save Network Details" class="p-button-primary" @click="editNetwork" :disabled="false"/>
+        <Button label="Delete Network" class="p-button-danger" @click="deleteNetworkDialog = true" />
+    </div>
+</div>
 
-    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium required" :modal="true">
-        <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
-        <span>You need premium to make your network private.</span>
-        <template #footer>
-            <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
-            <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
-        </template>
-    </Dialog>
+<Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium required" :modal="true">
+    <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
+    <span>You need premium to make your network private.</span>
+    <template #footer>
+        <Button label="No thanks" icon="pi pi-times" class="p-button-text" @click="ispublicDialog = false"/>
+        <Button label="What's Premium?" icon="pi pi-question" class="p-button-text" @click="ispublicDialog = false" />
+    </template>
+</Dialog>
 
-    <Dialog v-if="network" v-model:visible="deleteNetworkDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
-            <span>Are you sure you want to delete <b>{{network.name}}</b>?</span>
-        </div>
-        <template #footer>
-            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteNetworkDialog = false"/>
-            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeNetwork()" />
-        </template>
-    </Dialog> -->
+<Dialog v-if="network" v-model:visible="deleteNetworkDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+    <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
+        <span>Are you sure you want to delete <b>{{network.name}}</b>?</span>
+    </div>
+    <template #footer>
+        <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteNetworkDialog = false"/>
+        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeNetwork()" />
+    </template>
+</Dialog> -->
