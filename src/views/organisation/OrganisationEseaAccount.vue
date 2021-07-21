@@ -40,7 +40,7 @@
             </template>
             <Column field="name" header="Name" sortable />
             <Column field="stakeholdergroup" header="Stakeholder Group" />
-            <Column field="questions" header="Questions" sortable />
+            <Column field="questions.length" header="Questions" sortable />
             <Column field="respondees.length" header="Stakeholders" sortable />
             <Column field="responses" header="Responses" sortable />
             <Column field="current_response_rate" header="Response Rate" sortable>

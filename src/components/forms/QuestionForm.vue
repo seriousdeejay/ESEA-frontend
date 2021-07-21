@@ -35,11 +35,11 @@
                 <div class="p-col-12 p-d-flex p-ai-center p-jc-end">
                     <Button v-if="!lazyQuestion.direct_indicator.length" label="Add Indicator" class="p-button-outlined p-col" @click="addIndicator" />
                     <div class="p-d-flex p-ai-center p-ml-5"><p class="p-mr-2">Required</p> <InputSwitch v-model="lazyQuestion.isMandatory" style="" /></div>
-                    <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red;" />
-                    <i class="pi pi-ellipsis-v" style="font-size: 25px;" />
+                    <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: not-allowed;" />
+                    <i class="pi pi-ellipsis-v" style="font-size: 25px; cursor: not-allowed;" />
                 </div>
 
-                <div v-if="lazyQuestion.direct_indicator.length" class="p-grid p-col-12" :style="[(lazyQuestion.direct_indicator[0].id > 0) ? 'border: 1px solid lightgrey;': 'border: 1px solid rgba(255, 0, 0, 0.3);']">
+                <div v-if="lazyQuestion.direct_indicator.length" class="p-grid p-col-12" :style="[(lazyQuestion.direct_indicator[0].id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']">
                     <h3 class="p-col-12 p-text-bold p-text-center">Direct Indicator</h3>
                         <div class="p-col-5 p-m-1 p-field">
                             <span class="p-float-label">

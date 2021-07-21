@@ -70,6 +70,9 @@ export default {
             year: { required }
         }
     },
+    async created () {
+        await this.fetchMethods('')
+    },
     methods: {
         ...mapActions('method', ['fetchMethods']),
         ...mapActions('eseaAccount', ['createEseaAccount']),

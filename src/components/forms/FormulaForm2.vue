@@ -239,6 +239,7 @@ export default {
 }
 .header {
     // width: 100%;
+    height: 40px;
     line-height: 40px;
     border: 1px solid #D8D8D8;
     background-color: white;

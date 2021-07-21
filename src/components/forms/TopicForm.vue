@@ -13,7 +13,7 @@
             <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error"><small>{{error}}</small></div>
         </div>
     </form>
-    <topic-card v-else :name="lazyTopic.name" :description="lazyTopic.description" :is-sub-topic="!isMainTopic" />
+    <topic-card v-else :name="lazyTopic.name" :description="lazyTopic.description" :is-sub-topic="!isMainTopic" :style="[(!v$.lazyTopic.$invalid && lazyTopic.id > 0) ? 'border: 1px solid green;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" />
 </template>
 
 <script>

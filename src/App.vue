@@ -6,6 +6,7 @@
          <!-- <sub-sidebar /> -->
         <div style="width: 100%;">
         <router-view />
+        <router-view class="anonymous view" name="anonymousview"/>
         </div>
     </div>
   </div>
@@ -15,7 +16,9 @@
             <router-view name="loginview" />
         </div>
   </div>
+    <div v-if="accesToken === null">
     <router-view class="anonymous view" name="anonymousview"/>
+    </div>
 </template>
 <script>
 import { mapState } from 'vuex'

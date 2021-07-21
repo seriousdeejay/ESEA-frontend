@@ -95,7 +95,7 @@ export default {
             if (this.allMethods) {
                 await this.fetchMethods({ query: '?allmethods=1' })
             } else {
-                await this.fetchMethods({})
+                await this.fetchMethods({ query: '?mymethods=1' })
             }
             this.loading = false
         },

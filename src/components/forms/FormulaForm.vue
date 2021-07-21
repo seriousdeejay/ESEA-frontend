@@ -24,10 +24,9 @@
                         <i class="pi pi-plus Icon p-mt-2" style="color: grey;" @click="addConditional(idx)"/>
                     </div>
                     <div v-if="(key.then)" class="p-d-flex p-ai-start p-m-2">
-                        <span style="width: 60px;" class="p-mt-3">Then</span>
                         <div :id="key.then">
-                        <Dropdown  v-if="openItem[key.then]" class="p-m-2" v-model="key.then.type" :options="thenChoices" placeholder="Select option" @change="changeThenSection(idx)" style="height: 40px;" />
-                            <div v-else :id="key.then" class="p-mt-3">{{key.then.type}}</div>
+                            <Dropdown  v-if="openItem[key.then]" class="p-m-2" v-model="key.then.type" :options="thenChoices" placeholder="Select option" @change="changeThenSection(idx)" style="height: 40px;" />
+                            <div v-else :id="key.then" class="p-mt-3">{{ (key.then.type === 'Assignment') ? 'then': 'then'}}</div>
                         </div>
                         <conditional-form v-if="key.then?.type === 'Assignment'" assignment="assignment" :indicator="indicatorkey" @update="updateFormula()" />
                         <div v-if="key.then?.type === 'nested if statement'">

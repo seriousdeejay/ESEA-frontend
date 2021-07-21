@@ -1,5 +1,5 @@
 <template>
-    <div class="p-px-5 p-py-1 p-shadow-2" style="border-bottom: 2px solid lightgrey; background-color: #f1f1f1;"> <!-- #dcdcdc"> -->
+    <div class="p-px-5 p-py-1 p-shadow-2"> <!-- #dcdcdc"> -->
         <h3 v-if="isSubTopic">
             <span class="p-text-light p-text-italic">{{ name }}</span>
         </h3>
@@ -30,3 +30,4 @@ export default {
     }
 }
 </script>
+// style="border-bottom: 2px solid lightgrey; background-color: #f1f1f1;"

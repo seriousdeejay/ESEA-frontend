@@ -30,9 +30,8 @@
         <p>Formula</p>
         <Divider />
         <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
-        <formula-form-2 class="p-m-2"/>
     </div>
-
+    <formula-form-2 v-if="formulaType === 'Conditionals2'" class="p-col-12 p-m-2"/>
     <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div>
             <!-- <div class="p-col-12 p-field">
                 <span class="p-float-label">
@@ -89,7 +88,9 @@ export default {
             lazyIndirectIndicator: { ...this.indirectIndicator }, // cloneDeep(this.indirectIndicator) || {} //,
             formulaType: 'Conditionals',
             formulaTypeOptions: [
+                { type: 'Calculation' },
                 { type: 'Conditionals' },
+                { type: 'Conditionals2' },
                 { type: 'Average' },
                 { type: 'Sum' }
                 ]

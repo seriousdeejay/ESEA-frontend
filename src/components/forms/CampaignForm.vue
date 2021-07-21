@@ -104,6 +104,7 @@ export default {
         ...mapState('campaign', ['campaign', 'error']),
         ...mapState('network', ['network']),
         ...mapState('method', ['methods']),
+        ...mapState('organisation', ['organisations']),
         nameErrors () {
             return HandleValidationErrors(this.v$.campaignForm.name, this.error.name)
         },
@@ -115,12 +116,12 @@ export default {
         },
         closingDateErrors () {
             return HandleValidationErrors(this.v$.campaignForm.close_survey_date, this.error.close_survey_date)
-        },
-        organisations () {
-            var dict = []
-            this.network.organisations.forEach(org => dict.push({ name: org }))
-            return dict
         }
+        // organisations () {
+        //     var dict = []
+        //     this.network.organisations.forEach(org => dict.push({ name: org }))
+        //     return dict
+        // }
         // Methods of a Network
     },
     created () {
@@ -128,11 +129,13 @@ export default {
         this.initialize()
     },
     methods: {
+        ...mapActions('organisation', ['fetchOrganisations']),
         ...mapActions('campaign', ['createCampaign', 'setCampaign']),
         ...mapActions('method', ['fetchMethods']),
         async initialize () {
             this.campaignForm.close_survey_date = new Date(this.campaignForm.close_survey_date.setDate(this.campaignForm.open_survey_date.getDate() + 30))
             await this.setCampaign({})
+            await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
         },
         async createNewCampaign () {
             console.log('Validating...')

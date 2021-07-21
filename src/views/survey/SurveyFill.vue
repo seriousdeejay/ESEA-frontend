@@ -1,4 +1,5 @@
 <template>
+<div class="width: 80%;">
     <ProgressSpinner v-if="loading && !failedLoad" />
     <div v-else-if="loading && failedLoad" class="p-text-italic">THe Survey could not be loaded!</div>
     <div v-else-if="!surveyResponse.finished" class="p-d-flex p-grid p-jc-center p-m-0">
@@ -58,6 +59,7 @@
             <Button label="Ok" class="p-button-text" @click="missedQuestionsDialog = false"/>
         </template>
     </Dialog>
+    </div>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
