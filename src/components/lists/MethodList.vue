@@ -29,7 +29,7 @@
                 </template>
             </Column>
 
-            <div v-if="networkmethods && permission">
+            <!-- <div v-if="networkmethods && permission"> -->
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
                     <Button v-if="(data.created_by === this.currentuser && !networkmethods)" label="Update" class="p-button-sm" @click="updateMethod(data)"  style="width: 100px" />
@@ -40,8 +40,8 @@
                     <!-- <Button v-if="data.created_by === this.currentuser" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="(selectedMethod = data) && (destroyMethodDialog = true)" style="width: 50px" /> -->
                 </template>
             </Column>
-            </div>
-            <div v-else style="width: 0px;"><Column bodyStyle="width: 0rem;" /></div>
+            <!-- </div>
+            <div v-else style="width: 0px;"><Column bodyStyle="width: 0rem;" /></div> -->
         </Datatable>
     </div>
     <div v-else class="p-text-italic">No methods to display!</div>

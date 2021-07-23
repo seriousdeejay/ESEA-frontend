@@ -9,37 +9,22 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import MethodList from '../../components/lists/MethodList'
-// import NetworkForm from '../../components/forms/NetworkForm'
-// import { mapActions, mapState } from 'vuex'
-// import MyMethods from '../../components/MyMethods'
 
 export default {
     components: {
-        // MyMethods
         MethodList
-        // MethodForm
     },
     data () {
         return {
-            allMethods: false,
-            tableDisplay: false,
-            search: '',
-            loading: true,
             createMethodDialog: false
         }
     },
     computed: {
         ...mapState('method', ['methods', 'method'])
     },
-    watch: {
-        allMethods () {
-            this.getMethods()
-        }
-    },
     methods: {
-        ...mapActions('method', ['fetchMethods', 'setMethod', 'createMethod']),
         async goToMethodCreate () {
             this.$router.push({ name: 'methodcreation' })
         }

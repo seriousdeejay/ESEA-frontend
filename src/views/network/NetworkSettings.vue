@@ -86,7 +86,7 @@ export default {
         }
     },
     created () {
-        if (this.network.accesLevel !== 'admin' || this.accesLevel !== 'network admin') {
+        if (this.network.accesLevel !== 'admin' && this.accesLevel !== 'network admin') {
             console.log('You may not change settings!')
             this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
         }

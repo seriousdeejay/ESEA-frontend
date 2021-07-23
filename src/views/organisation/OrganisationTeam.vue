@@ -44,7 +44,7 @@
     </Dialog>
 
     <Dialog  v-model:visible="messageDialog" modal="true"  dismissableMask="true">
-        Can't perform this action because this network requires atleast one network admin. Promote someone else before you continue with this action.
+        Can't perform this action because this network requires atleast one organisation admin. Promote someone else before you continue with this action.
     </Dialog>
 </template>
 

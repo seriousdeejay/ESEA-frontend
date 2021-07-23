@@ -15,6 +15,9 @@ export default {
     },
 	getters: {
 		getById: state => id => state.questions.find(object => object.id === id),
+        // MethodQuestions: (state) => {
+        //     const filtered = {}
+        // }
 		topicQuestions: (state) => {
 			const filtered = {}
 			state.questions.forEach((question) => { filtered[question.topic] = !filtered[question.topic] ? [question] : [...filtered[question.topic], question] })

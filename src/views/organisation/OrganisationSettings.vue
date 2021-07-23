@@ -24,7 +24,7 @@
             </div>
             <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
                 <span>Organisation Status</span>
-                <SelectButton id="ispublic" v-model="boolChoice" :options="ispublicbool" optionLabel="name" optionValue="value" />
+                <SelectButton id="ispublic" v-model="organisation.ispublic" :options="ispublicbool" optionLabel="name" optionValue="value" />
             </div>
             <small class="p-text-italic">*Public organisations are visible to anyone. Explicitly granted access is still required for certain operations.</small>
         </form>
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium Feature" :modal="true" dismissableMask="true">
+    <Dialog v-model:visible="ispublicDialog" :style="{width: '450px'}" header="Premium Feature" :modal="true" :dismissableMask="true">
         <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
         <span>Go premium to make your organisation private!</span>
         <template #footer>
@@ -43,7 +43,7 @@
         </template>
     </Dialog>
 
-    <Dialog v-if="organisation" v-model:visible="deleteOrganisationDialog" :style="{width: '450px'}" header="Confirm" :modal="true" dismissableMask="true">
+    <Dialog v-if="organisation" v-model:visible="deleteOrganisationDialog" :style="{width: '450px'}" header="Confirm" :modal="true" :dismissableMask="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
             <span>Are you sure you want to delete <b>{{organisation.name}}</b>?</span>
@@ -70,20 +70,13 @@ export default {
                 { name: 'Public', value: true },
                 { name: 'Private', value: false }
             ],
-            boolChoice: null,
             ispublicDialog: false,
             deleteOrganisationDialog: false,
             file: false
         }
     },
     computed: {
-        ...mapState('organisation', ['organisation']),
-        ...mapState('authentication', ['currentuser'])
-    },
-    watch: {
-        boolChoice (val) {
-            this.organisation.ispublic = val
-        }
+        ...mapState('organisation', ['organisation'])
     },
     setup: () => ({ v$: useVuelidate() }),
     validations: {
@@ -93,17 +86,13 @@ export default {
         }
     },
     created () {
-        if (this.organisation.created_by !== this.currentuser) {
+        if (this.organisation.accesLevel !== 'admin' && this.accesLevel !== 'organisation admin') {
+            console.log('You may not change settings!')
             this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
-            return
         }
-        this.initialize()
     },
     methods: {
         ...mapActions('organisation', ['fetchOrganisation', 'updateOrganisation', 'deleteOrganisation']),
-        initialize () {
-            this.boolChoice = this.organisation.ispublic
-        },
         async validateImage (e) {
             this.file = await imageValidator(e)
         },

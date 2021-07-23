@@ -1,16 +1,8 @@
 <template>
     <div style="min-width: 1000px;">
-        <div class="p-d-flex p-jc-between p-m-5">
-            <div>
-                <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-                <Button v-if="permission" label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createEseaAccountDialog = true" />
-            </div>
-            <span class="p-input-icon-left">
-                <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Esea Accounts..." />
-            </span>
-        </div>
-    <Divider />
-    <esea-account-list :esea-accounts="eseaAccounts" :table="tableDisplay" :search="search" :loading="loading" @clicked-esea-account="goToEseaAccount" />
+    <esea-account-list :esea-accounts="eseaAccounts" :table="tableDisplay" :search="search" :loading="loading" @clicked-esea-account="goToEseaAccount">
+    <Button v-if="permission" label="Create ESEA Account" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createEseaAccountDialog = true" />
+    </esea-account-list>
     </div>
 
     <Dialog v-model:visible="createEseaAccountDialog" style="width: 700px" header="Esea Account Details" :modal="true" :dismissableMask="true">
@@ -18,7 +10,7 @@
     </Dialog>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import EseaAccountList from '../../components/lists/EseaAccountList'
 import EseaAccountForm from '../../components/forms/EseaAccountForm.vue'
 export default {
@@ -28,8 +20,6 @@ export default {
     },
     data () {
         return {
-            tableDisplay: false,
-            search: '',
             loading: true,
             createEseaAccountDialog: false,
             hover: false,
@@ -47,20 +37,6 @@ export default {
                 }
             }
             return false
-        }
-    },
-    async created () {
-        await this.fetchEseaAccounts({ oId: this.$route.params.OrganisationId })
-        this.loading = false
-    },
-    methods: {
-        ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount']),
-        // async initialize () {
-        //     await this.fetchEseaAccounts({ oId: this.$route.params.OrganisationId }) // query: `?organisation=${this.$route.params.OrganisationId}`
-        // },
-        async goToEseaAccount (eseaAccount) {
-            await this.setEseaAccount(eseaAccount)
-            this.$router.push({ name: 'organisationeseaaccount', params: { EseaAccountId: eseaAccount.id } })
         }
     }
 }

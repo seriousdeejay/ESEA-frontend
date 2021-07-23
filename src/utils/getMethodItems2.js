@@ -1,11 +1,11 @@
-const getChildren = (topic, topicDirectIndicators, topicIndirectIndicators) => {
+const getChildren = (topic, topicQuestions, topicIndirectIndicators) => {
     let children = []
-    if (topicDirectIndicators[topic.id]) {
-        children = topicDirectIndicators[topic.id].map(directIndicator => ({
-            ...directIndicator,
-            objType: 'indicator',
-            showName: directIndicator.name,
-            uniqueId: `indicator_${directIndicator.id}`
+    if (topicQuestions[topic.id]) {
+        children = topicQuestions[topic.id].map(question => ({
+            ...question,
+            objType: 'question',
+            showName: question.name,
+            uniqueId: `question_${question.id}`
         }))
     }
     if (topicIndirectIndicators[topic.id]) {
@@ -23,20 +23,20 @@ const getChildren = (topic, topicDirectIndicators, topicIndirectIndicators) => {
 }
 
 export default (
-    methodTopics, subTopics, topicDirectIndicators, topicIndirectIndicators
+    methodTopics, subTopics, topicQuestions, topicIndirectIndicators
 ) => {
     if (!methodTopics.length) return []
     return methodTopics.map((topic) => {
         let children = getChildren(
             topic,
-            topicDirectIndicators,
+            topicQuestions,
             topicIndirectIndicators
         )
         if (subTopics[topic.id]) {
             const subTopicItems = subTopics[topic.id].map(subTopic => {
                 const subChildren = getChildren(
                     subTopic,
-                    topicDirectIndicators,
+                    topicQuestions,
                     topicIndirectIndicators
                 )
                 return {

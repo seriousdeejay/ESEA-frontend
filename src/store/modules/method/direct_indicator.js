@@ -15,9 +15,9 @@ export default {
     },
     getters: {
         getById: state => id => state.directIndicators.find(object => object.id === id),
-        topicdirectIndicators: (state) => {
+        topicDirectIndicators: (state) => {
             const filtered = {}
-            state.directIndicators.forEach((indicator) => { filtered[indicator.topic] = !filtered[indicator.topic] ? [indicator] : [...filtered[indicator.topic], indicator] })
+            state.directIndicators.forEach((directIndicator) => { filtered[directIndicator.topic] = !filtered[directIndicator.topic] ? [directIndicator] : [...filtered[directIndicator.topic], directIndicator] })
             return filtered
         }
         // getValidDirectIndicatorNumber
@@ -78,6 +78,14 @@ export default {
                     [id]: isSaved
                 }
             }
+        },
+        setError (state, { error, id }) {
+            console.log(error?.response?.data)
+            if (id && error?.response?.data) {
+                state.errors = { ...state.errors, [id]: error?.response?.data }
+                return
+            }
+            state.error = error
         }
     },
     actions: {
@@ -100,9 +108,10 @@ export default {
                     return
                 }
             }
-            commit('deleteDirectIndicator')
+            commit('deleteDirectIndicator', payload)
         },
         updateDirectIndicator ({ state, commit }, { mId, directIndicator }) {
+            console.log('saving indicator (direct_indicator.js)')
             if (!directIndicator || !mId) { return }
             if (!state.debouncers[directIndicator.id]) {
                 commit('setDebouncer', { id: directIndicator.id, commit })

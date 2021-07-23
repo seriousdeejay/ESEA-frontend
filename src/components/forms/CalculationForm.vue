@@ -1,17 +1,20 @@
 <template>
-    <div class="p-grid p-m-0 p-p-2 p-d-flex p-ai-center" :style="cssProps">
+    <div class="p-grid p-m-0 p-px-2 p-d-flex p-ai-center" :style="cssProps">
         <!-- <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i> -->
         <form ref="form" class="p-grid p-col-12 p-fluid p-input-filled">
-            <h3 class="p-col-12 p-text-bold p-text-center">Indirect Indicator</h3>
-            <div class="p-grid p-col-12 p-mx-0 p-px-0 p-pt-5 p-field">
-                <div class="p-col-4">
+            <h3 class="p-col-12 p-text-center">Indirect Indicator</h3>
+            <div class="p-grid p-col-12 p-mx-0 p-px-0">
+                <div class="p-col-6 p-field p-my-2">
                     <span class="p-float-label">
-                        <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': nameErrors.length}"  @blur="updateName" :disabled="!active" />
-                        <label for="calculationkey">Key</label>
+                        <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': keyErrors.length}"  @blur="updateName" :disabled="!active" />
+                        <label for="calculationkey">indicator Key</label>
                     </span>
                     <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error">{{error}}</div>
                 </div>
-                <div class="p-col-8">
+                <div class="p-col-6 p-field p-my-2">
+                     <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
+                </div>
+                <div class="p-col-12 p-field p-my-2">
                     <span class="p-float-label">
                         <InputText id="calculationame" type="text" v-model="lazyIndirectIndicator.name" :class="{'borderless': nameErrors.length}" :disabled="!active" />
                         <label for="calculationname">Name</label>
@@ -26,13 +29,18 @@
                 </span>
             </div>
 
-    <div class="p-col-12">
-        <p>Formula</p>
+    <div  v-if="active" class="p-col-12">
+        <p class="p-mr-3">Formula</p>
         <Divider />
-        <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
+        <expression-form v-if="formulaType === 'Calculation'" :assignment="true" />
+         <formula-form-3 v-if="formulaType === 'Conditionals'" />
+         <div v-if="(formulaType === 'Average' || formulaType === 'Sum')" class="p-d-flex p-ai-center p-ml-5">
+            <span v-if="formulaType === 'Average'">Average of</span><span v-if="formulaType === 'Sum'">Sum of</span>
+            <Dropdown id="questionuicomponent" class="p-ml-2" v-model="indicator" :options="indicators" optionLabel="key" optionValue="key" placeholder="Select Indicator"  />
+        </div>
     </div>
-    <formula-form-2 v-if="formulaType === 'Conditionals2'" class="p-col-12 p-m-2"/>
-    <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div>
+    <!-- <formula-form-2 v-if="formulaType === 'Conditionals2'" class="p-col-12 p-m-2" /> -->
+    <!-- <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div> -->
             <!-- <div class="p-col-12 p-field">
                 <span class="p-float-label">
                     <InputText id="calculationformula" ref="calculationinput" type="text" v-model="lazyIndirectIndicator.formula" :class="{'borderless': formulaErrors.length}" @blur="updateFormula" :disabled="!active" />
@@ -45,19 +53,23 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { required, maxLength } from '../../utils/validators'
 import { isEqual, cloneDeep } from 'lodash'
-import FormulaForm from '@/components/forms/FormulaForm'
-import FormulaForm2 from '@/components/forms/FormulaForm2'
+// import FormulaForm from '@/components/forms/FormulaForm'
+// import FormulaForm2 from '@/components/forms/FormulaForm2'
+import FormulaForm3 from '@/components/forms/FormulaForm3'
+import ExpressionForm from '@/components/forms/ExpressionForm'
 import Dropdown from 'primevue/dropdown'
 
 export default {
     components: {
-        FormulaForm,
-        FormulaForm2,
+        // FormulaForm,
+        // FormulaForm2,
+        FormulaForm3,
+        ExpressionForm,
         Dropdown
     },
     props: {
@@ -77,9 +89,9 @@ export default {
     setup: () => ({ v$: useVuelidate() }),
     validations: {
         lazyIndirectIndicator: {
-            name: { required, maxLength: maxLength(255) },
+            key: { required },
+            name: { required, maxLength: maxLength(255) }
             // formula: { required },
-            key: { required }
         }
     },
     data () {
@@ -90,14 +102,20 @@ export default {
             formulaTypeOptions: [
                 { type: 'Calculation' },
                 { type: 'Conditionals' },
-                { type: 'Conditionals2' },
                 { type: 'Average' },
                 { type: 'Sum' }
-                ]
+                ],
+            indicator: null
         }
     },
     computed: {
         ...mapGetters('indirectIndicator', ['getValidIndirectIndicatorNumber']),
+        ...mapState('directIndicator', ['directIndicators']),
+        ...mapState('indirectIndicator', ['indirectIndicators', 'indirectIndicator']),
+        indicators () {
+            const selectableIndirectIndicators = this.indirectIndicators.filter(item => item.id !== this.indirectIndicator.id)
+            return this.directIndicators.concat(selectableIndirectIndicators)
+        },
         keyErrors () {
             return HandleValidationErrors(
                 this.v$.lazyIndirectIndicator.key,
