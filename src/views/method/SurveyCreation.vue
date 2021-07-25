@@ -7,7 +7,7 @@
         <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; text-align: center; overflow-y: scroll;">
             <div class="p-m-5 p-text-left p-fluid" style="width: 1200px;">
                 <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #fcfcfc; border: 1px solid lightgrey;">
-                    <section :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" />
+                    <sectioon-form :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" />
                     <div v-for="(sectionChild, index) in section.children" :key="index" class="p-m-5">
                         {{sectionChild}}
                         <question-form ref="items" :question="sectionChild" :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id" @input="saveActive(sectionChild.objType, $event)" @click="toggleActive(sectionChild)" />
@@ -24,14 +24,14 @@
 import { mapState, mapActions, mapGetters } from 'vuex'
 import SurveyTreeSideBar from '@/components/SurveyTreeSideBar'
 import getSurveyItems from '@/utils/getSurveyItems'
-import section from '../../components/forms/section'
+import SectioonForm from '../../components/forms/SectioonForm'
 import QuestionForm from '@/components/forms/QuestionForm'
 
 export default {
     components: {
         SurveyTreeSideBar,
         QuestionForm,
-        section
+        SectioonForm
     },
     data () {
         return {
