@@ -79,11 +79,11 @@ export default {
 		},
 		setDebouncer (state, { id, commit }) {
 			state.debouncers[id] = debounce(
-				async ({ mId, section }) => {
+				async ({ mId, sId, section }) => {
 					console.log('LLL', section)
 					const method = section.id > 0 ? 'put' : 'post'
 					const { response, error } = await SectionService[method](
-						{ mId, id, data: section }
+						{ mId, sId, id, data: section }
 						)
 					if (error) {
 						console.log('OOO', section)
@@ -139,26 +139,26 @@ export default {
             }
             commit('deleteSection', payload)
         },
-        async updateSection ({ state, commit }, { mId, sId, data }) {
+        // async updateSection ({ state, commit }, { mId, sId, data }) {
             // const id = state.eseaAccount.id
             // const data = state.eseaAccount
-            const { response, error } = await SectionService.put({ mId, sId, id: data.id, data })
-            if (error) {
-                commit('setError', { error })
-                return
-            }
-            commit('updateList', { id: response.data?.id, data: response.data })
-            commit('setSection', response)
-        },
-        // updateSection ({ state, commit }, { mId, sId, section }) {
-		// 	if (!section || !mId) return
-		// 	if (!state.debouncers[section.id]) {
-		// 		commit('setDebouncer', { id: section.id, commit })
-		// 	}
-		// 	commit('setIsSaved', { id: section.id })
-		// 	if (!section.name && state.isSaved[section.id]) return
-		// 	state.debouncers[section.id]({ mId, sId, section })
-		// },
+            // const { response, error } = await SectionService.put({ mId, sId, id: data.id, data })
+            // if (error) {
+            //     commit('setError', { error })
+            //     return
+            // }
+            // commit('updateList', { id: response.data?.id, data: response.data })
+            // commit('setSection', response)
+         // },
+       updateSection ({ state, commit }, { mId, sId, section }) {
+			if (!section || !mId || !sId) return
+			if (!state.debouncers[section.id]) {
+				commit('setDebouncer', { id: section.id, commit })
+			}
+			commit('setIsSaved', { id: section.id })
+			if (!section.title && state.isSaved[section.id]) return
+			state.debouncers[section.id]({ mId, sId, section })
+		},
 		setSection ({ state, commit }, { id }) {
 			const data = state.sections.find(sections => sections.id === id)
 			if (data && data.id === state.section.id) return

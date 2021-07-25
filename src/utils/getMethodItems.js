@@ -25,13 +25,13 @@ const getChildren = (topic, topicDirectIndicators, topicIndirectIndicators) => {
 export default (
     methodTopics, subTopics, topicDirectIndicators, topicIndirectIndicators
 ) => {
-    if (!methodTopics.length) return []
-    return methodTopics.map((topic) => {
-        let children = getChildren(
-            topic,
-            topicDirectIndicators,
-            topicIndirectIndicators
-        )
+        if (!methodTopics.length) return []
+        return methodTopics.map((topic) => {
+            let children = getChildren(
+                topic,
+                topicDirectIndicators,
+                topicIndirectIndicators
+            )
         if (subTopics[topic.id]) {
             const subTopicItems = subTopics[topic.id].map(subTopic => {
                 const subChildren = getChildren(

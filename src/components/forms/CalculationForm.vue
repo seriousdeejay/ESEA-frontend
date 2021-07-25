@@ -32,12 +32,13 @@
     <div  v-if="active" class="p-col-12">
         <p class="p-mr-3">Formula</p>
         <Divider />
-        <expression-form v-if="formulaType === 'Calculation'" :assignment="true" />
+        <expression-form v-if="formulaType === 'Calculation'" :formula="lazyIndirectIndicator.formula" :assignment="true" @expression="updateFormula" />
          <formula-form-3 v-if="formulaType === 'Conditionals'" />
          <div v-if="(formulaType === 'Average' || formulaType === 'Sum')" class="p-d-flex p-ai-center p-ml-5">
             <span v-if="formulaType === 'Average'">Average of</span><span v-if="formulaType === 'Sum'">Sum of</span>
             <Dropdown id="questionuicomponent" class="p-ml-2" v-model="indicator" :options="indicators" optionLabel="key" optionValue="key" placeholder="Select Indicator"  />
         </div>
+        <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
     </div>
     <!-- <formula-form-2 v-if="formulaType === 'Conditionals2'" class="p-col-12 p-m-2" /> -->
     <!-- <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div> -->
@@ -90,15 +91,15 @@ export default {
     validations: {
         lazyIndirectIndicator: {
             key: { required },
-            name: { required, maxLength: maxLength(255) }
-            // formula: { required },
+            name: { required, maxLength: maxLength(255) },
+            formula: { required }
         }
     },
     data () {
         return {
             tab: null,
             lazyIndirectIndicator: { ...this.indirectIndicator }, // cloneDeep(this.indirectIndicator) || {} //,
-            formulaType: 'Conditionals',
+            formulaType: 'Calculation',
             formulaTypeOptions: [
                 { type: 'Calculation' },
                 { type: 'Conditionals' },
@@ -149,6 +150,7 @@ export default {
                 // if (this.lazyIndirectIndicator.formula !== val.formula) {
                 //     this.$refs.calculationinput.focus()
                 // }
+                console.log('updating lazy object')
                 this.lazyIndirectIndicator = cloneDeep(val) // { ...val }
             }
         },
@@ -198,8 +200,12 @@ export default {
         updateName () {
             this.v$.lazyIndirectIndicator.name.$touch()
         },
-        updateFormula () {
-            this.v$.lazyIndirectIndicator.formula.$touch()
+        // updateFormula () {
+        //     this.v$.lazyIndirectIndicator.formula.$touch()
+        // },
+        updateFormula (formula) {
+            console.log('=====')
+            this.lazyIndirectIndicator.formula = formula
         }
     }
 }

@@ -1,6 +1,4 @@
 <template>
-<method-header />
-
 <div class="p-shadow-10 p-d-flex p-jc-center">
     <div class="p-shadow-5 p-m-5 p-p-5" style="width: 80%">
         <div class="p-d-flex p-ai-center p-jc-between">
@@ -27,7 +25,6 @@
 </template>
 
 <script>
-import MethodHeader from '../../components/MethodHeader'
 import Panel from 'primevue/panel'
 import SurveyForm from '../../components/forms/SurveyForm'
 import { mapActions, mapGetters, mapState } from 'vuex'
@@ -35,7 +32,6 @@ import getMethodItems from '../../utils/getMethodItems'
 
 export default {
     components: {
-        MethodHeader,
         Panel,
         SurveyForm
     },

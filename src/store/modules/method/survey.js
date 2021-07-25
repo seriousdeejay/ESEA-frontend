@@ -1,7 +1,7 @@
 import SurveyService from '../../../services/SurveyService'
 import { debounce, random } from 'lodash'
 
-const baseSurvey = { name: 'new Survey', description: '', welcome_text: '', closing_text: '', min_threshold: 100, questions: [] }
+const baseSurvey = { name: '', description: '', welcome_text: '', closing_text: '', min_threshold: 100, response_type: 'single', questions: [] }
 
 export default {
     namespaced: true,
@@ -58,8 +58,8 @@ export default {
 				return Object.assign(item, data)
 			})
 		},
-		addNewSurvey (state) {
-			const survey = { ...baseSurvey, id: random(-1000000, -1) }
+		addNewSurvey (state, { method }) {
+			const survey = { ...baseSurvey, id: random(-1000000, -1), method: method }
 			state.surveys.push(survey)
             state.survey = survey
 		},
@@ -138,8 +138,8 @@ export default {
 		resetError ({ commit }) {
 			commit('setError', { error: undefined })
 		},
-		addNewSurvey ({ commit }) {
-			commit('addNewSurvey')
+		async addNewSurvey ({ commit }, payload) {
+			await commit('addNewSurvey', payload)
 		}
 	}
 }

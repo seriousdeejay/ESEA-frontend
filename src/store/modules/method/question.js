@@ -24,6 +24,11 @@ export default {
             console.log('questions:', filtered)
 			return filtered
 		},
+        sectionQuestions: (state) => {
+            const filtered = {}
+            state.questions.forEach((question) => { filtered[question.section] = !filtered[question.section] ? [question] : [...filtered[question.section], question] })
+            return filtered
+        },
 		getValidQuestionKeyNumber: (state) => {
 			const indicators = state.questions
 				.map(indicator => parseInt(indicator.direct_indicators?.[0].key.match(/[^_]*$/), 10))
@@ -66,8 +71,8 @@ export default {
 				return Object.assign(item, data)
 			})
 		},
-		addNewQuestion (state, { topic }) {
-			const question = { ...baseQuestion, id: random(-1000000, -1), topic }
+		addNewQuestion (state, { section }) {
+			const question = { ...baseQuestion, id: random(-1000000, -1), section }
 			console.log(question)
 			state.questions.push(question)
 			state.question = question

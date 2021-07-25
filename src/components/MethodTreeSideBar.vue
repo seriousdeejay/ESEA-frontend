@@ -57,9 +57,9 @@ export default {
             searchbarDirect: false,
             searchbarIndirect: false,
             searchDirect: '',
-            searchIndirect: '',
-            selectedKey1: null,
-            expandedKeys: {}
+            searchIndirect: ''
+            // selectedKey1: null,
+            // expandedKeys: {}
         }
     },
     computed: {
@@ -74,13 +74,15 @@ export default {
 		...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
         filteredDirectIndicators () {
             return this.directIndicators.filter((indicator) => {
-                return (indicator.key.toLowerCase().includes(this.searchDirect.toLowerCase()))
+                return (indicator.key?.toLowerCase().includes(this.searchDirect.toLowerCase()))
             })
         },
         filteredIndirectIndicators () {
+            if (this.indirectIndicators.length) {
             return this.indirectIndicators.filter((indicator) => {
-                return (indicator.key.toLowerCase().includes(this.searchIndirect.toLowerCase()))
+                return (indicator.key?.toLowerCase().includes(this.searchIndirect.toLowerCase()))
             })
+            } else { return [] }
         },
 		items () {
             const data = getMethodItems(this.methodTopics,
@@ -134,7 +136,7 @@ export default {
         }
     },
     mounted () {
-        this.expandAll()
+        // this.expandAll()
         this.fetchItems()
     },
     methods: {

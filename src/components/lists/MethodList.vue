@@ -155,7 +155,7 @@
             },
             async updateMethod (method) {
                 await this.setMethod(method)
-                this.$router.push({ name: 'method-create', params: { id: method.id } })
+                this.$router.push({ name: 'method-general', params: { id: method.id } })
             }
         }
     }

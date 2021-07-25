@@ -1,8 +1,8 @@
 <template>
     <div class="p-d-flex p-ai-center p-m-0" style="height: 40px;">
         <div v-if="assignment" class="p-d-flex p-ai-center p-mx-2">
-            <p class="p-text-bold">{{ indirectIndicator.key || key }}</p>
-            <p class="p-text-bold" style="font-size: 30px;">=</p>
+            <p class="">{{ indirectIndicator.key }}</p>
+            <p class="p-mx-2" style="font-size: 30px;">=</p>
 
         </div>
         <div v-else class="p-d-flex p-mx-2">
@@ -29,6 +29,10 @@ export default {
         assignment: {
             type: Boolean,
             default: false
+        },
+        formula: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -49,7 +53,7 @@ export default {
                     { id: 5, value: '<=', component: null }
                 ],
             leftSide: null,
-            rightSide: '',
+            rightSide: this.formula || '',
             months: '',
             comparisonValue: '==',
             autoComplete: false,
@@ -68,6 +72,7 @@ export default {
     },
     watch: {
         rightSide (val) {
+            this.$emit('expression', val)
             this.positionleft = null
             this.positionright = null
             this.autoComplete = false
@@ -86,7 +91,7 @@ export default {
         this.$refs.expression.$el.addEventListener('keyup', self.checkUserPosition, false)
         this.$refs.expression.$el.addEventListener('click', self.checkUserPosition, false)
         document.addEventListener('click', function (event) {
-            if (self.$refs.focuswindow !== event.target && !self.$refs.focuswindow.contains(event.target)) { self.removeAutoComplete() }
+            if (self.$refs.focuswindow !== event.target && !self.$refs.focuswindow?.contains(event.target)) { self.removeAutoComplete() }
         })
     },
     methods: {

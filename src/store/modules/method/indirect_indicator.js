@@ -104,7 +104,6 @@ export default {
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
             delete state.errors[indirectIndicator.id]
             console.log('eeee')
-            indirectIndicator.formula = '[woman_staff] + 1'
           if (!indirectIndicator || !mId) { return }
           if (!state.debouncers[indirectIndicator.id]) {
               commit('setDebouncer', { id: indirectIndicator.id, commit })

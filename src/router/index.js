@@ -494,12 +494,74 @@ const routes = [
         }
     },
     {
-        path: '/methods/:id/method-design',
-        name: 'method-create',
-        component: () => import('../views/method/MethodCreate'),
+        path: '/methods/:id/creation',
+        name: 'methodwizard',
+        component: () => import('../views/method/Method.vue'),
         meta: {
         requiresLogin: true
+        },
+        children: [
+            {
+                path: '/methods/:id/method-general',
+                name: 'method-general',
+                component: () => import('../views/method/MethodGeneral'),
+                meta: {
+                requiresLogin: true
+                }
+            },
+            {
+                path: '/methods/:id/method-design',
+                name: 'method-create',
+                component: () => import('../views/method/MethodCreate'),
+                meta: {
+                requiresLogin: true
+                }
+            },
+            // {
+            //     path: '/method-wizard/:id/survey-creation',
+            //     name: 'survey-create',
+            //     component: () => import('../views/method/SurveyCreate'),
+            //     meta: {
+            //     requiresLogin: true
+            //     },
+            //     children: [
+            {
+                path: '/method-wizard/:id/surveys',
+                name: 'method-wizard-surveys',
+                component: () => import('@/components/lists/SurveyList'),
+                meta: {
+                    requiresLogin: true
+                    }
+            },
+            {
+                path: '/method-wizard/:id/surveys/:SurveyId',
+                name: 'method-wizard-survey',
+                component: () => import('@/views/method/Survey'),
+                meta: {
+                    requiresLogin: true
+                    },
+                children: [
+                    {
+                        path: '/method-wizard/:id/surveys/:SurveyId/settings',
+                        name: 'method-wizard-survey-settings',
+                        component: () => import('@/views/method/SurveyGeneral'),
+                        meta: {
+                            requiresLogin: true
+                        }
+                    },
+                    {
+                        path: '/method-wizard/:id/surveys/:SurveyId/survey-design',
+                        name: 'method-wizard-survey-design',
+                        component: () => import('@/views/method/SurveyCreation'),
+                        meta: {
+                            requiresLogin: true
+                        }
+                    }
+            ]
         }
+            //     ]
+            // }
+        ]
     },
     {
         path: '/method-copy',
@@ -510,15 +572,7 @@ const routes = [
         }
     },
     {
-        path: '/methods/:id/survey-creation',
-        name: 'survey-create',
-        component: () => import('../views/method/SurveyCreate'),
-        meta: {
-        requiresLogin: true
-        }
-    },
-    {
-        path: '/methods/:id',
+        path: '/method-details/:id',
         name: 'methoddetails',
         component: () => import('../views/method/MethodDetails.vue'),
         meta: {

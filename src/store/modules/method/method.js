@@ -17,6 +17,7 @@ export default {
                 commit('setError', { error })
             } else {
                 console.log('debouncing', response)
+                commit('clearError')
                 commit('setMethod', response)
             }
         }, 1000)
@@ -40,6 +41,7 @@ export default {
             state.methods = data
         },
         setMethod (state, { data }) {
+            console.log('oldmethod', state.method, 'newmethod', data)
             state.method = { ...data } || baseMethod
         },
         addMethodToList (state, { data }) {
@@ -116,10 +118,11 @@ export default {
                 return
             }
             await dispatch('fetchMethods', {})
-            commit('setMethod', response)
+            await commit('setMethod', response)
         },
         async updateMethod ({ state, commit }, method) {
             if (method.id !== state.method.id) { return }
+            console.log('kk')
             state.debouncer({ id: method.id, method, commit })
         },
         // async patchMethod ({ state, commit }, payload) {

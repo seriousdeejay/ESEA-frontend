@@ -1,13 +1,13 @@
 <template>
-    <div class="p-d-flex p-ai-center p-jc-between p-px-5" style="height: 80px; background-color: #f1f1f1;">
+    <div class="p-d-flex p-ai-center p-jc-between p-px-5" style="height: 60px; background-color: #f1f1f1;">
         <div class="p-d-flex p-ai-center">
             <i class="pi pi-arrow-left p-px-5" style="font-size: 30px;" @click="goToMethods()"></i>
             <h2>{{ title }} <span class="p-text-italic p-text-light p-ml-5"><small><template v-if="upToDate">All changes saved</template><template v-else>...</template></small></span></h2>
         </div>
         <div class="p-d-flex p-ai-center" style="height: 100%;">
-        <div v-for="step in steps" :key="step.text" class="p-d-flex p-ai-center" @mouseover="step.hover = true" @mouseleave="step.hover = false" :style="[(step.to.name === $route.name) ? 'background-color: grey; color: white;' :'', step.hover ? styleObject : '', ]" style="height: 100%;">
-            <div class="p-text-light p-p-5" @click="goToPage(step.to)"  style="text-align: center;">{{step.text}}</div>
-        </div>
+            <div v-for="step in steps" :key="step.text" class="p-d-flex p-ai-center" @mouseover="step.hover = true" @mouseleave="step.hover = false" :style="[($route.name.startsWith(step.to.name.slice(0, -1))) ? 'background-color: grey; color: white;' :'', step.hover ? styleObject : '', ]" style="height: 100%;">
+                <div class="p-text-light p-p-5" @click="goToPage(step.to)"  style="text-align: center;">{{step.text}}</div>
+            </div>
         </div>
 
     </div>
@@ -20,9 +20,10 @@ export default {
     data () {
         return {
         steps: [
-            { text: 'Design Method', to: { name: 'method-create' } },
-            { text: 'Create Surveys', to: { name: 'survey-create' } },
-            { text: 'Finish method', to: { name: '' } }
+            { text: 'Method Information', to: { name: 'method-general' } },
+            { text: 'Set Indicators', to: { name: 'method-create' } },
+            { text: 'Create Surveys', to: { name: 'method-wizard-surveys' } },
+            { text: 'Finish method', to: { name: 'finish-method' } }
             ],
         styleObject: { 'background-color': '#00695C', color: 'white' }
         }

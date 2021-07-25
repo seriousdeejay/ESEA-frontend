@@ -87,15 +87,16 @@ export default {
         ...mapState('method', ['method'])
     },
     methods: {
-        ...mapActions('method', ['fetchMethod']),
+        ...mapActions('method', ['fetchMethod', 'createMethod']),
         ...mapActions('authentication', ['refreshAccessToken']),
-        createNewMethod (action) {
+        async createNewMethod (action) {
             console.log(action)
             if (action === 'upload') {
                 this.uploadMethodDialog = true
             } else if (action === 'create') {
-                this.createMethodDialog = true
-                // this.$router.push({ name: 'method-create', params: { id: 1 } })
+                // this.createMethodDialog = true
+                await this.createMethod({})
+                this.$router.push({ name: 'method-general', params: { id: this.method.id } })
             } else if (action === 'copy') {
                 this.copyMethodDialog = true
             }
@@ -127,7 +128,7 @@ export default {
         },
         async goToMethod (id) {
             await this.fetchMethod({ id: id })
-            this.$router.push({ name: 'method-create', params: { id: this.method?.id } })
+            this.$router.push({ name: 'method-general', params: { id: 0 } })
         }
     }
 }

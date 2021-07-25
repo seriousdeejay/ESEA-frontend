@@ -1,7 +1,7 @@
 <template>
   <div class="myapp" v-if="accessToken!=null" style="position: relative; height: 100%; min-width: 1400px; background-color: #F5F7F6;"> <!--style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
     <main-topbar @sidebar="changeSidebar" />
-    <div class="p-d-flex" style="position: relative; min-height: 100%; padding-top: 70px; width: 100%;">
+    <div class="p-d-flex" style="position: relative; min-height: 100vh; padding-top: 70px; width: 100%;">
          <main-sidebar :sidebar="expandedSidebar" />
          <!-- <sub-sidebar /> -->
         <div style="width: 100%;">

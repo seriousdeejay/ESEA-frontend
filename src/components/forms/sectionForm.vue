@@ -1,26 +1,30 @@
 <template>
-<div class="p-grid p-pt-5" style="background-color: #F1F1F1; border: 1px solid #D8D8D8;">
-    <div class="p-col-12 p-field">
-                <span class="p-float-label">
+    <form ref="form"  class="p-fluid p-input-filled p-p-3 p-text-center" @submit.prevent="!v$.$invalid" :style="[(!v$.lazySection.$invalid && lazySection.id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']">
+        <div v-if="active" class="p-col-12 p-field">
+            <span class="p-float-label">
                 <InputText id="sectiontitle" type="text" v-model.lazy="lazySection.title" :class="{'p-invalid': v$.lazySection.title.$invalid}" @blur="v$.lazySection.title.$touch()" />
                 <label for="sectiontitle">Title</label>
-                </span>
-                <!-- <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" /> -->
-                <MultiSelect v-model="selectedQuestions" :options="questions" optionLabel="name" placeholder="Select Questions" class="p-col-12 p-my-2" :class="{'p-invalid': v$.lazySection.questions.$invalid}" @blur="v$.lazySection.questions.$touch()" /> <!--@blur="updateQuestions" :class="{'borderless': questionsErrors.length} -->
-                <Button label="Delete Section" class="p-col p-button-danger p-button-text" @click="deleteSection" /><!-- <div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div> -->
-            <!-- <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div> -->
+            </span>
         </div>
-        </div>
+        <h1 v-else>{{lazySection.title}}</h1>
+        <Divider />
+        <!-- <div v-if="v$.lazySection.questions.$invalid" class="p-error p-text-left">Be sure to add atleast one question to keep this section!</div> -->
+    </form>
+    <!-- <div class="p-grid p-m-0 p-pt-5" style="background-color: #F1F1F1; border: 1px solid #D8D8D8;"> -->
+    <!-- <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" /> -->
+    <!-- <MultiSelect v-model="selectedQuestions" :options="questions" optionLabel="name" placeholder="Select Questions" class="p-col-12 p-my-2" :class="{'p-invalid': v$.lazySection.questions.$invalid}" @blur="v$.lazySection.questions.$touch()" /> @blur="updateQuestions" :class="{'borderless': questionsErrors.length} -->
+    <!--<Button label="Delete Section" class="p-col p-button-danger p-button-text" @click="deleteSection" /><div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div> -->
+    <!-- <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div> -->
 </template>
 
 <script>
 import { isEqual, cloneDeep } from 'lodash'
 import useVuelidate from '@vuelidate/core'
-import { required, minLength } from '../../utils/validators'
-import MultiSelect from 'primevue/multiselect'
+import { required } from '../../utils/validators'
+// import MultiSelect from 'primevue/multiselect'
 export default {
     components: {
-        MultiSelect
+        // MultiSelect
     },
     props: {
         survey: {
@@ -34,6 +38,10 @@ export default {
         questions: {
             type: Object,
             required: true
+        },
+        active: {
+            type: Boolean,
+            default: false
         }
     },
     data () {
@@ -72,12 +80,15 @@ export default {
     setup: () => ({ v$: useVuelidate() }),
     validations: {
         lazySection: {
-            title: { required },
-            questions: {
-                required,
-                minLength: minLength(1)
-            }
+            title: { required }
+            // questions: {
+            //     required,
+            //     minLength: minLength(1)
+            // }
         }
+    },
+    created () {
+        this.lazySection = cloneDeep(this.section)
     },
     methods: {
         deleteSection () {
