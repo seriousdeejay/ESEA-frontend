@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>Component Library</h2>
         <div class="p-d-flex">
             <div v-for="item in libraryComponents" :key="item" class="p-col-6" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':''" @click="activeComponentType = item">
             {{item}}
