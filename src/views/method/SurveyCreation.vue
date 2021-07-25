@@ -24,7 +24,7 @@
 import { mapState, mapActions, mapGetters } from 'vuex'
 import SurveyTreeSideBar from '@/components/SurveyTreeSideBar'
 import getSurveyItems from '@/utils/getSurveyItems'
-import SectionForm from '@/components/forms/SectionForm'
+import SectionForm from '../../components/forms/SectionForm'
 import QuestionForm from '@/components/forms/QuestionForm'
 
 export default {
