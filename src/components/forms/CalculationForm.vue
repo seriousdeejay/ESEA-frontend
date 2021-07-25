@@ -1,9 +1,15 @@
 <template>
-    <div class="p-grid p-m-0 p-px-2 p-d-flex p-ai-center" :style="cssProps">
+    <div class="p-grid p-m-5 p-px-2 p-d-flex p-ai-center" :style="cssProps">
         <!-- <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i> -->
         <form ref="form" class="p-grid p-col-12 p-fluid p-input-filled">
-            <h3 class="p-col-12 p-text-center">Indirect Indicator</h3>
-            <div class="p-grid p-col-12 p-mx-0 p-px-0">
+            <div class="p-d-flex p-col-12">
+            <h3 class="p-col-11 p-text-center">Indirect Indicator</h3>
+            <div class="p-col p-d-flex p-ai-center p-jc-end">
+                <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeIndicator()" />
+                <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
+            </div>
+        </div>
+            <div class="p-grid p-col-12 p-mx-0 p-px-0 p-text-left">
                 <div class="p-col-6 p-field p-my-2">
                     <span class="p-float-label">
                         <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': keyErrors.length}"  @blur="updateName" :disabled="!active" />
@@ -12,7 +18,7 @@
                     <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error">{{error}}</div>
                 </div>
                 <div class="p-col-6 p-field p-my-2">
-                     <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" />
+                     <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" class="p-text-center" />
                 </div>
                 <div class="p-col-12 p-field p-my-2">
                     <span class="p-float-label">
@@ -206,6 +212,10 @@ export default {
         updateFormula (formula) {
             console.log('=====')
             this.lazyIndirectIndicator.formula = formula
+        },
+        removeIndicator () {
+            console.log('removed another one...')
+            this.$emit('delete', this.indirectIndicator)
         }
     }
 }

@@ -6,7 +6,7 @@
             </span>
             <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
         </div>
-        <div v-if="!lazyTopic.parent_topic" class="p-field">
+        <div class="p-field"> <!-- v-if="!lazyTopic.parent_topic"  -->
             <span class="p-float-label">
                 <InputText v-model="lazyTopic.description" placeholder="Topic Description" class="p-inputtext-sm" @blur="updateDescription" @focus="$event.target.select()" />
             </span>

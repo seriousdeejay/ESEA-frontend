@@ -21,7 +21,8 @@ export default {
         return {
         steps: [
             { text: 'Method Information', to: { name: 'method-general' } },
-            { text: 'Set Indicators', to: { name: 'method-create' } },
+            { text: 'Create Indicators', to: { name: 'method-indicator-creation' } },
+            { text: 'Set Indicators 2', to: { name: 'method-create' } },
             { text: 'Create Surveys', to: { name: 'method-wizard-surveys' } },
             { text: 'Finish method', to: { name: 'finish-method' } }
             ],

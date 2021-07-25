@@ -7,7 +7,7 @@
             <span class="p-text-light p-text-italic">{{ name }}</span>
         </h2>
         <p v-if="description">
-            {{ description }}
+            Description: {{ description }}
         </p>
     </div>
 </template>

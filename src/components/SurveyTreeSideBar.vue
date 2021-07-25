@@ -5,8 +5,8 @@
                 {{item}}
             </div>
         </div>
-        <div class="p-d-flex p-mt-2 p-mx-5" style="">
-            <div v-for="item in ComponentOptions" :key="item" class="p-col-6" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
+        <div v-if="activeComponentType === 'Indicators'" class="p-d-flex p-mt-2" style="">
+            <div v-for="item in ComponentOptions" :key="item" class="p-col-4" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
                 {{item}}
             </div>
         </div>
@@ -19,7 +19,7 @@
                     <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchIndicator" @blur="checksSearchbarContentIndicator" placeholder="Search Direct Indicators..." style="width: 100%;" />
                 </span>
             </div>
-            <div style="height: calc(100vh - 400px); overflow-y: scroll;">
+            <div style="height: calc(100vh - 390px); overflow-y: scroll;">
             <div v-for="indicator in filteredDirectIndicators" :key="indicator.id" class="directIndicators" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;"  @dragstart="startDrag($event, indicator)" @dragover.prevent @dragenter.prevent :draggable="true">
                 {{indicator.key}}
             </div>
@@ -34,13 +34,12 @@
                     <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchQuestion" @blur="checkSearchbarContentQuestion" placeholder="Search Questions..." style="width: 100%;" />
                 </span>
             </div>
-            <div style="height: calc(100vh - 400px); overflow-y: scroll;">
+            <div style="height: calc(100vh - 350px); overflow-y: scroll;">
                 <div v-for="question in filteredQuestions" :key="question.id" class="questions p-px-3" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(question.id === activeQuestion?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
                     {{question.name}}
                 </div>
             </div>
         </div>
-        {{directIndicators}}
     </div>
 </template>
 
@@ -51,7 +50,7 @@ export default {
     data () {
         return {
             libraryComponents: ['Indicators', 'Questions'],
-            ComponentOptions: ['Unused', 'All'],
+            ComponentOptions: ['Unused', 'Used', 'All'],
             activeComponentType: 'Indicators',
             activeComponentOption: 'Unused',
             searchbarQuestions: false,

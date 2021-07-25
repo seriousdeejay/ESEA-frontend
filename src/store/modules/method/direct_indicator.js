@@ -37,6 +37,9 @@ export default {
             delete state.errors[id]
             delete state.isSaved[id]
             state.directIndicators = state.directIndicators.filter(i => i.id !== id)
+            if (state.directIndicator.id === 'id') {
+                state.directIndicator = {}
+            }
         },
         updateList (state, { id, data }) {
             if (id !== data.id) {
@@ -103,6 +106,7 @@ export default {
         //     const { response, error } = await DirectIndicatorService.get(payload)
         // }
         async deleteDirectIndicator ({ commit }, payload) {
+            console.log('deleting item...')
             if (payload.id > 0) {
                 const { error } = await DirectIndicatorService.delete(payload)
                 if (error) {

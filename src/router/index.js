@@ -510,6 +510,14 @@ const routes = [
                 }
             },
             {
+                path: '/methods/:id/indicator-creation',
+                name: 'method-indicator-creation',
+                component: () => import('../views/method/MethodIndicatorCreation'),
+                meta: {
+                requiresLogin: true
+                }
+            },
+            {
                 path: '/methods/:id/method-design',
                 name: 'method-create',
                 component: () => import('../views/method/MethodCreate'),

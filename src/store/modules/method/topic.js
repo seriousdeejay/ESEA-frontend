@@ -55,6 +55,7 @@ export default {
             state.topics = state.topics.filter(t => t.id !== id)
         },
         setError (state, { error, id }) {
+            console.log(error?.response?.data)
             if (id && error?.response?.data) {
                 state.errors = { ...state.errors, [id]: error?.response?.data }
                 return
@@ -114,6 +115,15 @@ export default {
         },
         addNewTopic ({ commit }, payload) {
             commit('addNewTopic', payload)
+        },
+        async createTopic ({ commit, dispatch }, { mId }) {
+            const { response, error } = await TopicService.post({ mId, data: baseTopic })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            await dispatch('fetchTopics', { mId: mId })
+            await dispatch('setTopic', response.data)
         },
         updateTopic ({ state, commit }, { mId, topic }) {
             if (!topic || !mId) { return }

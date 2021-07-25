@@ -1,11 +1,17 @@
 <template>
 <form ref="form" class="p-grid p-m-5 p-px-5 p-pb-3 p-fluid p-input-filled" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (!v$.lazyIndicator.$invalid && lazyIndicator.id > 0) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);']" style="background-color: #F2F2F2;">
-    <!-- {{lazyIndicator}} {{v$.lazyIndicator.$invalid}} -->
-        <h3 class="p-col-12 p-text-center">Direct Indicator</h3>
+    <!-- {{lazyIndicator}} {{v$.lazyIndicator.$invalid}} --> {{lazyIndicator === directIndicator}}
+        <div class="p-d-flex p-col-12">
+            <h3 class="p-col-11 p-text-center">Direct Indicator</h3>
+            <div class="p-col p-d-flex p-ai-center p-jc-end">
+                <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeIndicator()" />
+                <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
+            </div>
+        </div>
         <div class="p-col-6 p-field p-my-2">
             <span class="p-float-label">
-                <InputText id="indicatorkey" type="text" v-model="lazyIndicator.key" :class="{'borderless': v$.lazyIndicator.key.$error}" :disabled="!active" /> <!--  @blur="questionKeyFilter(lazyIndicator.key)" -->
-                <label for="indicatorkey">Indicator Key</label>
+                <InputText id="indicator-key" type="text" v-model="lazyIndicator.key" :class="{'borderless': v$.lazyIndicator.key.$error}" :disabled="!active" /> <!--  @blur="questionKeyFilter(lazyIndicator.key)" -->
+                <label for="indicator-key">Indicator Key</label>
             </span>
             <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error"><small>{{ error }}</small></div>
         </div>
@@ -45,11 +51,6 @@
             <div v-if="lazyIndicator.datatype && datatypeWithOptions" class="p-grid p-col-12 p-mx-0 p-px-0">
                 <option-form v-for="(option, index) in lazyIndicator.options" :key="`option-${index}`" :option="option" @delete="deleteOption(option)" />
                 <Button label="Add Option" class="p-button-text" @click="addOption" />
-            </div>
-
-            <div class="p-col-12 p-d-flex p-ai-center p-jc-end">
-                <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: not-allowed;" />
-                <i class="pi pi-ellipsis-v" style="font-size: 25px; cursor: not-allowed;" />
             </div>
         </div>
    </form>
@@ -114,9 +115,15 @@ export default {
         }
     },
     watch: {
-        directIndicator (val) {
-            if (isEqual(this.lazyIndicator, val)) { return }
-            this.lazyIndicator = cloneDeep(val)
+        directIndicator: {
+            handler (val) {
+                setTimeout(() => {
+                    console.log('change it up')
+                     // if (isEqual(this.lazyIndicator, val)) { return }
+                    this.lazyIndicator = cloneDeep(val)
+                }, 200)
+            },
+            deep: true
         },
         lazyIndicator: {
             handler (val) {
@@ -138,7 +145,6 @@ export default {
         }
     },
     created () {
-        console.log(this.$refs)
     },
     setup: () => ({ v$: useVuelidate() }),
     validations: {
@@ -169,6 +175,9 @@ export default {
                 console.log('check', option)
                 this.lazyIndicator.options = this.lazyIndicator.options.filter(choice => choice.text !== option.text)
             }
+        },
+        removeIndicator () {
+            this.$emit('delete', this.directIndicator)
         }
     }
 
