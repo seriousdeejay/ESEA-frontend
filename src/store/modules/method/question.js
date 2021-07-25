@@ -51,6 +51,9 @@ export default {
 			delete state.errors[id]
 			delete state.isSaved[id]
 			state.questions = state.questions.filter(q => q.id !== id)
+            if (state.question.id === id) {
+                state.question = {}
+            }
 		},
 		setError (state, { error, id }) {
 			if (id && error?.response?.data) {

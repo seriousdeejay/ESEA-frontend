@@ -90,11 +90,13 @@ export default {
     },
     actions: {
         async fetchDirectIndicators ({ commit }, payload) {
+            console.log('check')
             const { response, error } = await DirectIndicatorService.get(payload)
             if (error) {
                 commit('setError', { error })
                 return
             }
+            console.log(response.data)
             commit('setDirectIndicators', response)
         },
         // async fetchDirectIndicator ({ commit }, payload) {

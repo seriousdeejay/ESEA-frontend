@@ -39,7 +39,10 @@ export default {
             delete state.debouncers[id]
 			delete state.errors[id]
 			delete state.isSaved[id]
-			state.sections = state.sections.filter(q => q.id !== id)
+			state.sections = state.sections.filter(s => s.id !== id)
+            if (state.section.id === id) {
+                state.section = {}
+            }
         },
         setError (state, { error, id }) {
             console.log(error?.response?.data)
@@ -130,6 +133,7 @@ export default {
             await dispatch('setSection', response.data)
         },
         async deleteSection ({ commit }, payload) {
+            console.log(payload)
             if (payload.id > 0) {
                 const { error } = await SectionService.delete(payload)
                 if (error) {

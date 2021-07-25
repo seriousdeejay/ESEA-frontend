@@ -1,8 +1,13 @@
 <template>
     <div>
-        <div class="p-d-flex">
-            <div v-for="item in libraryComponents" :key="item" class="p-col-6" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':''" @click="activeComponentType = item">
-            {{item}}
+        <div class="p-d-flex p-mt-2">
+            <div v-for="item in libraryComponents" :key="item" class="p-col-6" style="font-size: 20px;" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':'border-bottom: 3px solid lightgrey;'" @click="activeComponentType = item">
+                {{item}}
+            </div>
+        </div>
+        <div class="p-d-flex p-mt-2 p-mx-5" style="">
+            <div v-for="item in ComponentOptions" :key="item" class="p-col-6" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
+                {{item}}
             </div>
         </div>
         <div v-if="activeComponentType === 'Indicators'" class="p-text-left">
@@ -29,22 +34,26 @@
                     <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchQuestion" @blur="checkSearchbarContentQuestion" placeholder="Search Questions..." style="width: 100%;" />
                 </span>
             </div>
-            <hr>
-            <div v-for="question in filteredQuestions" :key="question.id" class="questions p-px-3" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(question.id === activeQuestion?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
-                {{question.name}}
+            <div style="height: calc(100vh - 400px); overflow-y: scroll;">
+                <div v-for="question in filteredQuestions" :key="question.id" class="questions p-px-3" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(question.id === activeQuestion?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
+                    {{question.name}}
+                </div>
             </div>
         </div>
+        {{directIndicators}}
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     data () {
         return {
             libraryComponents: ['Indicators', 'Questions'],
+            ComponentOptions: ['Unused', 'All'],
             activeComponentType: 'Indicators',
+            activeComponentOption: 'Unused',
             searchbarQuestions: false,
             searchQuestion: '',
             searchbarIndicators: false,
@@ -60,12 +69,22 @@ export default {
             })
         },
         filteredDirectIndicators () {
-            return this.directIndicators.filter((indicator) => {
-                return (indicator.name.toLowerCase().includes(this.searchIndicator.toLowerCase()))
-            })
+            if (this.activeComponentOption === 'Unused') {
+                return this.directIndicators.filter((indicator) => {
+                    return (indicator.question === null && indicator.name.toLowerCase().includes(this.searchIndicator.toLowerCase()))
+                })
+            }
+             return this.directIndicators.filter((indicator) => { return (indicator.name.toLowerCase().includes(this.searchIndicator.toLowerCase())) })
         }
     },
+    async created () {
+        this.fetchData()
+    },
     methods: {
+        ...mapActions('directIndicator', ['fetchDirectIndicators']),
+        async fetchData () {
+            await this.fetchDirectIndicators({ mId: this.$route.params.id })
+        },
         startDrag (evt, item) {
             console.log(item)
             evt.dataTransfer.dropEffect = 'move'
@@ -74,6 +93,7 @@ export default {
                 item = JSON.stringify(item)
             }
             evt.dataTransfer.setData('draggedItem', item)
+            this.directIndicators = this.directIndicators.filter(indicator => indicator.id !== item.id)
         }
     }
 }

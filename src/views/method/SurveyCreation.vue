@@ -3,14 +3,13 @@
         <div class="p-d-flex p-flex-column p-jc-between" style="height: calc(100vh - 190px;); width: 300px; border: 1px solid lightgrey;">
             <survey-tree-side-bar style="height: 100%;" />
         </div>
-        {{items}} {{sections}} {{questions}}
         <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; text-align: center; overflow-y: scroll;">
             <div class="p-m-5 p-text-left p-fluid" style="width: 1200px;">
                 <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #fcfcfc; border: 1px solid lightgrey;">
-                    <sectioon-form :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" />
+                    <sectioon-form :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" @delete="removeSection" />
                     <div v-for="(sectionChild, index) in section.children" :key="index" class="p-m-5">
                         {{sectionChild}}
-                        <question-form ref="items" :question="sectionChild" :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id" @input="saveActive(sectionChild.objType, $event)" @click="toggleActive(sectionChild)" />
+                        <question-form ref="items" :question="sectionChild" :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id" @input="saveActive(sectionChild.objType, $event)" @click="toggleActive(sectionChild)" @delete="removeQuestion(section, question)" />
                     </div>
                     <div class="addQuestion" @click="addQuestion(section)"><i class="pi pi-plus" /> Add Question</div>
                 </div>
@@ -103,6 +102,7 @@ export default {
             }
         },
         saveActive (type, object) {
+            console.log(this.section.name)
             if (object.target) { return }
             if (type === 'section') {
                 this.updateSection({
@@ -129,6 +129,17 @@ export default {
             }
             if (objType === 'question') {
                 this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: 0, id: id })
+            }
+        },
+        removeSection (section) {
+            this.deleteSection({ mId: this.method.id, sId: this.survey.id, id: section.id })
+            this.initialize()
+        },
+        async removeQuestion (...args) {
+            const [section, question] = [...args]
+            console.log('event:', section, 'question:', question)
+            if (section?.id && question?.id) {
+                await this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: section.id, id: question.id })
             }
         }
     }
