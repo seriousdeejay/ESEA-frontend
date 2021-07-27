@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-ai-center p-m-0" style="height: 40px;">
         <div v-if="assignment" class="p-d-flex p-ai-center p-mx-2">
-            <p class="">{{ indirectIndicator.key }}</p>
+            <p class="">{{ indirectIndicator.key || 'indicator_value' }}</p>
             <p class="p-mx-2" style="font-size: 30px;">=</p>
 
         </div>

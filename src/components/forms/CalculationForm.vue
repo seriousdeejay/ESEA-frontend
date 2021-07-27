@@ -1,14 +1,15 @@
 <template>
-    <div class="p-grid p-m-5 p-px-2 p-d-flex p-ai-center" :style="cssProps">
-        <!-- <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i> -->
-        <form ref="form" class="p-grid p-col-12 p-fluid p-input-filled">
+    <div class="" >
+        <!-- <i class="pi pi-percentage p-col-1 p-text-center" style="fontSize: 3rem; color: grey;"></i> p-grid p-m-5 p-px-2 p-d-flex p-ai-center -->
+        <form v-if="active" ref="form" class="p-grid p-fluid p-input-filled p-m-3 p-px-5 p-pb-3 p-text-center" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '':'border: 2px solid rgba(255, 0, 0, 0.3)', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
+            {{v$.lazyIndirectIndicator.$invalid}} {{lazyIndirectIndicator}} {{errors}}
             <div class="p-d-flex p-col-12">
-            <h3 class="p-col-11 p-text-center">Indirect Indicator</h3>
-            <div class="p-col p-d-flex p-ai-center p-jc-end">
-                <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeIndicator()" />
-                <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
+                <h3 class="p-col p-text-cente">Indirect Indicator</h3>
+                <div class="p-d-flex p-ai-center p-jc-end">
+                    <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeIndicator()" />
+                    <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
+                </div>
             </div>
-        </div>
             <div class="p-grid p-col-12 p-mx-0 p-px-0 p-text-left">
                 <div class="p-col-6 p-field p-my-2">
                     <span class="p-float-label">
@@ -18,7 +19,7 @@
                     <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error">{{error}}</div>
                 </div>
                 <div class="p-col-6 p-field p-my-2">
-                     <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" class="p-text-center" />
+                    <Dropdown v-model="formulaType" :options="formulaTypeOptions" optionLabel="type" optionValue="type" placeholder="Select Formula Type" class="p-text-center" />
                 </div>
                 <div class="p-col-12 p-field p-my-2">
                     <span class="p-float-label">
@@ -35,17 +36,17 @@
                 </span>
             </div>
 
-    <div  v-if="active" class="p-col-12">
-        <p class="p-mr-3">Formula</p>
-        <Divider />
-        <expression-form v-if="formulaType === 'Calculation'" :formula="lazyIndirectIndicator.formula" :assignment="true" @expression="updateFormula" />
-         <formula-form-3 v-if="formulaType === 'Conditionals'" />
-         <div v-if="(formulaType === 'Average' || formulaType === 'Sum')" class="p-d-flex p-ai-center p-ml-5">
-            <span v-if="formulaType === 'Average'">Average of</span><span v-if="formulaType === 'Sum'">Sum of</span>
-            <Dropdown id="questionuicomponent" class="p-ml-2" v-model="indicator" :options="indicators" optionLabel="key" optionValue="key" placeholder="Select Indicator"  />
-        </div>
-        <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
-    </div>
+            <div  v-if="active" class="p-col-12">
+                <p class="p-mr-3">Formula</p>
+                <Divider />
+                <expression-form v-if="formulaType === 'Calculation'" :formula="lazyIndirectIndicator.formula" :assignment="true" @expression="updateFormula" />
+                <formula-form-3 v-if="formulaType === 'Conditionals'" />
+                <div v-if="(formulaType === 'Average' || formulaType === 'Sum')" class="p-d-flex p-ai-center p-ml-5">
+                    <span v-if="formulaType === 'Average'">Average of</span><span v-if="formulaType === 'Sum'">Sum of</span>
+                    <Dropdown id="questionuicomponent" class="p-ml-2" v-model="indicator" :options="indicators" optionLabel="key" optionValue="key" placeholder="Select Indicator"  />
+                </div>
+                <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
+            </div>
     <!-- <formula-form-2 v-if="formulaType === 'Conditionals2'" class="p-col-12 p-m-2" /> -->
     <!-- <div id="formulaform" class="p-col-12"><formula-form :type="formulaType" :indicatorkey="lazyIndirectIndicator.key" /></div> -->
             <!-- <div class="p-col-12 p-field">
@@ -56,6 +57,7 @@
                 <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
             </div> -->
         </form>
+        <calculation-card v-if="!active" :keyy="indirectIndicator.key" :name="indirectIndicator.name" :formula="indirectIndicator.formula" :valid="valid" :hover="hover" @mouseover="hover=true" @mouseleave="hover=false" />
     </div>
 </template>
 
@@ -67,6 +69,7 @@ import { required, maxLength } from '../../utils/validators'
 import { isEqual, cloneDeep } from 'lodash'
 // import FormulaForm from '@/components/forms/FormulaForm'
 // import FormulaForm2 from '@/components/forms/FormulaForm2'
+import CalculationCard from '@/components/cards/CalculationCard'
 import FormulaForm3 from '@/components/forms/FormulaForm3'
 import ExpressionForm from '@/components/forms/ExpressionForm'
 import Dropdown from 'primevue/dropdown'
@@ -75,6 +78,7 @@ export default {
     components: {
         // FormulaForm,
         // FormulaForm2,
+        CalculationCard,
         FormulaForm3,
         ExpressionForm,
         Dropdown
@@ -112,13 +116,14 @@ export default {
                 { type: 'Average' },
                 { type: 'Sum' }
                 ],
-            indicator: null
+            indicator: null,
+            hover: false
         }
     },
     computed: {
         ...mapGetters('indirectIndicator', ['getValidIndirectIndicatorNumber']),
         ...mapState('directIndicator', ['directIndicators']),
-        ...mapState('indirectIndicator', ['indirectIndicators', 'indirectIndicator']),
+        ...mapState('indirectIndicator', ['indirectIndicators', 'indirectIndicator', 'errors']),
         indicators () {
             const selectableIndirectIndicators = this.indirectIndicators.filter(item => item.id !== this.indirectIndicator.id)
             return this.directIndicators.concat(selectableIndirectIndicators)
@@ -141,14 +146,17 @@ export default {
                 this.errors.formula
             )
         },
-        cssProps () {
-            const props = { border: '1px solid lightgrey' }
-            if (this.active) {
-                props.border = '2px solid #9ecaed'
-                props['background-color'] = '#f7f7f7' // '#d0dfff' // '#E1E8ED' // '#DFE3EE' // '#CCD6DD' // '#E1E8ED' // '#cfe0e8' // '#fbfbfb'
-            }
-            return props
+        valid () {
+            return (!this.v$.lazyIndirectIndicator.$invalid && (this.lazyIndirectIndicator.id > 0))
         }
+        // cssProps () {
+        //     const props = { border: '1px solid lightgrey' }
+        //     if (this.active) {
+        //         props.border = '2px solid #9ecaed'
+        //         props['background-color'] = '#f7f7f7' // '#d0dfff' // '#E1E8ED' // '#DFE3EE' // '#CCD6DD' // '#E1E8ED' // '#cfe0e8' // '#fbfbfb'
+        //     }
+        //     return props
+        // }
     },
     watch: {
         indirectIndicator (val) {
@@ -172,16 +180,17 @@ export default {
                 console.log('check3')
                 console.log('-------', val)
                 this.$emit('input', cloneDeep(val))
-                }, 200)
+                }, 500)
             },
             deep: true
         },
-        active (val) {
-            if (!val) {
-                this.v$.$touch()
-            } else {
-                this.$nextTick(() => this.$refs.input && this.$refs.input.focus())
-            }
+        active () {
+            this.v$.lazyIndirectIndicator.$touch()
+            // if (!val) {
+            //     this.v$.$touch()
+            // } else {
+            //     this.$nextTick(() => this.$refs.input && this.$refs.input.focus())
+            // }
         }
     },
     mounted () {

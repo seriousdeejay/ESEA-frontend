@@ -1,5 +1,12 @@
 <template>
     <form v-if="active" ref="form" class="p-fluid p-input-filled p-p-3" @submit.prevent="!v$.$invalid" :style="cssProps">
+        <div class="p-d-flex p-col-12">
+            <h3 class="p-col p-text-center">Topic</h3>
+            <div class="p-d-flex p-ai-center p-jc-end">
+                <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeTopic()" />
+                <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
+            </div>
+        </div>
         <div class="p-field">
             <span class="p-float-label">
                 <InputText id="topicname" ref="input" v-model="lazyTopic.name" :placeholder="nameLabel" :class="{'borderless': nameErrors.length }" @blur="updateName" />
@@ -126,6 +133,9 @@ export default {
         },
         updateDescription () {
             this.v$.lazyTopic.description.$touch()
+        },
+        removeTopic () {
+            this.$emit('delete', this.topic)
         }
     }
 }

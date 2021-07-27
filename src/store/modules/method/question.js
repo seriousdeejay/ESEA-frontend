@@ -81,6 +81,7 @@ export default {
 			state.question = question
 		},
 		setDebouncer (state, { id, commit }) {
+            console.log('hey')
 			state.debouncers[id] = debounce(
 				async ({ mId, SuId, SeId, question }) => {
                     console.log('+++++', question)
@@ -130,7 +131,14 @@ export default {
 			commit('deleteQuestion', payload)
         },
         updateQuestion ({ state, commit }, { mId, SuId, SeId, question }) {
-			console.log('yeeeee')
+			console.log('yeeeee', question)
+
+            // if (question.direct_indicator.length) {
+            //     const directIndicatorId = question.direct_indicator?.[0]?.id || question.direct_indicator?.[0]
+            //     question.direct_indicator = [directIndicatorId]
+            // } else {
+            //     question.direct_indicator = []
+            // }
 			if (!question || !mId) return
 			if (!state.debouncers[question.id]) {
 				commit('setDebouncer', { id: question.id, commit })
@@ -140,6 +148,7 @@ export default {
 			}
 			commit('setIsSaved', { id: question.id })
 			if (!question.name) return
+            console.log('naaay')
 			state.debouncers[question.id]({ mId, SuId, SeId, question })
 		},
 		setQuestion ({ state, commit }, { id } = {}) {

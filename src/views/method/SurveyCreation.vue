@@ -8,7 +8,6 @@
                 <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #fcfcfc; border: 1px solid lightgrey;">
                     <sectioon-form :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" @delete="removeSection" />
                     <div v-for="(sectionChild, index) in section.children" :key="index" class="p-m-5">
-                        {{sectionChild}}
                         <question-form ref="items" :question="sectionChild" :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id" @input="saveActive(sectionChild.objType, $event)" @click="toggleActive(sectionChild)" @delete="removeQuestion(section, question)" />
                     </div>
                     <div class="addQuestion" @click="addQuestion(section)"><i class="pi pi-plus" /> Add Question</div>
@@ -72,6 +71,7 @@ export default {
         ...mapActions('survey', ['fetchSurvey', 'updateSurvey', 'saveSurvey']),
         ...mapActions('section', ['fetchSections', 'createSection', 'setSection', 'updateSection', 'addNewSection', 'deleteSection']),
         ...mapActions('question', ['fetchQuestions', 'setQuestion', 'addNewQuestion', 'updateQuestion', 'deleteQuestion']),
+        ...mapActions('directIndicator', ['fetchDirectIndicators']),
         async initialize () {
             if (this.survey.id !== parseInt(this.$route.params.SurveyId)) {
                 this.$router.push({ name: 'method-wizard-surveys' })
@@ -101,24 +101,25 @@ export default {
                 this.setQuestion(item)
             }
         },
-        saveActive (type, object) {
-            console.log(this.section.name)
+        async saveActive (type, object) {
+            console.log(type, 'object', object)
             if (object.target) { return }
             if (type === 'section') {
-                this.updateSection({
+                await this.updateSection({
                     mId: this.method.id,
                     sId: this.survey.id,
                     section: object
                 })
             }
             if (type === 'question') {
-                this.updateQuestion({
+                await this.updateQuestion({
                     mId: this.method.id,
                     SuId: this.survey.id,
                     SeId: this.section.id,
                     question: object
                 })
             }
+            // await this.fetchDirectIndicators({ mId: this.method.id })
         },
         deleteActive () {
             const objType = this.activeItem.objType

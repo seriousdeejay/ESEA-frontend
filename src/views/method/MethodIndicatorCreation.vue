@@ -9,6 +9,16 @@
             </div>
         </div>
     </div>
+    <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 45%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
+        <div>
+            <div v-for="option in addBar" :key="option.choice" class="p-d-flex p-jc-center p-ai-center" style="height: 100px; width: 100px; border: 1px solid lightgrey" :style="(option.hover ? 'background-color: lightgrey;' : '')" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="addBarMethod(option.choice)">
+                <div>
+                    <i :class="option.icon? option.icon : 'pi pi-plus'" />
+                    <p class="p-text-italic p-m-2">{{option.choice}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 10%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
         <div>
             <div v-for="option in addBar" :key="option.choice" class="p-d-flex p-jc-center p-ai-center" style="height: 100px; width: 100px; border: 1px solid lightgrey" :style="(option.hover ? 'background-color: lightgrey;' : '')" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="addBarMethod(option.choice)">
@@ -106,6 +116,7 @@ export default {
         },
         toggleActive (item) {
             const { objType } = item
+            console.log('yeeeha', item)
             if (objType === 'indicator' && item.id !== this.activeDirectIndicator.id) {
                 this.setDirectIndicator(item)
                 this.setIndirectIndicator()

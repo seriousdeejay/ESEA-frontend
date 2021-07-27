@@ -1,8 +1,29 @@
 <template>
-    <div style="width: 400px;">
+    <div style="width: 400px; border-right: 1px solid lightgrey;" @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>
         <div class="p-d-flex p-mt-2">
-            <div v-for="item in libraryComponents" :key="item" class="p-col-6" style="font-size: 20px;" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':'border-bottom: 3px solid lightgrey;'" @click="activeComponentType = item">
+            <div v-for="item in libraryComponents" :key="item" class="p-col-4" style="font-size: 20px;" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':'border-bottom: 3px solid lightgrey;'" @click="activeComponentType = item">
                 {{item}}
+            </div>
+        </div>
+        <div v-if="activeComponentType === 'Indicators'" class="p-text-left">
+            <div class="p-m-2" style="height: 50px;">
+                    <div class="p-d-flex p-mt-2" style="">
+                    <div v-for="item in ComponentOptions" :key="item" class="p-col-4" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
+                        {{item}}
+                    </div>
+                </div>
+
+                <!-- <div v-if="!searchbarDirect" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarDirect = !searchbarDirect" @blur="searchbarDirect = false">
+                    <h3>Direct Indicators</h3><i class="pi pi-search" />
+                </div> -->
+                <span class="p-input-icon-left" style="width: 100%">
+                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchDirect" placeholder="Search Direct Indicators..." style="width: 100%;" />
+                </span>
+            </div>
+            <div class="p-mt-5" style="height: calc(100vh - 280px); overflow-y: scroll;">
+                <div v-for="indicator in filteredDirectIndicators" :key="indicator.id" class="directIndicators p-m-1" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(indicator.id === activeDirectIndicator?.id) ? 'background-color: #EEEEEE;':''"  @dragstart="startDrag($event, indicator)" @dragover.prevent @dragenter.prevent :draggable="true">
+                    {{indicator.key}}
+                </div>
             </div>
         </div>
         <div v-if="activeComponentType === 'Calculations'" class="p-text-left">
@@ -12,15 +33,15 @@
                         {{item}}
                     </div>
                 </div>
-                <div v-if="!searchbarCalculations" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarCalculations = !searchbarCalculations">
+                <!-- <div v-if="!searchbarCalculations" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarIndirect = !searchbarIndirect">
                     <h3>Indicators</h3><i class="pi pi-search" />
-                </div>
-                <span v-else class="p-input-icon-left" style="width: 100%">
-                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchCalculation" @blur="checkSearchbarContentQuestion" placeholder="Search Indirect Indicators..." style="width: 100%;" />
+                </div> -->
+                <span class="p-input-icon-left" style="width: 100%">
+                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchIndirect" placeholder="Search Indirect Indicators..." style="width: 100%;" />
                 </span>
             </div>
-            <div class="p-mt-5" style="height: calc(100vh - 350px); overflow-y: scroll;">
-                <div v-for="calculation in filteredIndirectIndicators" :key="calculation.id" class="questions p-px-3" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(calculation.id === active?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
+            <div class="p-mt-5" style="height: calc(100vh - 280px); overflow-y: scroll;">
+                <div v-for="calculation in filteredIndirectIndicators" :key="calculation.id" class="questions p-px-3 p-m-1" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(calculation.id === activeIndirectIndicator?.id) ? 'background-color: #EEEEEE;':''" @dragstart="startDrag($event, calculation)" @dragover.prevent @dragenter.prevent :draggable="true">
                     {{calculation.name}}
                 </div>
             </div>
@@ -30,40 +51,23 @@
                 </div>
             </div> -->
         </div>
-         <!-- <div v-if="activeComponentType === 'Indicators'" class="p-text-left"> </div>
-            <div class="p-m-2" style="height: 50px;"> -->
-                <div v-if="activeComponentType === 'Indicators'" class="p-text-left">
-                <div class="p-m-2" style="height: 50px;">
-                     <div class="p-d-flex p-mt-2" style="">
-                        <div v-for="item in ComponentOptions" :key="item" class="p-col-4" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
-                            {{item}}
-                        </div>
-                    </div>
-
-                    <div v-if="!searchbarIndicators" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarIndicators = !searchbarIndicators" @blur="searchbarIndicators = false">
-                        <h3>Direct Indicators</h3><i class="pi pi-search" />
-                    </div>
-                <span v-else class="p-input-icon-left" style="width: 100%">
-                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchIndicator" @blur="checksSearchbarContentIndicator" placeholder="Search Direct Indicators..." style="width: 100%;" />
+        <div v-if="activeComponentType === 'Topics'" class="p-text-left">
+            <div class="p-m-1" style="height: 50px;">
+                <!-- <div v-if="!searchbarQuestions" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarQuestions = !searchbarQuestions">
+                    <h3>Questions</h3><i class="pi pi-search" />
+                </div> -->
+                <span class="p-input-icon-left" style="width: 100%">
+                    <i class="pi pi-search" /><InputText ref="searchbarTopics" v-model="searchTopic" @blur="checkSearchbarContentQuestion" placeholder="Search Topics..." style="width: 100%;" />
                 </span>
             </div>
-            <div class="p-mt-5" style="height: calc(100vh - 280px); overflow-y: scroll;">
-                <div v-for="indicator in filteredDirectIndicators" :key="indicator.id" class="directIndicators" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;"  @dragstart="startDrag($event, indicator)" @dragover.prevent @dragenter.prevent :draggable="true">
-                    {{indicator.key}}
+            <div style="height: calc(100vh - 350px); overflow-y: scroll;">
+                <div v-for="topic in filteredTopics" :key="topic.id" class="questions p-px-3 p-m-2" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(topic.id === activeTopic?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
+                    {{topic.name}}
                 </div>
             </div>
         </div>
-
-        <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 45%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
-            <div>
-                <div v-for="option in addBar" :key="option.choice" class="p-d-flex p-jc-center p-ai-center" style="height: 100px; width: 100px; border: 1px solid lightgrey" :style="(option.hover ? 'background-color: lightgrey;' : '')" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="addBarMethod(option.choice)">
-                    <div>
-                        <i :class="option.icon? option.icon : 'pi pi-plus'" />
-                        <p class="p-text-italic p-m-2">{{option.choice}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+         <!-- <div v-if="activeComponentType === 'Indicators'" class="p-text-left"> </div>
+            <div class="p-m-2" style="height: 50px;"> -->
     </div>
     <!-- <div v-for="question in methodQuestions" :key="question.id">
         {{question.name}}
@@ -85,14 +89,18 @@ export default {
     },
     data () {
         return {
-            libraryComponents: ['Indicators', 'Calculations'],
+            libraryComponents: ['Indicators', 'Calculations', 'Topics'],
             ComponentOptions: ['Unused', 'Used', 'All'],
-            activeComponentType: 'Calculations',
+            activeComponentType: 'Indicators',
             activeComponentOption: 'Unused',
             searchbarCalculations: true,
-            searchQuestion: '',
             searchbarIndicators: true,
-            searchIndicator: '',
+            searchbarDirect: false,
+            searchbarIndirect: false,
+            searchbarTopic: false,
+            searchDirect: '',
+            searchIndirect: '',
+            searchTopic: '',
             indicatorss: [
                 { key: 'indicator_1' },
                 { key: 'indicator_2' },
@@ -102,18 +110,14 @@ export default {
             addBar: [
                     { choice: 'indicator' },
                     { choice: 'calculation' }
-                ],
-            searchbarDirect: false,
-            searchbarIndirect: false,
-            searchDirect: '',
-            searchIndirect: ''
+                ]
             // selectedKey1: null,
             // expandedKeys: {}
         }
     },
     computed: {
         ...mapState('method', ['method']),
-        ...mapState('topic', { activeTopic: 'topic' }),
+        ...mapState('topic', { topics: 'topics', activeTopic: 'topic' }),
         ...mapState('question', { activeQuestion: 'question', methodQuestions: 'questions' }),
         ...mapState('directIndicator', { activeDirectIndicator: 'directIndicator', directIndicators: 'directIndicators' }),
 		...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicators: 'indirectIndicators' }),
@@ -121,10 +125,18 @@ export default {
         ...mapGetters('topic', ['methodTopics', 'subTopics']),
 		...mapGetters('question', { topicQuestions: 'topicQuestions' }),
 		...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
+        filteredTopics () {
+            return this.topics.filter((topic) => { return (topic.name.toLowerCase().includes(this.searchTopic.toLowerCase())) })
+        },
         filteredDirectIndicators () {
-            return this.directIndicators.filter((indicator) => {
-                return (indicator.key?.toLowerCase().includes(this.searchDirect.toLowerCase()))
-            })
+            const directindicators = this.directIndicators.filter((indicator) => { return (indicator.key?.toLowerCase().includes(this.searchDirect.toLowerCase())) })
+            if (this.activeComponentOption === 'Unused') {
+                return directindicators.filter(indicator => !(indicator.topic > 0))
+            } else if (this.activeComponentOption === 'Used') {
+                return directindicators.filter(indicator => indicator.topic > 0)
+            } else {
+                return directindicators
+            }
         },
         filteredIndirectIndicators () {
             if (this.indirectIndicators.length) {
@@ -162,39 +174,37 @@ export default {
     //     }
     },
     watch: {
-        activeItem () {
-            if (this.activeQuestion.id) {
-				this.itemsOpen.push(`topic_${this.activeQuestion.topic}`)
-			}
-			if (this.activeIndirectIndicator.id) {
-				this.itemsOpen.push(`topic_${this.activeIndirectIndicator.topic}`)
-			}
-			if (this.activeTopic.parent_topic) {
-				this.itemsOpen.push(`topic_${this.activeTopic.parent_topic}`)
-			}
-        },
-        searchbarDirect (val) {
-            if (val) {
-                this.$nextTick(() => this.$refs.searchbardirect.$el.focus())
-            }
-        },
-        searchbarIndirect (val) {
-            if (val) {
-                this.$nextTick(() => this.$refs.searchbarindirect.$el.focus())
-            }
-        }
+        // activeItem () {
+        //     if (this.activeQuestion.id) {
+		// 		this.itemsOpen.push(`topic_${this.activeQuestion.topic}`)
+		// 	}
+		// 	if (this.activeIndirectIndicator.id) {
+		// 		this.itemsOpen.push(`topic_${this.activeIndirectIndicator.topic}`)
+		// 	}
+		// 	if (this.activeTopic.parent_topic) {
+		// 		this.itemsOpen.push(`topic_${this.activeTopic.parent_topic}`)
+		// 	}
+        // }
+        // searchbarDirect (val) {
+        //     if (val) {
+        //         this.$nextTick(() => this.$refs.searchbardirect.$el.focus())
+        //     }
+        // },
+        // searchbarIndirect (val) {
+        //     if (val) {
+        //         this.$nextTick(() => this.$refs.searchbarindirect.$el.focus())
+        //     }
+        // }
     },
     crated () {
         this.fetchItems()
     },
     methods: {
-        ...mapActions('topic', ['setTopic']),
+        ...mapActions('topic', ['setTopic', 'patchTopic']),
 		...mapActions('question', ['fetchQuestions', 'setQuestion']),
-		...mapActions('indirectIndicator', [
-			'setIndirectIndicator',
-			'updateIndirectIndicator'
-		]),
-          startDrag (evt, item) {
+        ...mapActions('directIndicator', ['fetchDirectIndicators']),
+		...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'updateIndirectIndicator']),
+        startDrag (evt, item) {
             console.log(item)
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
@@ -202,10 +212,28 @@ export default {
                 item = JSON.stringify(item)
             }
             evt.dataTransfer.setData('draggedItem', item)
-            this.directIndicators = this.directIndicators.filter(indicator => indicator.id !== item.id)
+            // this.directIndicators = this.directIndicators.filter(indicator => indicator.id !== item.id)
+        },
+        async onDrop (evt) {
+            const myitem = evt.dataTransfer.getData('draggedItem')
+            const parseditem = JSON.parse(myitem)
+            if (!parseditem.id) { return }
+            console.log('-->', parseditem)
+            if (parseditem.objType === 'indicator') {
+                const topicIndicators = this.directIndicators.filter(indicator => (indicator.topic === parseditem.topic && indicator.id !== parseditem.id))
+                const ids = topicIndicators.map(indicator => indicator.id)
+                await this.patchTopic({ mId: this.method.id, id: parseditem.topic, data: { direct_indicators: ids } })
+            } else if (parseditem.objType === 'calculation') {
+                const topicIndirectIndicators = this.indirectIndicators.filter(indicator => (indicator.topic === parseditem.topic && indicator.id !== parseditem.id))
+                const ids = topicIndirectIndicators.map(indicator => indicator.id)
+                await this.patchTopic({ mId: this.method.id, id: parseditem.topic, data: { indirect_indicators: ids } })
+            }
+            this.fetchItems()
         },
         async fetchItems () {
             await this.fetchQuestions({ mId: this.method.id, SuId: 0, SeId: 0 })
+            await this.fetchDirectIndicators({ mId: this.method.id })
+            await this.fetchIndirectIndicators({ mId: this.method.id })
         },
         activateItem (item) {
             console.log('ss', item)
@@ -233,17 +261,17 @@ export default {
 					formula: `${this.activeIndirectIndicator.formula} [${item.key}]`
 				}
 			})
-        },
-        checkSearchbarContentDirect () {
-            if (this.searchDirect === '') {
-                this.searchbarDirect = false
-            }
-        },
-        checkSearchbarContentIndirect () {
-            if (this.searchIndirect === '') {
-                this.searchbarIndirect = false
-            }
         }
+        // checkSearchbarContentDirect () {
+        //     if (this.searchDirect === '') {
+        //         this.searchbarDirect = false
+        //     }
+        // },
+        // checkSearchbarContentIndirect () {
+        //     if (this.searchIndirect === '') {
+        //         this.searchbarIndirect = false
+        //     }
+        // }
         // expandAll () {
         //     for (const node of this.items) {
         //         this.expandNode(node)

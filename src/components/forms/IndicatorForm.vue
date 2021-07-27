@@ -1,9 +1,9 @@
 <template>
-<form ref="form" class="p-grid p-m-5 p-px-5 p-pb-3 p-fluid p-input-filled" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (!v$.lazyIndicator.$invalid && lazyIndicator.id > 0) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);']" style="background-color: #F2F2F2;">
-    <!-- {{lazyIndicator}} {{v$.lazyIndicator.$invalid}} --> {{lazyIndicator === directIndicator}}
+<div>
+    <form v-if="active" ref="form" class="p-grid p-m-3 p-px-5 p-pb-3 p-fluid" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
         <div class="p-d-flex p-col-12">
-            <h3 class="p-col-11 p-text-center">Direct Indicator</h3>
-            <div class="p-col p-d-flex p-ai-center p-jc-end">
+            <h3 class="p-col p-text-center">Direct Indicator</h3>
+            <div class="p-d-flex p-ai-center p-jc-end">
                 <i class="pi pi-trash p-mx-5" style="font-size: 30px; color: red; cursor: pointer;" @click="removeIndicator()" />
                 <i class="pi pi-ellipsis-v" style="font-size: 30px; cursor: not-allowed;" />
             </div>
@@ -54,9 +54,12 @@
             </div>
         </div>
    </form>
+   <indicator-card v-if="!active" :keyy="directIndicator.key" :datatype="directIndicator.datatype" :name="directIndicator.name" :valid="valid" :hover="hover" @mouseover="hover=true" @mouseleave="hover=false" />
+   </div>
 </template>
 
 <script>
+import IndicatorCard from '@/components/cards/IndicatorCard/'
 import { isEqual, cloneDeep } from 'lodash'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import useVuelidate from '@vuelidate/core'
@@ -68,6 +71,7 @@ import { DATA_TYPES } from '@/utils/constants'
 
 export default {
     components: {
+        IndicatorCard,
         OptionForm,
         Dropdown
     },
@@ -91,7 +95,8 @@ export default {
     data () {
         return {
             lazyIndicator: cloneDeep(this.directIndicator || {}),
-            dataTypes: DATA_TYPES
+            dataTypes: DATA_TYPES,
+            hover: false
             // active: true
         }
     },
@@ -112,6 +117,9 @@ export default {
         },
         nameErrors () {
             return HandleValidationErrors(this.v$.lazyIndicator.name, this.errors.name)
+        },
+        valid () {
+            return (!this.v$.lazyIndicator.$invalid && (this.lazyIndicator.id > 0))
         }
     },
     watch: {
@@ -119,7 +127,7 @@ export default {
             handler (val) {
                 setTimeout(() => {
                     console.log('change it up')
-                     // if (isEqual(this.lazyIndicator, val)) { return }
+                    if (isEqual(this.lazyIndicator, val)) { return }
                     this.lazyIndicator = cloneDeep(val)
                 }, 200)
             },
@@ -128,14 +136,18 @@ export default {
         lazyIndicator: {
             handler (val) {
                 setTimeout(() => {
+                    console.log(this.v$.lazyIndicator.$invalid)
                     this.v$.lazyIndicator.$touch()
                     if (this.v$.$invalid) { return }
                     if (isEqual(this.directIndicator, val)) { return }
                     console.log('saving Indicator...')
                     this.$emit('input', val)
-                }, 200)
+                }, 500)
             },
             deep: true
+        },
+        active () {
+            this.v$.lazyIndicator.$touch()
         }
     },
     mounted () {

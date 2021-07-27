@@ -75,15 +75,6 @@ export default {
             commit('updateNetwork', { ...response, id })
             commit('setNetwork', response)
         },
-        async deleteNetwork ({ commit, dispatch }, payload) {
-            const { error } = await NetworkService.delete(payload)
-            if (error) {
-                commit('setError', { error })
-                return
-            }
-            commit('deleteNetwork', payload)
-            dispatch('setNetwork', {})
-        },
         async patchNetwork ({ state, commit }, payload) {
             const id = parseInt(state.network.id)
             console.log('LLL', payload)
@@ -95,6 +86,15 @@ export default {
             commit('updateNetwork', { ...response, id })
             commit('setNetwork', response)
             // commit('deleteNetworkOrganisations', payload)
+        },
+        async deleteNetwork ({ commit, dispatch }, payload) {
+            const { error } = await NetworkService.delete(payload)
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            commit('deleteNetwork', payload)
+            dispatch('setNetwork', {})
         },
         setNetwork ({ state, commit }, { id }) {
             if (id) {

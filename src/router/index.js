@@ -518,6 +518,14 @@ const routes = [
                 }
             },
             {
+                path: '/methods/:id/topic-creation',
+                name: 'method-topic-creation',
+                component: () => import('../views/method/MethodTopicCreation'),
+                meta: {
+                requiresLogin: true
+                }
+            },
+            {
                 path: '/methods/:id/method-design',
                 name: 'method-create',
                 component: () => import('../views/method/MethodCreate'),

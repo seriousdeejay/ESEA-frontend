@@ -134,6 +134,16 @@ export default {
             if (!topic.name) { return }
             state.debouncers[topic.id]({ mId, topic })
         },
+        async patchTopic ({ commit }, { mId, id, data }) {
+            console.log('LLL', data)
+            const { response, error } = await TopicService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            commit('updateList', { id: id, data: response.data })
+            // commit('setTopic', response)
+        },
         async deleteTopic ({ commit }, payload) {
             if (payload.id > 0) {
                 const { error } = await TopicService.delete(payload)

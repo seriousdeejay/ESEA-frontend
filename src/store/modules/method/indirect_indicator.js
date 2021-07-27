@@ -31,6 +31,9 @@ export default {
     },
     mutations: {
         setIndirectIndicators (state, { data }) {
+            if (data.length) {
+                data.forEach(indicator => { indicator.objType = 'direct_indicator' })
+            }
             state.indirectIndicators = data || {}
             state.debouncers = {}
             state.errors = {}
@@ -56,8 +59,8 @@ export default {
                 return Object.assign(item, data)
             })
         },
-        addNewIndirectIndicator (state, { topic }) {
-            const indirectIndicator = { ...baseIndirectIndicator, id: random(-1000000, -1), topic }
+        addNewIndirectIndicator (state) {
+            const indirectIndicator = { ...baseIndirectIndicator, id: random(-1000000, -1) }
             state.indirectIndicators.push(indirectIndicator)
             state.indirectIndicator = indirectIndicator
         },
@@ -83,12 +86,15 @@ export default {
             }
         },
         setError (state, { error, id }) {
-            console.log(error?.response?.data)
+            console.log(id, '--', error?.response?.data)
             if (id && error?.response?.data) {
                 state.errors = { ...state.errors, [id]: error?.response?.data }
                 return
             }
             state.error = error
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {
@@ -102,6 +108,10 @@ export default {
             commit('setIndirectIndicators', response)
         },
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
+        if (indirectIndicator.topic === null) {
+            delete indirectIndicator.topic
+        }
+            commit('clearError')
             delete state.errors[indirectIndicator.id]
             console.log('eeee')
           if (!indirectIndicator || !mId) { return }
@@ -117,6 +127,16 @@ export default {
           commit('setIsSaved', { id: indirectIndicator.id })
           if (!indirectIndicator.name) { return }
           state.debouncers[indirectIndicator.id]({ mId, indirectIndicator })
+        },
+        async patchIndirectIndicator ({ commit }, { mId, id, data }) {
+            console.log('LLL', data)
+            const { response, error } = await IndirectIndicatorService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            commit('updateList', { id: id, data: response.data })
+            commit('setIndirectIndicator', response)
         },
         async deleteIndirectIndicator ({ commit }, payload) {
             if (payload.id > 0) {

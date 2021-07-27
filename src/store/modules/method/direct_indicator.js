@@ -24,6 +24,9 @@ export default {
     },
     mutations: {
         setDirectIndicators (state, { data }) {
+            if (data.length) {
+                data.forEach(indicator => { indicator.objType = 'direct_indicator' })
+            }
             state.directIndicators = data || {}
             state.debouncers = {}
             state.errors = {}
@@ -102,21 +105,20 @@ export default {
             console.log(response.data)
             commit('setDirectIndicators', response)
         },
-        // async fetchDirectIndicator ({ commit }, payload) {
-        //     const { response, error } = await DirectIndicatorService.get(payload)
-        // }
-        async deleteDirectIndicator ({ commit }, payload) {
-            console.log('deleting item...')
-            if (payload.id > 0) {
-                const { error } = await DirectIndicatorService.delete(payload)
-                if (error) {
-                    commit('setError', { error })
-                    return
-                }
+        async patchDirectIndicator ({ commit }, { mId, id, data }) {
+            console.log('LLL', data)
+            const { response, error } = await DirectIndicatorService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })
+            if (error) {
+                commit('setError', { error })
+                return
             }
-            commit('deleteDirectIndicator', payload)
+            commit('updateList', { id: id, data: response.data })
+            commit('setDirectIndicator', response)
         },
         updateDirectIndicator ({ state, commit }, { mId, directIndicator }) {
+            if (directIndicator.topic === null) {
+                delete directIndicator.topic
+            }
             console.log('saving indicator (direct_indicator.js)')
             if (!directIndicator || !mId) { return }
             if (!state.debouncers[directIndicator.id]) {
@@ -128,6 +130,17 @@ export default {
             commit('setIsSaved', { id: directIndicator.id })
             if (!directIndicator.name || !directIndicator.key) { return }
             state.debouncers[directIndicator.id]({ mId, directIndicator })
+        },
+        async deleteDirectIndicator ({ commit }, payload) {
+            console.log('deleting item...')
+            if (payload.id > 0) {
+                const { error } = await DirectIndicatorService.delete(payload)
+                if (error) {
+                    commit('setError', { error })
+                    return
+                }
+            }
+            commit('deleteDirectIndicator', payload)
         },
         setDirectIndicator ({ state, commit }, { id } = {}) {
             const data = state.directIndicators.find(indicator => indicator.id === id)
