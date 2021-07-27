@@ -5,114 +5,31 @@
                 {{item}}
             </div>
         </div>
-        <div v-if="activeComponentType === 'Indicators'" class="p-text-left">
-            <div class="p-m-2" style="height: 50px;">
-                    <div class="p-d-flex p-mt-2" style="">
-                    <div v-for="item in ComponentOptions" :key="item" class="p-col-4" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
-                        {{item}}
-                    </div>
-                </div>
-
-                <!-- <div v-if="!searchbarDirect" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarDirect = !searchbarDirect" @blur="searchbarDirect = false">
-                    <h3>Direct Indicators</h3><i class="pi pi-search" />
-                </div> -->
-                <span class="p-input-icon-left" style="width: 100%">
-                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchDirect" placeholder="Search Direct Indicators..." style="width: 100%;" />
-                </span>
-            </div>
-            <div class="p-mt-5" style="height: calc(100vh - 280px); overflow-y: scroll;">
-                <div v-for="indicator in filteredDirectIndicators" :key="indicator.id" class="directIndicators p-m-1" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(indicator.id === activeDirectIndicator?.id) ? 'background-color: #EEEEEE;':''"  @dragstart="startDrag($event, indicator)" @dragover.prevent @dragenter.prevent :draggable="true">
-                    {{indicator.key}}
-                </div>
-            </div>
-        </div>
-        <div v-if="activeComponentType === 'Calculations'" class="p-text-left">
-            <div class="p-m-2" style="height: 50px;">
-                 <div class="p-d-flex p-mt-2" style="">
-                    <div v-for="item in ComponentOptions" :key="item" class="p-col-4" style="font-size: 14px;" :style="(item === activeComponentOption) ? 'border-bottom: 1px solid #00695C; font-size;':'border-bottom: 1px solid lightgrey;'" @click="activeComponentOption = item">
-                        {{item}}
-                    </div>
-                </div>
-                <!-- <div v-if="!searchbarCalculations" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarIndirect = !searchbarIndirect">
-                    <h3>Indicators</h3><i class="pi pi-search" />
-                </div> -->
-                <span class="p-input-icon-left" style="width: 100%">
-                    <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchIndirect" placeholder="Search Indirect Indicators..." style="width: 100%;" />
-                </span>
-            </div>
-            <div class="p-mt-5" style="height: calc(100vh - 280px); overflow-y: scroll;">
-                <div v-for="calculation in filteredIndirectIndicators" :key="calculation.id" class="questions p-px-3 p-m-1" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(calculation.id === activeIndirectIndicator?.id) ? 'background-color: #EEEEEE;':''" @dragstart="startDrag($event, calculation)" @dragover.prevent @dragenter.prevent :draggable="true">
-                    {{calculation.name}}
-                </div>
-            </div>
-            <!-- <div style="height: calc(100vh - 350px); overflow-y: scroll;">
-                <div v-for="question in filteredQuestions" :key="question.id" class="questions p-px-3" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(question.id === activeQuestion?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
-                    {{question.name}}
-                </div>
-            </div> -->
-        </div>
-        <div v-if="activeComponentType === 'Topics'" class="p-text-left">
-            <div class="p-m-1" style="height: 50px;">
-                <!-- <div v-if="!searchbarQuestions" class="p-px-3 p-d-flex p-jc-between p-ai-center" @click="searchbarQuestions = !searchbarQuestions">
-                    <h3>Questions</h3><i class="pi pi-search" />
-                </div> -->
-                <span class="p-input-icon-left" style="width: 100%">
-                    <i class="pi pi-search" /><InputText ref="searchbarTopics" v-model="searchTopic" @blur="checkSearchbarContentQuestion" placeholder="Search Topics..." style="width: 100%;" />
-                </span>
-            </div>
-            <div style="height: calc(100vh - 350px); overflow-y: scroll;">
-                <div v-for="topic in filteredTopics" :key="topic.id" class="questions p-px-3 p-m-2" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;" :style="(topic.id === activeTopic?.id) ? 'background-color: #EEEEEE;':''" :draggable="true">
-                    {{topic.name}}
-                </div>
-            </div>
-        </div>
-         <!-- <div v-if="activeComponentType === 'Indicators'" class="p-text-left"> </div>
-            <div class="p-m-2" style="height: 50px;"> -->
+        <method-sidebar-component v-if="activeComponentType === 'Indicators'" :items="filteredDirectIndicators" :active-item="activeDirectIndicator" v-model:searchbar="searchbar" item-type="direct" />
+        <method-sidebar-component v-if="activeComponentType === 'Calculations'" :items="filteredIndirectIndicators" :active-item="activeIndirectIndicator" v-model:searchbar="searchbar" item-type="indirect" />
+        <method-sidebar-component v-if="activeComponentType === 'Topics' && topicsdisplay" :items="filteredTopics" :active-item="activeTopic" v-model:searchbar="searchbar" item-type="topic" />
     </div>
-    <!-- <div v-for="question in methodQuestions" :key="question.id">
-        {{question.name}}
-    </div> -->
-    <!-- {{selectedKey1}}
-    {{items}} -->
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-// import getMethodItems from '../utils/getMethodItems'
-// import Tree from 'primevue/tree'
-// import TreeSelect from 'primevue/treeselect'
+import MethodSidebarComponent from '@/components/MethodSidebarComponent'
 
 export default {
     components: {
-        // Tree
-        // TreeSelect
+        MethodSidebarComponent
+    },
+    props: {
+        topicsdisplay: {
+            type: Boolean,
+            default: false
+        }
     },
     data () {
         return {
             libraryComponents: ['Indicators', 'Calculations', 'Topics'],
-            ComponentOptions: ['Unused', 'Used', 'All'],
             activeComponentType: 'Indicators',
-            activeComponentOption: 'Unused',
-            searchbarCalculations: true,
-            searchbarIndicators: true,
-            searchbarDirect: false,
-            searchbarIndirect: false,
-            searchbarTopic: false,
-            searchDirect: '',
-            searchIndirect: '',
-            searchTopic: '',
-            indicatorss: [
-                { key: 'indicator_1' },
-                { key: 'indicator_2' },
-                { key: 'indicator_3' },
-                { key: 'indicator_4' }
-            ],
-            addBar: [
-                    { choice: 'indicator' },
-                    { choice: 'calculation' }
-                ]
-            // selectedKey1: null,
-            // expandedKeys: {}
+            searchbar: ''
         }
     },
     computed: {
@@ -126,10 +43,10 @@ export default {
 		...mapGetters('question', { topicQuestions: 'topicQuestions' }),
 		...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
         filteredTopics () {
-            return this.topics.filter((topic) => { return (topic.name.toLowerCase().includes(this.searchTopic.toLowerCase())) })
+            return this.topics.filter((topic) => { return (topic.name.toLowerCase().includes(this.searchbar.toLowerCase())) })
         },
         filteredDirectIndicators () {
-            const directindicators = this.directIndicators.filter((indicator) => { return (indicator.key?.toLowerCase().includes(this.searchDirect.toLowerCase())) })
+            const directindicators = this.directIndicators.filter((indicator) => { return (indicator.key?.toLowerCase().includes(this.searchbar.toLowerCase())) })
             if (this.activeComponentOption === 'Unused') {
                 return directindicators.filter(indicator => !(indicator.topic > 0))
             } else if (this.activeComponentOption === 'Used') {
@@ -141,79 +58,21 @@ export default {
         filteredIndirectIndicators () {
             if (this.indirectIndicators.length) {
             return this.indirectIndicators.filter((indicator) => {
-                return (indicator.key?.toLowerCase().includes(this.searchIndirect.toLowerCase()))
+                return (indicator.key?.toLowerCase().includes(this.searchbar.toLowerCase()))
             })
             } else { return [] }
         }
-		// items () {
-        //     const data = getMethodItems(this.methodTopics,
-		// 		this.subTopics,
-		// 		this.topicQuestions,
-		// 		this.topicIndirectIndicators)
-        //     if (data?.length) {
-        //         for (const topic of data) {
-        //             topic.label = topic.name
-        //             if (topic?.children?.length) {
-        //                 for (const subtopic of topic?.children) {
-        //                     subtopic.label = subtopic.name
-        //                     if (subtopic?.children?.length) {
-        //                     for (const indicator of subtopic?.children) {
-        //                         indicator.label = indicator.name
-        //                         if (indicator.objType === 'calculation') {
-        //                             indicator.icon = 'pi pi-percentage'
-        //                         } else {
-        //                             indicator.icon = 'pi pi-pencil'
-        //                         }
-        //                     }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     return data
-    //     }
     },
     watch: {
-        // activeItem () {
-        //     if (this.activeQuestion.id) {
-		// 		this.itemsOpen.push(`topic_${this.activeQuestion.topic}`)
-		// 	}
-		// 	if (this.activeIndirectIndicator.id) {
-		// 		this.itemsOpen.push(`topic_${this.activeIndirectIndicator.topic}`)
-		// 	}
-		// 	if (this.activeTopic.parent_topic) {
-		// 		this.itemsOpen.push(`topic_${this.activeTopic.parent_topic}`)
-		// 	}
-        // }
-        // searchbarDirect (val) {
-        //     if (val) {
-        //         this.$nextTick(() => this.$refs.searchbardirect.$el.focus())
-        //     }
-        // },
-        // searchbarIndirect (val) {
-        //     if (val) {
-        //         this.$nextTick(() => this.$refs.searchbarindirect.$el.focus())
-        //     }
-        // }
     },
-    crated () {
+    created () {
         this.fetchItems()
     },
     methods: {
-        ...mapActions('topic', ['setTopic', 'patchTopic']),
+        ...mapActions('topic', ['fetchTopics', 'setTopic', 'patchTopic']),
 		...mapActions('question', ['fetchQuestions', 'setQuestion']),
         ...mapActions('directIndicator', ['fetchDirectIndicators']),
 		...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'updateIndirectIndicator']),
-        startDrag (evt, item) {
-            console.log(item)
-            evt.dataTransfer.dropEffect = 'move'
-            evt.dataTransfer.effectAllowed = 'move'
-            if (typeof item === 'object') {
-                item = JSON.stringify(item)
-            }
-            evt.dataTransfer.setData('draggedItem', item)
-            // this.directIndicators = this.directIndicators.filter(indicator => indicator.id !== item.id)
-        },
         async onDrop (evt) {
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)
@@ -232,61 +91,10 @@ export default {
         },
         async fetchItems () {
             await this.fetchQuestions({ mId: this.method.id, SuId: 0, SeId: 0 })
+            await this.fetchTopics({ mId: this.method.id })
             await this.fetchDirectIndicators({ mId: this.method.id })
             await this.fetchIndirectIndicators({ mId: this.method.id })
-        },
-        activateItem (item) {
-            console.log('ss', item)
-        },
-		setActiveItem (active) {
-			const [type, id] = active.split('_')
-			const parsedId = parseInt(id, 10)
-			if (type === 'topic') {
-				this.setTopic({ id: parsedId })
-				this.setQuestion()
-				this.setIndirectIndicator()
-			} else if (type === 'question') {
-				this.setQuestion({ id: parsedId })
-				this.setIndirectIndicator()
-			} else if (type === 'calculation') {
-				this.setIndirectIndicator({ id: parsedId })
-				this.setQuestion()
-			}
-        },
-        addToCalculation (item) {
-			this.updateIndirectIndicator({
-				mId: this.method.id,
-				indirectIndicator: {
-					...this.activeIndirectIndicator,
-					formula: `${this.activeIndirectIndicator.formula} [${item.key}]`
-				}
-			})
         }
-        // checkSearchbarContentDirect () {
-        //     if (this.searchDirect === '') {
-        //         this.searchbarDirect = false
-        //     }
-        // },
-        // checkSearchbarContentIndirect () {
-        //     if (this.searchIndirect === '') {
-        //         this.searchbarIndirect = false
-        //     }
-        // }
-        // expandAll () {
-        //     for (const node of this.items) {
-        //         this.expandNode(node)
-        //     }
-
-        //     this.expandedKeys = { ...this.expandedKeys }
-        // },
-        // expandNode (node) {
-        //     this.expandedKeys[node.key] = true
-        //     if (node.children && node.children.length) {
-        //         for (const child of node.children) {
-        //             this.expandNode(child)
-        //         }
-        //     }
-        // }
     }
 }
 </script>
@@ -299,7 +107,51 @@ export default {
 .directIndicators:hover {
     background-color: #EEEEEE;
 }
-
+// setActiveItem (active) {
+// 	const [type, id] = active.split('_')
+// 	const parsedId = parseInt(id, 10)
+// 	if (type === 'topic') {
+// 		this.setTopic({ id: parsedId })
+// 		this.setQuestion()
+// 		this.setIndirectIndicator()
+// 	} else if (type === 'question') {
+// 		this.setQuestion({ id: parsedId })
+// 		this.setIndirectIndicator()
+// 	} else if (type === 'calculation') {
+// 		this.setIndirectIndicator({ id: parsedId })
+// 		this.setQuestion()
+// 	}
+// },
+// addToCalculation (item) {
+// 	this.updateIndirectIndicator({
+// 		mId: this.method.id,
+// 		indirectIndicator: {
+// 			...this.activeIndirectIndicator,
+// 			formula: `${this.activeIndirectIndicator.formula} [${item.key}]`
+// 		}
+// 	})
+// }
+// activeItem () {
+//     if (this.activeQuestion.id) {
+// 		this.itemsOpen.push(`topic_${this.activeQuestion.topic}`)
+// 	}
+// 	if (this.activeIndirectIndicator.id) {
+// 		this.itemsOpen.push(`topic_${this.activeIndirectIndicator.topic}`)
+// 	}
+// 	if (this.activeTopic.parent_topic) {
+// 		this.itemsOpen.push(`topic_${this.activeTopic.parent_topic}`)
+// 	}
+// }
+// searchbarDirect (val) {
+//     if (val) {
+//         this.$nextTick(() => this.$refs.searchbardirect.$el.focus())
+//     }
+// },
+// searchbarIndirect (val) {
+//     if (val) {
+//         this.$nextTick(() => this.$refs.searchbarindirect.$el.focus())
+//     }
+// }
 //     <div style="width: 300px; justify-content: between;">
 //             <h2 class="height: 500px;">Indicator Libary</h2>
 //             <!-- <div v-if="items.length">
@@ -348,4 +200,29 @@ export default {
 //     this.topicQuestions,
 //     this.topicIndirectIndicators
 // )
+// checkSearchbarContentDirect () {
+//     if (this.searchDirect === '') {
+//         this.searchbarDirect = false
+//     }
+// },
+// checkSearchbarContentIndirect () {
+//     if (this.searchIndirect === '') {
+//         this.searchbarIndirect = false
+//     }
+// }
+// expandAll () {
+//     for (const node of this.items) {
+//         this.expandNode(node)
+//     }
+
+//     this.expandedKeys = { ...this.expandedKeys }
+// },
+// expandNode (node) {
+//     this.expandedKeys[node.key] = true
+//     if (node.children && node.children.length) {
+//         for (const child of node.children) {
+//             this.expandNode(child)
+//         }
+//     }
+// }
 </style>

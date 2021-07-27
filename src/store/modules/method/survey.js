@@ -126,8 +126,11 @@ export default {
 			if (!state.debouncers[survey.id]) {
 				commit('setDebouncer', { id: survey.id, commit })
 			}
+            if (survey.id < 0) {
+                commit('updateList', { id: survey.id, data: survey })
+            }
 			commit('setIsSaved', { id: survey.id })
-			if (!survey.name && state.isSaved[survey.id]) return
+			if (!survey.name && state.isSaved[survey.id]) { return }
 			state.debouncers[survey.id]({ mId, survey })
 		},
 		setSurvey ({ state, commit }, { id }) {

@@ -1,6 +1,6 @@
 <template>
     <organisation-list :permission="permission" v-model:refresh="refresh" :networkorganisations="true" :invitableorganisations="invitableOrganisations" @invite-organisation="inviteChosenOrganisation" @remove-organisation="removeChosenOrganisation">
-        <Button v-if="permission" :label="(invitableOrganisations) ? 'Show own Network':'Join Network'" :class="(invitableOrganisations) ? 'p-button-warning':'p-button-success'" @click="invitableOrganisations= !invitableOrganisations" />
+        <Button v-if="permission" :label="(invitableOrganisations) ? 'Show own Organisations':'Invite Organisations'" :class="(invitableOrganisations) ? 'p-button-warning':'p-button-success'" @click="invitableOrganisations= !invitableOrganisations" />
     </organisation-list>
 
     <invitation-window v-if="permission" parenttype="network" @refresh="refreshData()"/>

@@ -119,7 +119,7 @@ export default {
                     question: object
                 })
             }
-            // await this.fetchDirectIndicators({ mId: this.method.id })
+            await this.fetchDirectIndicators({ mId: this.method.id })
         },
         deleteActive () {
             const objType = this.activeItem.objType

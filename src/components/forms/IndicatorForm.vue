@@ -136,7 +136,6 @@ export default {
         lazyIndicator: {
             handler (val) {
                 setTimeout(() => {
-                    console.log(this.v$.lazyIndicator.$invalid)
                     this.v$.lazyIndicator.$touch()
                     if (this.v$.$invalid) { return }
                     if (isEqual(this.directIndicator, val)) { return }

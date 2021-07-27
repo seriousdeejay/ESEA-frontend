@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex" style="height: calc(100vh - 145px); width: 100%; border-top: solid lightgrey; display: flex;">
-        <method-tree-sidebar style="height: 100%; width: 400px; flex: 0 0 400px;" />
+        <method-tree-sidebar :topicsdisplay="true" style="height: 100%; width: 400px; flex: 0 0 400px;" />
         <div v-if="methodTopics.length" class="p-m-4" style="width: 100%; height: calc(100vh - 200px); background-color: white; overflow-y: scroll;">
             <div class="p-d-flex" style="width: 100%; height: 50px; background-color: #f6f6f6; border-bottom: 2px solid lightgrey;">
                 <div v-for="(topic, topicIndex) in methodTopics" :key="`topic_${topicIndex}`" class="topicTabs" @click="switchTopic(topic)" @dblclick="changeName(topic.edit = true)" :style="(currentTopic?.id === topic.id) ? 'border-bottom: 3px solid #00695C; color: #00695C;':''">
@@ -123,6 +123,23 @@ export default {
             }
             evt.dataTransfer.setData('draggedItem', item)
         },
+        async onDrop (evt, topic) {
+            console.log(topic)
+            const myitem = evt.dataTransfer.getData('draggedItem')
+            const parseditem = JSON.parse(myitem)
+            if (!topic.id || !parseditem.id) { return }
+            console.log('0000', parseditem)
+            if ((parseditem.objType === 'indicator') || (parseditem.objType === 'direct_indicator')) {
+                console.log('9999')
+                await this.patchDirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
+            } else if (parseditem.objType === 'calculation') {
+                await this.patchIndirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
+            }
+            // delete parseditem.method
+            // delete parseditem.question
+            // this.lazyQuestion.direct_indicator = [parseditem]
+            // console.log('-->', this.lazyQuestion)
+        },
         addBarMethod (choice) {
             if (choice === 'Topic') { this.addTopic() }
             if (choice === 'SubTopic') { this.addSubTopic() }
@@ -146,21 +163,6 @@ export default {
         async removeTopic (topic) {
             await this.deleteTopic({ mId: this.method.id, id: topic.id })
             this.currentTopic = this.methodTopics?.[0] || {}
-        },
-        async onDrop (evt, topic) {
-            console.log(topic)
-            const myitem = evt.dataTransfer.getData('draggedItem')
-            const parseditem = JSON.parse(myitem)
-            if (!topic.id || !parseditem.id) { return }
-            if (parseditem.objType === ('direct_indicator' || 'indicator')) {
-                await this.patchDirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
-            } else if (parseditem.objType === 'calculation') {
-                await this.patchIndirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
-            }
-            // delete parseditem.method
-            // delete parseditem.question
-            // this.lazyQuestion.direct_indicator = [parseditem]
-            // console.log('-->', this.lazyQuestion)
         },
         toggleActive (item) {
             console.log('breee')

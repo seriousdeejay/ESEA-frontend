@@ -128,7 +128,7 @@ export default {
         },
         async goToMethod (id) {
             await this.fetchMethod({ id: id })
-            this.$router.push({ name: 'method-general', params: { id: 0 } })
+            this.$router.push({ name: 'method-general', params: { id: this.method?.id } })
         }
     }
 }

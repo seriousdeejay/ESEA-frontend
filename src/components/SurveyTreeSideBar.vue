@@ -98,6 +98,9 @@ export default {
             }
         }
     },
+    mounted () {
+        this.fetchDirectIndicators({ mId: this.$route.params.id })
+    },
     async created () {
         this.fetchData()
     },

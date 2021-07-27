@@ -160,9 +160,9 @@ export default {
     },
     mounted () {
         // this.lazyQuestion = cloneDeep(this.question)
-        const namefield = document.getElementById('myAnchor')
-        console.log('ddd', namefield)
-        namefield.focus()
+        // const namefield = document.getElementById('myAnchor')
+        // console.log('ddd', namefield)
+        // namefield.focus()
     },
     created () {
         console.log(this.question)

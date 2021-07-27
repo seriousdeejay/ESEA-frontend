@@ -25,7 +25,6 @@
             <div class="p-col-12 p-d-flex p-ai-center p-jc-between p-mb-2">
                 <span>Network Status</span>
                 <SelectButton id="ispublic" v-model="network.ispublic" :options="ispublicbool" optionLabel="name" optionValue="value" />
-                {{network.ispublic}}
             </div>
             <small class="p-text-italic">*Public Networks are visible to anyone. Explicitly granted access is still required for cetain operations.</small>
         </form>

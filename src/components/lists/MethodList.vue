@@ -32,12 +32,12 @@
             <!-- <div v-if="networkmethods && permission"> -->
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
-                    <Button v-if="(data.created_by === this.currentuser && !networkmethods)" label="Update" class="p-button-sm" @click="updateMethod(data)"  style="width: 100px" />
+                    <Button v-if="(data.created_by === this.currentuser && !networkmethods)" label="Update" class="p-button-sm p-mr-2" @click="updateMethod(data)"  style="width: 100px" />
+                     <Button v-if="data.created_by === this.currentuser && !networkmethods" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="(selectedMethod = data) && (destroyMethodDialog = true)" style="width: 50px" />
                     <div v-if="(networkmethods && permission)">
                         <Button v-if="importablemethods" label="Import Method" class="p-button-success p-button-sm" @click="importMethod(data)" />
                         <Button v-if="!importablemethods" label="Drop Method" class="p-button-danger p-button-sm" @click="dropMethod(data)" />
                     </div>
-                    <!-- <Button v-if="data.created_by === this.currentuser" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="(selectedMethod = data) && (destroyMethodDialog = true)" style="width: 50px" /> -->
                 </template>
             </Column>
             <!-- </div>
@@ -45,6 +45,16 @@
         </Datatable>
     </div>
     <div v-else class="p-text-italic">No methods to display!</div>
+    <Dialog v-model:visible="destroyMethodDialog" :style="{width: '450px'}" header="Confirm Method Deletion" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
+            <span>Are you sure you want to delete <b>{{selectedMethod.name}}</b>?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="destroyMethodDialog = false"/>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="destroyMethod()" />
+        </template>
+    </Dialog>
 </template>
 
 <script>
@@ -82,6 +92,8 @@
                 failedLoad: false,
                 tableDisplay: false,
                 allMethods: false,
+                destroyMethodDialog: false,
+                selectedMethod: null,
                 styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
                 columns: [
                     { field: 'name', header: 'Name' },
@@ -156,24 +168,14 @@
             async updateMethod (method) {
                 await this.setMethod(method)
                 this.$router.push({ name: 'method-general', params: { id: method.id } })
+            },
+            destroyMethod () {
+                if (this.selectedMethod) {
+                    this.deleteMethod({ id: this.selectedMethod?.id })
+                }
+                this.selectedMethod = null
+                this.destroyMethodDialog = false
             }
         }
     }
-    // destroyMethod () {
-    //     if (this.selectedMethod) {
-    //         this.deleteMethod({ id: this.selectedMethod?.id })
-    //     }
-    //     this.selectedMethod = null
-    //     this.destroyMethodDialog = false
-    // },
-    // <Dialog v-model:visible="destroyMethodDialog" :style="{width: '450px'}" header="Confirm Method Deletion" :modal="true">
-    // <div class="confirmation-content">
-    //     <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
-    //     <span>Are you sure you want to delete <b>{{selectedMethod.name}}</b>?</span>
-    // </div>
-    // <template #footer>
-    //     <Button label="No" icon="pi pi-times" class="p-button-text" @click="destroyMethodDialog = false"/>
-    //     <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="destroyMethod()" />
-    // </template>
-    // </Dialog>
 </script>

@@ -6,15 +6,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import MethodHeader from '@/components/MethodHeader'
 
 export default {
     components: {
         MethodHeader
-    },
-    methods: {
-        ...mapState('method', ['method'])
     }
 }
 </script>
