@@ -77,6 +77,7 @@ export default {
 						{ mId, SuId, SeId, id, data: question }
 					)
 					if (error) {
+                        console.log(error?.response?.data)
 						commit('setError', { error, id: question.id })
 						return
 					}
