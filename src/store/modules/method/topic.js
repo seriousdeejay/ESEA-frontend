@@ -123,7 +123,7 @@ export default {
                 return
             }
             await dispatch('fetchTopics', { mId: mId })
-            await dispatch('setTopic', response.data)
+            await commit('setTopic', response)
         },
         updateTopic ({ state, commit }, { mId, topic }) {
             if (!topic || !mId) { return }
@@ -135,14 +135,13 @@ export default {
             state.debouncers[topic.id]({ mId, topic })
         },
         async patchTopic ({ commit }, { mId, id, data }) {
-            console.log('LLL', data)
             const { response, error } = await TopicService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })
             if (error) {
                 commit('setError', { error })
                 return
             }
             commit('updateList', { id: id, data: response.data })
-            // commit('setTopic', response)
+            commit('setTopic', response)
         },
         async deleteTopic ({ commit }, payload) {
             if (payload.id > 0) {

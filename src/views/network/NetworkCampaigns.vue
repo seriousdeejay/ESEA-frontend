@@ -27,7 +27,7 @@ export default {
     },
     computed: {
         ...mapState('network', ['network']),
-        ...mapState('campaign', ['campaigns']),
+        ...mapState('campaign', ['campaigns', 'campaign']),
         permission () {
             if (this.network.accesLevel) {
                 const accesLevel = this.network.accesLevel

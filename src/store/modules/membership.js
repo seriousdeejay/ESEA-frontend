@@ -42,7 +42,7 @@ export default {
             state.memberships = state.memberships.filter(m => m.id !== id)
         },
         setError (state, { error }) {
-            console.log(error?.response.data)
+            console.log(error?.response?.data)
             state.error = error?.response.data || []
         },
         clearError (state) {
@@ -67,14 +67,14 @@ export default {
             }
             commit('setMembership', response)
         },
-        async createMembership ({ commit, dispatch }, data) {
+        async createMembership ({ commit, dispatch }, { data }) {
             const { response, error } = await MembershipService.post({ data: data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return
             }
             await dispatch('fetchMemberships', {})
-            dispatch('setMembership', response)
+            commit('setMembership', response)
         },
         async updateMembership ({ commit }, { id, data }) {
             const { response, error } = await MembershipService.put({ id: id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
@@ -91,7 +91,7 @@ export default {
                 return
             }
             commit('deleteMembership', payload)
-            dispatch('setMembership', {})
+            commit('setMembership', {})
         },
 
         setMembership ({ state, commit }, { id }) {

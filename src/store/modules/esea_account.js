@@ -55,7 +55,7 @@ export default {
                 return
             }
             await dispatch('fetchEseaAccounts', { oId })
-            await dispatch('setEseaAccount', response)
+            await commit('setEseaAccount', response)
         },
         async updateEseaAccount ({ state, commit }, { oId, data }) {
             // const id = state.eseaAccount.id
@@ -74,7 +74,7 @@ export default {
                 return
             }
             commit('deleteEseaAccount', payload)
-            dispatch('setEseaAccount', {})
+            commit('setEseaAccount', {})
         },
         setEseaAccount ({ state, commit }, { id }) {
             if (id) {

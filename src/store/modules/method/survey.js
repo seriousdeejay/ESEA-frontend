@@ -107,7 +107,7 @@ export default {
                 commit('setError', { error })
                 return
             }
-            // commit('updateList', response)
+            commit('updateList', { id: payload.id, data: response.data })
             commit('setSurvey', response)
         },
         async deleteSurvey ({ commit }, payload) {

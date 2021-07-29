@@ -21,20 +21,6 @@ export default {
                 commit('setMethod', response)
             }
         }, 1000)
-            // function () { console.log('Debouncing!') }, 2000)
-        // debouncer: debounce(
-        //     async ({ id, data, commit }) => {
-        //         console.log('chheec')
-        //         const { response, error } = await MethodService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
-        //         if (error) {
-        //             commit('setError', { error })
-        //         } else {
-        //             commit('setMethod', response)
-        //             commit('addMethodToList', { ...response, id })
-        //         }
-        //     }, 1000
-        // )
-
     },
     mutations: {
         setMethods (state, { data }) {
@@ -47,27 +33,6 @@ export default {
         addMethodToList (state, { data }) {
             state.methods.push(data)
         },
-        // updateMethod(state, data) {},
-        // setDebouncer (state, { id, commit }) {
-        //     console.log('ccchheeck')
-        //     state.debouncers[id] = debounce(
-        //         async ({ id, data }) => {
-        //             console.log('zzz', data)
-        //             const { response, error } = await MethodService.put({ id, data: data })
-        //             if (error) {
-        //                 console.log(error)
-        //                 commit('setError', { error })
-        //                 return
-        //             }
-        //             commit('setMethod', response)
-        //             state.methods = state.methods.map((item) => {
-        //             if (item.id !== response.data.id) { return item }
-        //                 return { ...item, ...response.data }
-        //             })
-        //         },
-        //         1000
-        //     )
-        // },
         deleteMethod (state, { id }) {
             state.methods = state.methods.filter(m => m.id !== id)
             console.log(id, 'methods:', state.methods)
@@ -122,9 +87,42 @@ export default {
         },
         async updateMethod ({ state, commit }, method) {
             if (method.id !== state.method.id) { return }
-            console.log('kk')
             state.debouncer({ id: method.id, method, commit })
         },
+        async deleteMethod ({ commit }, payload) {
+            const { error } = await MethodService.delete(payload)
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            commit('deleteMethod', payload)
+            commit('setMethod', {})
+        },
+        setMethod ({ state, commit }, { id }) {
+            console.log('ld:', id)
+            if (id) {
+                const data = state.methods.find(m => m.id === id)
+                console.log('}}}', data)
+                commit('setMethod', { data })
+            } else {
+                commit('setMethod', {})
+            }
+        }
+    }
+}
+            // function () { console.log('Debouncing!') }, 2000)
+        // debouncer: debounce(
+        //     async ({ id, data, commit }) => {
+        //         console.log('chheec')
+        //         const { response, error } = await MethodService.put({ id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+        //         if (error) {
+        //             commit('setError', { error })
+        //         } else {
+        //             commit('setMethod', response)
+        //             commit('addMethodToList', { ...response, id })
+        //         }
+        //     }, 1000
+        // )
         // async patchMethod ({ state, commit }, payload) {
         //     console.log(state.method.id)
         //     const id = payload.id || state.method.id
@@ -140,28 +138,27 @@ export default {
         //     commit('updateMethod', { ...response, id })
         //     commit('setMethod', response.data)
         // },
-        async deleteMethod ({ commit, dispatch }, payload) {
-            const { error } = await MethodService.delete(payload)
-            if (error) {
-                commit('setError', { error })
-                return
-            }
-            commit('deleteMethod', payload)
-            dispatch('setMethod', {})
-        },
-        setMethod ({ state, commit }, { id }) {
-            console.log('ld:', id)
-            if (id) {
-                const data = state.methods.find(m => m.id === id)
-                console.log('}}}', data)
-                commit('setMethod', { data })
-            } else {
-                commit('setMethod', {})
-            }
-        }
-    }
-}
-
+        // updateMethod(state, data) {},
+        // setDebouncer (state, { id, commit }) {
+        //     console.log('ccchheeck')
+        //     state.debouncers[id] = debounce(
+        //         async ({ id, data }) => {
+        //             console.log('zzz', data)
+        //             const { response, error } = await MethodService.put({ id, data: data })
+        //             if (error) {
+        //                 console.log(error)
+        //                 commit('setError', { error })
+        //                 return
+        //             }
+        //             commit('setMethod', response)
+        //             state.methods = state.methods.map((item) => {
+        //             if (item.id !== response.data.id) { return item }
+        //                 return { ...item, ...response.data }
+        //             })
+        //         },
+        //         1000
+        //     )
+        // },
            // debounce(
             // //     console.log('debounce works!')
             // // , 10000)

@@ -116,7 +116,7 @@ export default {
             if (error) {
                 commit('setError', { error })
             }
-            // commit('updateList', response)
+            commit('updateList', response)
             commit('setSection', response)
         },
         async createSection ({ commit, dispatch }, { mId, sId }) {

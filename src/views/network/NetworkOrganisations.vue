@@ -96,7 +96,7 @@ export default {
         },
         async inviteOrganisation () {
             if (this.selectedOrganisation.id) {
-                await this.createMembership({ network: this.$route.params.NetworkId, organisation: this.selectedOrganisation.id, requester: 'network' })
+                await this.createMembership({ data: { network: this.$route.params.NetworkId, organisation: this.selectedOrganisation.id, requester: 'network' } })
                 this.inviteDialog = false
                 this.refreshData()
             }

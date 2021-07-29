@@ -143,6 +143,7 @@ export default {
                 }
             }
             await this.createCampaign({ nId: this.$route.params.NetworkId, data: this.campaignForm })
+            this.closeDialog()
             if (this.campaign.id) {
                 this.$router.push({ name: 'networkcampaign', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.campaign.id } })
             }

@@ -59,7 +59,7 @@ export default {
                 return
             }
             await dispatch('fetchCampaigns', { nId: nId })
-            await dispatch('setCampaign', response)
+            await commit('setCampaign', response)
         },
         async updateCampaign ({ state, commit }, { nId, data }) {
             const id = state.campaign.id
@@ -72,14 +72,14 @@ export default {
             commit('updateCampaign', { ...response, id })
             commit('setCampaign', response)
         },
-        async deleteCampaign ({ commit, dispatch }, payload) {
+        async deleteCampaign ({ commit }, payload) {
             const { error } = await CampaignService.delete(payload)
             if (error) {
                 commit('setError', { error })
                 return
             }
             commit('deleteCampaign', payload)
-            dispatch('setCampaign', {})
+            commit('setCampaign', {})
         },
         setCampaign ({ state, commit }, { id }) {
             if (id) {

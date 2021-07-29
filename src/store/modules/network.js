@@ -84,7 +84,7 @@ export default {
                 return
             }
             commit('deleteNetwork', payload)
-            dispatch('setNetwork', {})
+            commit('setNetwork', {})
         },
         setNetwork ({ state, commit }, { id }) {
             if (id) {

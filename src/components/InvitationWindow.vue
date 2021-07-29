@@ -122,12 +122,20 @@ export default {
         },
         async reactOnAllRequests (choice) {
             for (const request of this.memberships) {
-                 await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
+                if (choice === 'accepted') {
+                    await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
+                } else if (choice === 'denied') {
+                    await this.deleteMembership({ id: request.id })
+                }
             }
             this.getMembershipRequests()
         },
         async reactOnRequest (request, choice) {
-            await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
+             if (choice === 'accepted') {
+                await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
+            } else if (choice === 'denied') {
+                await this.deleteMembership({ id: request.id })
+            }
             this.getMembershipRequests()
         },
         async cancelRequest (request) {

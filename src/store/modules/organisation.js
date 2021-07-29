@@ -59,7 +59,7 @@ export default {
                 return
             }
             await dispatch('fetchOrganisations', {})
-            dispatch('setOrganisation', response)
+            commit('setOrganisation', response)
         },
         async updateOrganisation ({ state, commit }, payload) {
             const id = state.organisation.id
@@ -88,7 +88,7 @@ export default {
                 return
             }
             commit('deleteOrganisation', payload)
-            dispatch('setOrganisation', {})
+            commit('setOrganisation', {})
         },
         setOrganisation ({ state, commit }, { id }) {
             if (id) {

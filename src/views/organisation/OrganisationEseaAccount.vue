@@ -219,11 +219,9 @@
                 this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
             },
             goToSurvey (methodid, surveyid) {
-                console.log(methodid)
                 this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: 0 } })
             },
             goToResults (data) {
-                console.log(data)
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
             },
             async removeEseaAccount () {

@@ -59,7 +59,7 @@ export default {
                 return
             }
             // await dispatch('fetchMemberships', {})
-            dispatch('setNetworkMember', response)
+            commit('setNetworkMember', response)
         },
         async updateNetworkMember ({ commit }, { nId, id, data }) {
             const { response, error } = await NetworkTeamService.put({ nId, id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
