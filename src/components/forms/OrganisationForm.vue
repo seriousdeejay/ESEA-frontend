@@ -56,13 +56,10 @@ export default {
         }
     },
     created () {
-        this.initialize()
+        this.setOrganisation({})
     },
     methods: {
         ...mapActions('organisation', ['setOrganisation', 'createOrganisation']),
-        async initialize () {
-            this.setOrganisation({})
-        },
         async createNewOrganisation () {
             this.v$.organisationForm.$touch()
             if (this.v$.$invalid) { return }

@@ -52,7 +52,8 @@ export default {
                 commit('setError', { error })
                 return
             }
-            commit('updateUser', response)
+            commit('updateUser', { ...response, id })
+            commit('setOrganisation', response)
         },
         async deleteUser ({ commit, dispatch }, payload) {
             const { error } = await UserService.delete(payload)
@@ -64,10 +65,9 @@ export default {
             dispatch('setUser', {})
         },
         setUser ({ state, commit }, { id }) {
-            console.log(id)
             if (id) {
                 const data = state.users.find(u => u.id === id)
-                commit('setUser', { data })
+                commit('setUser', { data: data })
             } else {
                 commit('setUser', {})
             }

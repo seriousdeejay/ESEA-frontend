@@ -5,7 +5,6 @@ export default {
     state: {
         organisations: [],
         organisation: {},
-        // organisationParticipants: [],
         error: []
     },
     mutations: {
@@ -27,14 +26,8 @@ export default {
         deleteOrganisation (state, { id }) {
             state.organisations = state.organisations.filter(o => o.id !== id)
         },
-        // setOrganisationParticipants (state, { data }) {
-        //     state.organisationParticipants = data.participants || {}
-        // },
-        // deleteOrganisationUsers (state, { id }) {
-        //     state.organisationParticipants = state.organisationParticipants.filter(o => o.id !== id)
-        // },
         setError (state, { error }) {
-            console.log(error?.response.data)
+            console.log(error?.response?.data)
             state.error = error?.response.data || []
         },
         clearError (state) {
@@ -58,16 +51,15 @@ export default {
                 return
             }
             commit('setOrganisation', response)
-            // commit('setOrganisationParticipants', response)
         },
-        async createOrganisation ({ state, commit, dispatch }, { data }) {
+        async createOrganisation ({ commit, dispatch }, { data }) {
             const { response, error } = await OrganisationService.post({ data: data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return
             }
             await dispatch('fetchOrganisations', {})
-            dispatch('setOrganisation', response.data)
+            dispatch('setOrganisation', response)
         },
         async updateOrganisation ({ state, commit }, payload) {
             const id = state.organisation.id
@@ -77,6 +69,17 @@ export default {
                 return
             }
             commit('updateOrganisation', response)
+            commit('setOrganisation', response)
+        },
+        async patchOrganisation ({ state, commit }, payload) {
+            const id = state.organisation.id
+            const { response, error } = await OrganisationService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            commit('updateOrganisation', { ...response, id })
+            commit('setOrganisation', response)
         },
         async deleteOrganisation ({ commit, dispatch }, payload) {
             const { error } = await OrganisationService.delete(payload)
@@ -87,19 +90,7 @@ export default {
             commit('deleteOrganisation', payload)
             dispatch('setOrganisation', {})
         },
-        async patchOrganisation ({ state, commit }, payload) {
-            const id = state.organisation.id
-            const { response, error } = await OrganisationService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
-            console.log(response?.data, error?.response?.data)
-            if (error) {
-                commit('setError', { error })
-                return
-            }
-            commit('updateOrganisation', { ...response, id })
-            commit('setOrganisation', response)
-        },
         setOrganisation ({ state, commit }, { id }) {
-            console.log('>>', id)
             if (id) {
                 const data = state.organisations.find(o => o.id === id)
                 commit('setOrganisation', { data: data })

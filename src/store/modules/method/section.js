@@ -23,9 +23,9 @@ export default {
 	},
     mutations: {
         setSections (state, { data }) {
-			for (const section of data) {
-				console.log(section) // section.questions.sort()
-			}
+			// for (const section of data) {
+			// 	console.log(section) // section.questions.sort()
+			// }
             state.sections = data
             state.debouncers = {}
 			state.errors = {}
@@ -44,17 +44,6 @@ export default {
                 state.section = {}
             }
         },
-        setError (state, { error, id }) {
-            console.log(error?.response?.data)
-            if (id) {
-                state.errors = {
-                    ...state.errors,
-                    [id]: error?.response?.data || error
-                }
-                return
-			}
-			state.error = error
-        },
         updateList (state, { id, data }) {
 			if (id !== data.id) {
 			delete state.debouncers[id]
@@ -68,7 +57,6 @@ export default {
 			})
 		},
 		addNewSection (state, { survey }) {
-			console.log('yeees')
 			const section = { ...baseSection, id: random(-1000000, -1), survey }
 			state.sections.push(section)
 		},
@@ -83,14 +71,11 @@ export default {
 		setDebouncer (state, { id, commit }) {
 			state.debouncers[id] = debounce(
 				async ({ mId, sId, section }) => {
-					console.log('LLL', section)
 					const method = section.id > 0 ? 'put' : 'post'
 					const { response, error } = await SectionService[method](
 						{ mId, sId, id, data: section }
 						)
 					if (error) {
-						console.log('OOO', section)
-						console.log('---', error.response.data)
 						commit('setError', { error, id: section.id })
 						return
 					}
@@ -99,13 +84,27 @@ export default {
 					commit('updateList', { id: section.id, data: response.data })
 				},
 				500
-				)
+			)
+		},
+        setError (state, { error, id }) {
+            console.log(error?.response?.data)
+            if (id) {
+                state.errors = {
+                    ...state.errors,
+                    [id]: error?.response?.data || error
+                }
+                return
 			}
+			state.error = error
+        },
+        clearError (state) {
+            state.error = []
+        }
 	},
     actions: {
         async fetchSections ({ commit }, payload) {
             const { response, error } = await SectionService.get(payload)
-            console.log('my sections:', response?.data)
+            commit('clearError')
             if (error) {
                 commit('setError', { error })
                 return
@@ -116,24 +115,20 @@ export default {
             const { response, error } = await SectionService.get(payload)
             if (error) {
                 commit('setError', { error })
-                return { error }
             }
             // commit('updateList', response)
             commit('setSection', response)
-            return { response }
         },
         async createSection ({ commit, dispatch }, { mId, sId }) {
-            console.log('-------', sId)
             const { response, error } = await SectionService.post({ mId, sId, data: baseSection })
             if (error) {
                 commit('setError', { error })
                 return
             }
             await dispatch('fetchSections', { mId: mId, sId: sId })
-            await dispatch('setSection', response.data)
+            commit('setSection', response)
         },
         async deleteSection ({ commit }, payload) {
-            console.log(payload)
             if (payload.id > 0) {
                 const { error } = await SectionService.delete(payload)
                 if (error) {
@@ -143,17 +138,6 @@ export default {
             }
             commit('deleteSection', payload)
         },
-        // async updateSection ({ state, commit }, { mId, sId, data }) {
-            // const id = state.eseaAccount.id
-            // const data = state.eseaAccount
-            // const { response, error } = await SectionService.put({ mId, sId, id: data.id, data })
-            // if (error) {
-            //     commit('setError', { error })
-            //     return
-            // }
-            // commit('updateList', { id: response.data?.id, data: response.data })
-            // commit('setSection', response)
-         // },
        updateSection ({ state, commit }, { mId, sId, section }) {
 			if (!section || !mId || !sId) return
 			if (!state.debouncers[section.id]) {
@@ -164,9 +148,13 @@ export default {
 			state.debouncers[section.id]({ mId, sId, section })
 		},
 		setSection ({ state, commit }, { id }) {
-			const data = state.sections.find(sections => sections.id === id)
-			if (data && data.id === state.section.id) return
-			commit('setSection', { data })
+            if (id) {
+                const data = state.sections.find(sections => sections.id === id)
+                if (data && data.id === state.section.id) return
+                commit('setSection', { data: data })
+            } else {
+                commit('setSection', {})
+            }
 		},
 		resetError ({ commit }) {
 			commit('setError', { error: undefined })
@@ -176,3 +164,14 @@ export default {
 		}
 	}
 }
+// async updateSection ({ state, commit }, { mId, sId, data }) {
+// const id = state.eseaAccount.id
+// const data = state.eseaAccount
+// const { response, error } = await SectionService.put({ mId, sId, id: data.id, data })
+// if (error) {
+//     commit('setError', { error })
+//     return
+// }
+// commit('updateList', { id: response.data?.id, data: response.data })
+// commit('setSection', response)
+// },

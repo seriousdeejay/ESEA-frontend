@@ -117,12 +117,6 @@ export default {
         closingDateErrors () {
             return HandleValidationErrors(this.v$.campaignForm.close_survey_date, this.error.close_survey_date)
         }
-        // organisations () {
-        //     var dict = []
-        //     this.network.organisations.forEach(org => dict.push({ name: org }))
-        //     return dict
-        // }
-        // Methods of a Network
     },
     created () {
         this.fetchMethods({ query: `?network=${this.network?.id || 0}` })
@@ -158,6 +152,12 @@ export default {
         }
     }
 }
+// organisations () {
+//     var dict = []
+//     this.network.organisations.forEach(org => dict.push({ name: org }))
+//     return dict
+// }
+// Methods of a Network
 </script>
 
 <style lang="scss" scoped>

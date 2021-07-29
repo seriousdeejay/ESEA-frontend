@@ -1,5 +1,6 @@
 <template>
-    <form v-if="active" ref="form" class="p-fluid p-input-filled p-p-3" @submit.prevent="!v$.$invalid" :style="cssProps">
+    <form v-if="active" ref="form" class="p-fluid p-input-filled p-p-3 p-text-left" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);']"> <!-- @submit.prevent="!v$.$invalid" -->
+        {{lazyTopic}}
         <div class="p-d-flex p-col-12">
             <h3 class="p-col p-text-center">Topic</h3>
             <div class="p-d-flex p-ai-center p-jc-end">
@@ -9,13 +10,13 @@
         </div>
         <div class="p-field">
             <span class="p-float-label">
-                <InputText id="topicname" ref="input" v-model="lazyTopic.name" :placeholder="nameLabel" :class="{'borderless': nameErrors.length }" @blur="updateName" />
+                <InputText id="topicname" ref="input" v-model="lazyTopic.name" :placeholder="nameLabel" :class="{'borderless': nameErrors.length }" @blur="v$.lazyTopic.name.$touch()" />
             </span>
             <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
         </div>
-        <div class="p-field"> <!-- v-if="!lazyTopic.parent_topic"  -->
+        <div class="p-field">
             <span class="p-float-label">
-                <InputText v-model="lazyTopic.description" placeholder="Topic Description" class="p-inputtext-sm" @blur="updateDescription" @focus="$event.target.select()" />
+                <InputText v-model="lazyTopic.description" placeholder="Topic Description" class="p-inputtext-sm" @blur="v$.lazyTopic.description.$touch()" />
             </span>
             <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error"><small>{{error}}</small></div>
         </div>
@@ -49,9 +50,16 @@ export default {
             default: () => ({})
         }
     },
+    setup: () => ({ v$: useVuelidate() }),
+    validations: {
+        lazyTopic: {
+            name: { required, maxLength: maxLength(120) }, // $lazy: true
+            description: { maxLength: maxLength(255) }
+        }
+    },
     data () {
         return {
-            lazyTopic: { ...this.topic }
+            lazyTopic: { ...this.topic } || {}
         }
     },
     computed: {
@@ -73,61 +81,30 @@ export default {
                 this.errors.description
             )
         },
-        cssProps () {
-            const props = { border: '1px solid lightgrey' }
-            if (this.active) {
-                props.border = '2px solid #9ecaed'
-                props['background-color'] = 'white'
-            }
-            return props
+        valid () {
+            return (!this.v$.lazyTopic.$invalid && (this.lazyTopic.id > 0))
         }
     },
     watch: {
         topic (val) {
-            if (!isEqual(this.lazyTopic, val)) {
-                this.lazyTopic = { ...val }
-            }
+            if (isEqual(this.lazyTopic, val)) { return }
+            this.lazyTopic = { ...val }
         },
         lazyTopic: {
             handler (val) {
             setTimeout(() => {
                 if (this.v$.$invalid) { return }
-                if (isEqual(this.topic, this.lazyTopic)) { return }
+                if (isEqual(this.topic, val)) { return }
                 this.$emit('input', this.lazyTopic)
-                }, 200)
+                }, 10000)
             },
             deep: true
         },
         active (val) {
-            if (!val) {
-                this.v$.$touch()
-            } else {
-                // this.$nextTick(() => this.$refs.input && this.$refs.input.focus())
-            }
+            this.v$.lazyTopic.$touch()
         }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        lazyTopic: {
-            name: { required, maxLength: maxLength(120), $lazy: true },
-            description: { maxLength: maxLength(255), $lazy: true }
-        }
-    },
-    mounted () {
-        if (!this.lazyTopic.name) {
-            this.$refs.topicname.focus()
-        }
-    },
-    created () {
-        this.initialize()
     },
     methods: {
-        initialize () {
-            if (this.lazyTopic.name === 'topic') {
-                const name = this.lazyTopic.parent_topic ? 'subtopic' : 'topic'
-                this.lazyTopic.name = `Untitled ${name}`
-            }
-        },
         updateName () {
             this.v$.lazyTopic.name.$touch()
         },
@@ -139,6 +116,21 @@ export default {
         }
     }
 }
+// else {
+//     this.$nextTick(() => this.$refs.input && this.$refs.input.focus())
+// }
+// mounted () {
+//     if (!this.lazyTopic.name) {
+//         this.$refs.topicname.focus()
+//     }
+// },
+// initialize () {
+// if (this.lazyTopic.name === 'topic') {
+//     const name = this.lazyTopic.parent_topic ? 'subtopic' : 'topic'
+//     this.lazyTopic.name = `Untitled ${name}`
+// }
+// },
+// @focus="$event.target.select()"
 </script>
 
 <style lang="scss" scoped>

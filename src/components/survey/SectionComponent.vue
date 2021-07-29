@@ -73,9 +73,7 @@ export default {
         checkRequirementStatus () {
             console.log('check Requirements', this.item.name, this.answer)
             if (this.focused && this.item.isMandatory) {
-                console.log('ee')
                 if (!this.answer?.[0].length && (!this.answer?.[1]?.length || this.answer?.[1] === null) && !this.item.text) { // === ('' || null))
-                    console.log('____')
                     this.requireStatus = true
                 } else {
                     this.requireStatus = false

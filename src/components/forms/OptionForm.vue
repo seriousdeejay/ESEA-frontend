@@ -1,12 +1,12 @@
 <template>
     <div class="p-grid p-col-12">
-        <div class="p-col-11">
-        <InputText id="optiontext" type="text" v-model="lazyOption.text" placeholder="Option text" :class="{'borderless': v$.lazyOption.text.$invalid}" />
+        <div class="p-col-1">
+            {{ order }}
         </div>
-        <!-- <div class="p-col-5">
-        <InputText id="optionvalue" type="number" v-model="lazyOption.value" placeholder="Option value" :class="{'borderless': v$.lazyOption.value.$invalid}" />
-        </div> -->
-        <Button icon="pi pi-times" class="p-col p-button-danger p-button-text" @click="deleteOption" />
+        <div class="p-col-10">
+            <InputText id="optiontext" type="text" v-model="lazyOption.text" :class="{'borderless': v$.lazyOption.text.$invalid}" :disabled="disabled" />
+        </div>
+        <Button v-if="!disabled" icon="pi pi-times" class="p-col p-button-danger p-button-text" @click="deleteOption" />
     </div>
 </template>
 
@@ -18,6 +18,14 @@ export default {
     props: {
         option: {
             type: Object,
+            required: true
+        },
+        order: {
+            type: Number,
+            required: true
+        },
+        disabled: {
+            type: Boolean,
             required: true
         }
     },
@@ -40,8 +48,7 @@ export default {
     setup: () => ({ v$: useVuelidate() }),
     validations: {
         lazyOption: {
-            text: { required },
-            value: { required }
+            text: { required }
         }
     },
     methods: {

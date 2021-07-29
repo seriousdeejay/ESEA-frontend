@@ -25,7 +25,7 @@
 
 <script>
 import useVuelidate from '@vuelidate/core'
-import { required } from '../../utils/validators'
+import { required } from '../utils/validators'
 import Dropdown from 'primevue/dropdown'
 
 export default {

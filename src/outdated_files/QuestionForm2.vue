@@ -90,10 +90,10 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
-import { DATA_TYPES, UI_COMPONENTS } from '../../utils/constants'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
+import { DATA_TYPES, UI_COMPONENTS } from '../utils/constants'
+import HandleValidationErrors from '../utils/HandleValidationErrors'
 import { isEqual, cloneDeep } from 'lodash'
-import { required, maxLength } from '../../utils/validators'
+import { required, maxLength } from '../utils/validators'
 import Dropdown from 'primevue/dropdown'
 import OptionForm from '../../components/forms/OptionForm'
 import InputSwitch from 'primevue/inputswitch'

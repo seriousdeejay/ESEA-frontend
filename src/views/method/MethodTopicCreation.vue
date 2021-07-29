@@ -22,8 +22,6 @@
             </div>
         </div>
         <div v-else class="p-m-5" style="display: flex; width: 100%; height: 50px; background-color: #00695C; border-radius: 5px; cursor: pointer;" @click="addTopic"><span style="margin: auto; color: white; font-weight: bold;">Add Topic</span></div>
-        <!-- <div class="p-m-5" style="display: flex; width: 100%; background-color: #00695C; cursor: pointer;"><span style="width: 50%; height: 50%; margin: auto; font-size: 50px; font-weight: bold; color: white; background-color: grey;">Create topic</span></div>
-     -->
     </div>
 
     <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 45%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
@@ -66,15 +64,13 @@ export default {
         ...mapState('method', ['method', 'error']),
         ...mapState('topic', { topics: 'topics', activeTopic: 'topic', topicErrors: 'errors' }),
         ...mapGetters('topic', ['methodTopics', 'subTopics']),
-        // ...mapState('question', { activeQuestion: 'question', questionErrors: 'errors' }),
-        // ...mapGetters('question', ['topicQuestions']),
         ...mapState('directIndicator', { activeDirectIndicator: 'directIndicator', directIndicatorErrors: 'errors' }),
         ...mapGetters('directIndicator', ['topicDirectIndicators']),
         ...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicatorErrors: 'errors' }),
         ...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
         items () {
             return getTopicItems(
-                this.currentTopic, // this.methodTopics,
+                this.currentTopic,
                 this.subTopics,
                 this.topicDirectIndicators,
                 this.topicIndirectIndicators
@@ -105,17 +101,13 @@ export default {
         if (!this.currentTopic) {
             this.currentTopic = this.methodTopics?.[0] || {}
         }
-        this.initialize()
     },
     methods: {
         ...mapActions('method', ['fetchMethod', 'updateMethod', 'saveMethod']),
         ...mapActions('topic', ['fetchTopics', 'setTopic', 'createTopic', 'updateTopic', 'addNewTopic', 'deleteTopic']),
         ...mapActions('directIndicator', ['fetchDirectIndicators', 'setDirectIndicator', 'addNewDirectIndicator', 'updateDirectIndicator', 'patchDirectIndicator', 'deleteDirectIndicator']),
         ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'patchIndirectIndicator', 'deleteIndirectIndicator']),
-        async initialize () {
-        },
         startDrag (evt, item) {
-            console.log(item)
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
             if (typeof item === 'object') {
@@ -124,21 +116,14 @@ export default {
             evt.dataTransfer.setData('draggedItem', item)
         },
         async onDrop (evt, topic) {
-            console.log(topic)
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)
             if (!topic.id || !parseditem.id) { return }
-            console.log('0000', parseditem)
             if ((parseditem.objType === 'indicator') || (parseditem.objType === 'direct_indicator')) {
-                console.log('9999')
                 await this.patchDirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
             } else if (parseditem.objType === 'calculation') {
                 await this.patchIndirectIndicator({ mId: this.method.id, id: parseditem.id, data: { topic: topic.id } })
             }
-            // delete parseditem.method
-            // delete parseditem.question
-            // this.lazyQuestion.direct_indicator = [parseditem]
-            // console.log('-->', this.lazyQuestion)
         },
         addBarMethod (choice) {
             if (choice === 'Topic') { this.addTopic() }
@@ -165,7 +150,6 @@ export default {
             this.currentTopic = this.methodTopics?.[0] || {}
         },
         toggleActive (item) {
-            console.log('breee')
             const { objType } = item
             const topic = { id: item.topic || item.id }
             if (objType === 'topic') {
@@ -182,7 +166,6 @@ export default {
             }
         },
         async saveActive (type, object) {
-            console.log('!!', 'type:', type, 'object:', object)
             if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
             console.log('saving object...')
             if (type === 'topic') {
@@ -199,7 +182,6 @@ export default {
                 })
             }
             if (type === 'calculation') {
-                console.log(';reee')
                 await this.updateIndirectIndicator({
                     mId: this.method.id,
                     indirectIndicator: object
@@ -209,8 +191,6 @@ export default {
         deleteActive () {
             const objType = this.activeItem.objType
             const id = this.activeItem.id
-            console.log('{{{{{', objType, id)
-            // const { objType, id } = this.activeitem
             if (objType === 'topic') {
                 this.deleteTopic({ mId: this.method.id, id })
             }
@@ -223,6 +203,10 @@ export default {
         }
     }
 }
+// delete parseditem.method
+// delete parseditem.question
+// this.lazyQuestion.direct_indicator = [parseditem]
+// console.log('-->', this.lazyQuestion)
 </script>
 
 <style lang="scss" scoped>

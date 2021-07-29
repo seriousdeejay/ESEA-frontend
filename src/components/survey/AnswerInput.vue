@@ -153,6 +153,7 @@ export default {
             }
         }
     }
+}
     // type: {
     //     type: String,
     //     default: 'text'
@@ -219,7 +220,6 @@ export default {
     // -->
     // <!-- Line -->
     // <!-- Textbox -->
-}
 </script>
 
 // <style lang="scss" scoped>

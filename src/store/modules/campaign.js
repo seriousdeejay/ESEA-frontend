@@ -1,5 +1,4 @@
 import CampaignService from '../../services/CampaignService'
-// import { AxiosInstance } from '../../../plugins/axios'
 
 export default {
     namespaced: true,
@@ -15,9 +14,9 @@ export default {
         setCampaign (state, { data }) {
             state.campaign = data || {}
         },
-        addCampaignToList (state, { data }) {
-            state.campaigns.push(data)
-        },
+        // addCampaignToList (state, { data }) {
+        //     state.campaigns.push(data)
+        // },
         updateCampaign (state, { data, id }) {
             state.campaigns = state.campaigns.map((item) => {
                 if (item.id !== id) { return item }
@@ -28,7 +27,7 @@ export default {
             state.campaigns = state.campaigns.filter(c => c.id !== id)
         },
         setError (state, { error }) {
-            console.log(error?.response.data)
+            console.log(error?.response?.data)
             state.error = error?.response.data || []
         },
         clearError (state) {
@@ -36,11 +35,9 @@ export default {
         }
     },
     actions: {
-        async fetchCampaigns ({ commit, state }, payload) {
+        async fetchCampaigns ({ commit }, payload) {
             const { response, error } = await CampaignService.get(payload)
-            state.error = []
-            // var error = []
-            // commit('setError', { error })
+            commit('clearError')
             if (error) {
                 commit('setError', { error })
                 return
@@ -62,7 +59,7 @@ export default {
                 return
             }
             await dispatch('fetchCampaigns', { nId: nId })
-            await dispatch('setCampaign', response.data)
+            await dispatch('setCampaign', response)
         },
         async updateCampaign ({ state, commit }, { nId, data }) {
             const id = state.campaign.id
@@ -72,7 +69,8 @@ export default {
                 commit('setError', { error })
                 return
             }
-            commit('updateCampaign', response)
+            commit('updateCampaign', { ...response, id })
+            commit('setCampaign', response)
         },
         async deleteCampaign ({ commit, dispatch }, payload) {
             const { error } = await CampaignService.delete(payload)
@@ -80,14 +78,13 @@ export default {
                 commit('setError', { error })
                 return
             }
-            commit('deleteCampaign', { payload })
-            await dispatch('setCampaign', {})
+            commit('deleteCampaign', payload)
+            dispatch('setCampaign', {})
         },
         setCampaign ({ state, commit }, { id }) {
             if (id) {
-                console.log(id)
                 const data = state.campaigns.find(c => c.id === id)
-                commit('setCampaign', { data })
+                commit('setCampaign', { data: data })
             } else {
                 commit('setCampaign', {})
             }

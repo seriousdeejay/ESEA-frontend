@@ -1,6 +1,6 @@
 <template>
 <div>
-    <form v-if="active" ref="form" class="p-grid p-m-3 p-px-5 p-pb-3 p-fluid" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
+    <form v-if="active" ref="form" class="p-grid p-m-3 p-px-5 p-pb-3 p-fluid p-text-left" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
         <div class="p-d-flex p-col-12">
             <h3 class="p-col p-text-center">Direct Indicator</h3>
             <div class="p-d-flex p-ai-center p-jc-end">
@@ -10,7 +10,7 @@
         </div>
         <div class="p-col-6 p-field p-my-2">
             <span class="p-float-label">
-                <InputText id="indicator-key" type="text" v-model="lazyIndicator.key" :class="{'borderless': v$.lazyIndicator.key.$error}" :disabled="!active" /> <!--  @blur="questionKeyFilter(lazyIndicator.key)" -->
+                <InputText id="indicator-key" type="text" v-model="lazyIndicator.key" :class="{'borderless': v$.lazyIndicator.key.$error}" @blur="v$.lazyIndicator.key.$touch()" :disabled="!active" /> <!--  @blur="questionKeyFilter(lazyIndicator.key)" -->
                 <label for="indicator-key">Indicator Key</label>
             </span>
             <div class="p-error p-text-italic" v-for="error in keyErrors" :key="error"><small>{{ error }}</small></div>
@@ -25,6 +25,7 @@
                 <InputText ref="indicatorname" id="indicatorname" type="text" v-model="lazyIndicator.name" :class="{borderless: nameErrors.length }" @blur="v$.lazyIndicator.name.$touch()" :disabled="!active" />
                 <label for="indicatorname">Name</label>
             </span>
+            <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{ error }}</small></div>
         </div>
         <div v-if="active" class="p-col-12 p-m-0 p-p-0">
             <div class="p-col-12 p-field p-my-2">
@@ -48,9 +49,17 @@
                     </span>
                 </div>
             </div>
-            <div v-if="lazyIndicator.datatype && datatypeWithOptions" class="p-grid p-col-12 p-mx-0 p-px-0">
-                <option-form v-for="(option, index) in lazyIndicator.options" :key="`option-${index}`" :option="option" @delete="deleteOption(option)" />
-                <Button label="Add Option" class="p-button-text" @click="addOption" />
+            <div v-if="lazyIndicator.datatype && datatypeWithOptions" class="p-grid p-col-12 p-m-0 p-p-0" style="border: 1px solid lightgrey;">
+                <div class="p-col-1">Order</div>
+                <div class="p-col-10 p-text-left">Text</div>
+                <Divider />
+                <div v-if="(lazyIndicator.datatype === 'boolean')" class="p-col-12">
+                    <option-form v-for="(option, index) in lazyIndicator.options" :key="`option-${index}`" :option="option" :order="index+1" :disabled="true" />
+                </div>
+                <div v-else class="p-col-12">
+                    <option-form v-for="(option, index) in lazyIndicator.options" :key="`option-${index}`" :option="option" :order="index+1" @delete="deleteOption(option)" />
+                    <Button label="Add Option" class="p-button-text" @click="addOption" />
+                </div>
             </div>
         </div>
    </form>
@@ -67,9 +76,9 @@ import { required, maxLength } from '@/utils/validators'
 import Dropdown from 'primevue/dropdown'
 import OptionForm from '@/components/forms/OptionForm'
 import { DATA_TYPES } from '@/utils/constants'
-// import InputSwitch from 'primevue/inputswitch'
 
 export default {
+    setup () { return { v$: useVuelidate() } },
     components: {
         IndicatorCard,
         OptionForm,
@@ -86,22 +95,16 @@ export default {
         errors: {
             type: Object,
             default: () => ({})
-        },
-        checker: {
-            type: Boolean,
-            default: false
         }
     },
     data () {
         return {
-            lazyIndicator: cloneDeep(this.directIndicator || {}),
+            lazyIndicator: cloneDeep(this.directIndicator) || {},
             dataTypes: DATA_TYPES,
             hover: false
-            // active: true
         }
     },
     computed: {
-        // ...mapGetters(directIndicator, ['getValidIndicatorKeyNumber'])
         dataTypesList () {
             return this.dataTypes
         },
@@ -125,11 +128,8 @@ export default {
     watch: {
         directIndicator: {
             handler (val) {
-                setTimeout(() => {
-                    console.log('change it up')
-                    if (isEqual(this.lazyIndicator, val)) { return }
-                    this.lazyIndicator = cloneDeep(val)
-                }, 200)
+                if (isEqual(this.lazyIndicator, val)) { return }
+                this.lazyIndicator = cloneDeep(val)
             },
             deep: true
         },
@@ -139,25 +139,15 @@ export default {
                     this.v$.lazyIndicator.$touch()
                     if (this.v$.$invalid) { return }
                     if (isEqual(this.directIndicator, val)) { return }
-                    console.log('saving Indicator...')
                     this.$emit('input', val)
                 }, 500)
             },
             deep: true
         },
         active () {
-            this.v$.lazyIndicator.$touch()
+            // this.v$.$touch()
         }
     },
-    mounted () {
-        if (this.lazyIndicator) {
-            // console.log('-->', this.$refs)
-            //  this.$refs.indicatorname.$el.focus()
-        }
-    },
-    created () {
-    },
-    setup: () => ({ v$: useVuelidate() }),
     validations: {
         lazyIndicator: {
             key: { required },
@@ -167,25 +157,36 @@ export default {
     },
     methods: {
         changeDataTypeComponent (e) {
-            console.log(e)
             const datatypesWithOptions = ['boolean', 'singlechoice', 'multiplechoice']
             if (!datatypesWithOptions.includes(e.value)) {
                 this.lazyIndicator.options = []
+            } else if (this.lazyIndicator.datatype === 'boolean') {
+                this.lazyIndicator.options = [
+                    { text: 'True', order: 1 },
+                    { text: 'False', order: 2 }
+                ]
             } else if (!this.lazyIndicator.options.length) {
                 this.lazyIndicator.options = [
-                    { text: 'Option 1', order: 1 },
-                    { text: 'Option 2', order: 2 }
+                    { text: '', order: 1 },
+                    { text: '', order: 2 }
                 ]
             }
         },
         addOption () {
-            this.lazyIndicator.options.push({ text: `option ${this.lazyIndicator.options.length + 1}`, order: this.lazyIndicator.options.length + 1 })
+            this.lazyIndicator.options.push({ text: '', order: this.lazyIndicator.options.length + 1 })
+            this.sortOptions()
         },
         deleteOption (option) {
             if (this.lazyIndicator.options && this.lazyIndicator.options.length > 2) {
-                console.log('check', option)
                 this.lazyIndicator.options = this.lazyIndicator.options.filter(choice => choice.text !== option.text)
+                this.sortOptions()
             }
+        },
+        sortOptions () {
+            this.lazyIndicator.options.forEach((option, index) => { option.order = index + 1 })
+            this.lazyIndicator.options = this.lazyIndicator.options.sort(function sortiItems (a, b) {
+                return (a.order - b.order)
+            })
         },
         removeIndicator () {
             this.$emit('delete', this.directIndicator)
@@ -193,6 +194,18 @@ export default {
     }
 
 }
+// mounted () {
+//     if (this.lazyIndicator) {
+//         // console.log('-->', this.$refs)
+//         //  this.$refs.indicatorname.$el.focus()
+//     }
+// },
+// if (!this.lazyIndicator.key) {
+//     this.lazyIndicator.key = `indicator_${this.getValidDirectIndicatorNumber}`
+// }
+// if (!this.lazyIndicator.name) {
+//     this.lazyIndicator.name = `indicator_${this.getValidDirectIndicatorNumber}`
+// }
 </script>
 
 <style lang="scss" scoped>

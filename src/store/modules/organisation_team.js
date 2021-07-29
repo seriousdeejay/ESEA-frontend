@@ -58,7 +58,7 @@ export default {
                 commit('setError', { error })
                 return
             }
-            dispatch('setOrganisationMember', response.data)
+            dispatch('setOrganisationMember', response)
         },
         async updateOrganisationMember ({ commit }, { oId, id, data }) {
             const { response, error } = await OrganisationTeamService.put({ oId, id, data: data, headers: { 'Content-Type': 'multipart/form-data' } })
@@ -67,6 +67,7 @@ export default {
                 return
             }
             commit('updateOrganisationMember', response)
+            commit('setOrganisationMember', response)
         },
         async deleteOrganisationMember ({ commit, dispatch }, payload) {
             const { error } = await OrganisationTeamService.delete(payload)

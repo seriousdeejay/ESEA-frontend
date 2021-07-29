@@ -4,7 +4,6 @@ export default {
     state: {
         networks: [],
         network: {},
-        // networkorganisations: [],
         error: []
     },
     mutations: {
@@ -23,12 +22,6 @@ export default {
         deleteNetwork (state, { id }) {
             state.networks = state.networks.filter(n => n.id !== id)
         },
-        // setNetworkOrganisations (state, { data }) {
-        //     state.networkorganisations = data.organisations || {}
-        // },
-        // deleteNetworkOrganisations (state, { id }) {
-        //     state.networkorganisations = state.networkorganisations.filter(o => o.id !== id)
-        // },
         setError (state, { error }) {
             console.log(error?.response?.data)
             state.error = error?.response?.data || []
@@ -54,7 +47,6 @@ export default {
                 return
             }
             commit('setNetwork', response)
-            // commit('setNetworkOrganisations', response)
         },
         async createNetwork ({ commit, dispatch }, { data }) {
             const { response, error } = await NetworkService.post({ data: data, headers: { 'Content-Type': 'multipart/form-data' } })
@@ -63,7 +55,7 @@ export default {
                 return
             }
             await dispatch('fetchNetworks', {})
-            dispatch('setNetwork', response.data)
+            commit('setNetwork', response)
         },
         async updateNetwork ({ state, commit }, payload) {
             const id = state.network.id
@@ -77,7 +69,6 @@ export default {
         },
         async patchNetwork ({ state, commit }, payload) {
             const id = parseInt(state.network.id)
-            console.log('LLL', payload)
             const { response, error } = await NetworkService.patch({ id, data: payload, headers: { 'Content-Type': 'application/json' } })
             if (error) {
                 commit('setError', { error })
@@ -85,7 +76,6 @@ export default {
             }
             commit('updateNetwork', { ...response, id })
             commit('setNetwork', response)
-            // commit('deleteNetworkOrganisations', payload)
         },
         async deleteNetwork ({ commit, dispatch }, payload) {
             const { error } = await NetworkService.delete(payload)

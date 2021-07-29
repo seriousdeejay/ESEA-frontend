@@ -8,8 +8,6 @@
 
         <div class="p-field p-m-0">
             <label for="year">Year</label>
-            <!-- <Calendar id="year" v-model="eseaaccountForm.year" placeholder="Year" appendTo="body" :showIcon="true" view="year" dateFormat="yy"  yearRange="2000:2030" />
-            <InputNumber id="integeronly" v-model="eseaaccountForm.year" :min="2000" :max="2050" /> -->
             <Dropdown id="method" v-model="eseaaccountForm.year" :options="possibleyears" placeholder="Select a Year" :class="{'p-invalid': v$.eseaaccountForm.year.$error}" />
             <!-- <div class="p-error p-text-italic" v-for="error in openingDateErrors" :key="error"><small>{{error}}</small></div> -->
         </div>
@@ -59,7 +57,6 @@ export default {
             for (let i = minyear; i <= currentyear; i++) {
                 years.push(i)
             }
-            // const years = [minyear, currentyear]
             return years
         }
     },
@@ -71,7 +68,7 @@ export default {
         }
     },
     async created () {
-        await this.fetchMethods('')
+        await this.fetchMethods()
     },
     methods: {
         ...mapActions('method', ['fetchMethods']),
@@ -80,7 +77,6 @@ export default {
             console.log('Validating new Esea Account...')
             this.v$.eseaaccountForm.$touch()
             if (this.v$.$invalid) { return }
-            console.log('Validated.', this.eseaaccountForm)
             await this.createEseaAccount({ oId: this.$route.params.OrganisationId, data: { method: this.eseaaccountForm.method.id, year: this.eseaaccountForm.year } })
 
             if (this.eseaAccount.id) {
@@ -92,4 +88,6 @@ export default {
         }
     }
 }
+// <!-- <Calendar id="year" v-model="eseaaccountForm.year" placeholder="Year" appendTo="body" :showIcon="true" view="year" dateFormat="yy"  yearRange="2000:2030" />
+// <InputNumber id="integeronly" v-model="eseaaccountForm.year" :min="2000" :max="2050" /> -->
 </script>

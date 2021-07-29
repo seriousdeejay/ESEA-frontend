@@ -96,15 +96,12 @@ export default {
             return HandleValidationErrors(this.v$.campaign.close_survey_date, this.error.close_survey_date)
         }
     },
-    created () {
-        this.initialize()
+    async created () {
+        await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
     },
     methods: {
         ...mapActions('campaign', ['updateCampaign', 'deleteCampaign']),
         ...mapActions('method', ['fetchMethods']),
-        async initialize () {
-            await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
-        },
         async editCampaign () {
             this.v$.campaign.$touch()
             if (this.v$.campaign.$invalid) { return }

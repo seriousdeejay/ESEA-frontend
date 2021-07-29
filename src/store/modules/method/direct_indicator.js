@@ -1,7 +1,7 @@
-import { random, debounce } from 'lodash'
+import { random, debounce, isInteger } from 'lodash'
 import DirectIndicatorService from '../../../services/DirectIndicatorService'
 
-const baseDirectIndicator = { key: '', name: 'new direct indicator', description: '', isMandatory: true, datatype: '', options: [] }
+const baseDirectIndicator = { key: '', name: '', description: '', isMandatory: true, datatype: '', options: [] }
 
 export default {
     namespaced: true,
@@ -19,8 +19,11 @@ export default {
             const filtered = {}
             state.directIndicators.forEach((directIndicator) => { filtered[directIndicator.topic] = !filtered[directIndicator.topic] ? [directIndicator] : [...filtered[directIndicator.topic], directIndicator] })
             return filtered
+        },
+        getValidDirectIndicatorNumber: (state) => {
+            const indicators = state.directIndicators.map(indicator => parseInt(indicator.name.match(/[^_]*$/), 10)).filter(indicator => isInteger(indicator))
+            return indicators.length ? Math.max(...indicators) + 1 : 1
         }
-        // getValidDirectIndicatorNumber
     },
     mutations: {
         setDirectIndicators (state, { data }) {
@@ -57,7 +60,6 @@ export default {
         },
         addNewDirectIndicator (state, { topic, question }) {
             const directIndicator = { ...baseDirectIndicator, id: random(-1000000, -1), topic, question }
-            console.log(directIndicator)
             state.directIndicators.push(directIndicator)
             state.directIndicator = directIndicator
         },
@@ -92,21 +94,22 @@ export default {
                 return
             }
             state.error = error
+        },
+        clearError (state) {
+            state.error = []
         }
     },
     actions: {
         async fetchDirectIndicators ({ commit }, payload) {
-            console.log('check')
+            commit('clearError')
             const { response, error } = await DirectIndicatorService.get(payload)
             if (error) {
                 commit('setError', { error })
                 return
             }
-            console.log(response.data)
             commit('setDirectIndicators', response)
         },
         async patchDirectIndicator ({ commit }, { mId, id, data }) {
-            console.log('LLL', data)
             const { response, error } = await DirectIndicatorService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })
             if (error) {
                 commit('setError', { error })
@@ -119,7 +122,9 @@ export default {
             if (directIndicator.topic === null) {
                 delete directIndicator.topic
             }
-            console.log('saving indicator (direct_indicator.js)')
+            commit('clearError')
+            delete state.errors[directIndicator.id]
+
             if (!directIndicator || !mId) { return }
             if (!state.debouncers[directIndicator.id]) {
                 commit('setDebouncer', { id: directIndicator.id, commit })
@@ -132,7 +137,6 @@ export default {
             state.debouncers[directIndicator.id]({ mId, directIndicator })
         },
         async deleteDirectIndicator ({ commit }, payload) {
-            console.log('deleting item...')
             if (payload.id > 0) {
                 const { error } = await DirectIndicatorService.delete(payload)
                 if (error) {
@@ -143,9 +147,13 @@ export default {
             commit('deleteDirectIndicator', payload)
         },
         setDirectIndicator ({ state, commit }, { id } = {}) {
+            if (id) {
             const data = state.directIndicators.find(indicator => indicator.id === id)
             if (data && data.id === state.directIndicator.id) { return data }
             commit('setDirectIndicator', { data })
+            } else {
+                commit('setDirectIndicator', {})
+            }
         },
         resetError ({ commit }) {
             commit('setError', { error: undefined })

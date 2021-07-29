@@ -49,13 +49,14 @@ export default {
             state.indirectIndicators = state.indirectIndicators.filter(i => i.id !== id)
         },
         updateList (state, { id, data }) {
+            console.log(id, '------', data)
             if (id !== data.id) {
                 delete state.debouncers[id]
                 delete state.errors[id]
                 delete state.isSaved[id]
             }
             state.indirectIndicators = state.indirectIndicators.map((item) => {
-                if (item.id !== id) return item
+                if (item.id !== id) { return item }
                 return Object.assign(item, data)
             })
         },
@@ -65,7 +66,6 @@ export default {
             state.indirectIndicator = indirectIndicator
         },
         setDebouncer (state, { id, commit }) {
-            console.log('checkk')
             state.debouncers[id] = debounce(
                 async ({ mId, indirectIndicator }) => {
                     const method = indirectIndicator.id > 0 ? 'put' : 'post'
@@ -74,6 +74,8 @@ export default {
                     commit('setError', { error, id: indirectIndicator.id })
                     return
                 }
+                console.log('saving indirect indicator...', indirectIndicator.id)
+                console.log('response.data:', response.data)
                 commit('setError', { error: {}, id: indirectIndicator.id })
                 commit('setIsSaved', { id: indirectIndicator.id, isSaved: true })
 				commit('updateList', { id: indirectIndicator.id, data: response.data })
@@ -108,21 +110,18 @@ export default {
             commit('setIndirectIndicators', response)
         },
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
+            indirectIndicator.formula = indirectIndicator.formula.replace('\n', '')
         if (indirectIndicator.topic === null) {
             delete indirectIndicator.topic
         }
             commit('clearError')
             delete state.errors[indirectIndicator.id]
-            console.log('eeee')
           if (!indirectIndicator || !mId) { return }
           if (!state.debouncers[indirectIndicator.id]) {
               commit('setDebouncer', { id: indirectIndicator.id, commit })
           }
           if (indirectIndicator.id < 0) {
-              commit('updateList', {
-                  id: indirectIndicator.id,
-                  data: indirectIndicator
-              })
+              commit('updateList', { id: indirectIndicator.id, data: indirectIndicator })
           }
           commit('setIsSaved', { id: indirectIndicator.id })
           if (!indirectIndicator.name) { return }

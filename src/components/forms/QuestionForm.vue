@@ -1,9 +1,10 @@
 <template>
-    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-5 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(!v$.lazyQuestion.$invalid && lazyQuestion.id > 0) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
+    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-5 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
+        {{lazyQuestion}}
         <template v-if="active" class="p-grid p-col-12 p-m-0">
             <div class="p-col-8 p-m-0 p-my-1 p-field">
                 <span class="p-float-label">
-                    <InputText id="myAnchor" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" /> <!-- nameErrors.length -->
+                    <InputText id="myAnchor" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" />
                     <label for="myAnchor">Question</label>
                 </span>
                 <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
@@ -31,9 +32,8 @@
 
             <Divider />
             <div class="p-col-12 p-d-flex p-ai-center p-jc-end">
-                <!-- <Button v-if="lazyQuestion.direct_indicator.length" label="Drag Indicator" class="p-button-outlined p-col" @click="addIndicator" /> -->
                 <h3 v-if="!lazyQuestion.direct_indicator?.length" class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.7); background-color:rgba(192,192,192,0.25); height: 50px; color: grey; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent >{{ this.lazyQuestion.direct_indicator?.[0]?.key || 'Add Indicator by dragging it into the box' }}</h3>
-                <div v-else class="p-col p-d-flex p-ai-center"><h3 class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.4); background-color:rgba(192,192,192,0.1); height: 50px; color: black; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>{{ this.lazyQuestion.direct_indicator?.[0]?.key || placeholderkey  }}</h3><i class="pi pi-trash p-p-2" style="font-size: 25px; color: red;" @click="deleteIndicator" /></div>
+                <div v-else class="p-col p-d-flex p-ai-center"><h3 class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.4); background-color:rgba(192,192,192,0.1); height: 50px; color: black; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>{{ this.lazyQuestion.direct_indicator?.[0]?.key || placeholder?.key  }}</h3><i class="pi pi-trash p-p-2" style="font-size: 25px; color: red;" @click="deleteIndicator" /></div>
                 <div class="p-d-flex p-ai-center p-ml-5"><p class="p-mr-2">Required</p> <InputSwitch v-model="lazyQuestion.isMandatory" style="" /></div>
                 <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: pointer;" @click="deleteQuestion" />
                 <i class="pi pi-ellipsis-v" style="font-size: 25px; cursor: not-allowed;" />
@@ -47,11 +47,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import useVuelidate from '@vuelidate/core'
-import { DATA_TYPES, UI_COMPONENTS } from '../../utils/constants'
+import { UI_COMPONENTS } from '../../utils/constants'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import { isEqual, cloneDeep } from 'lodash' // cloneDeep
+import { isEqual, cloneDeep } from 'lodash'
 import { required, maxLength } from '../../utils/validators'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -79,22 +78,15 @@ export default {
         return {
             lazyQuestion: cloneDeep(this.question) || {},
             uiComponents: UI_COMPONENTS,
-            dataTypes: DATA_TYPES,
             requiredList: [{ name: 'Required', value: true }, { name: 'Optional', value: 'false' }],
             changeTimer: false,
-            placeholderkey: null
+            placeholder: {}
         }
     },
     computed: {
-        ...mapGetters('question', ['getValidQuestionKeyNumber']),
-        dataTypesList () {
-                // const acceptedDataTypes = this.dataTypes.reduce((result, option) => option.possibleUI.includes(this.lazyQuestion.uiComponent) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)}))
-                // return acceptedDataTypes
-            return this.dataTypes // Object.entries(this.dataTypes).map((element) => ({ text, value }))
-        },
         uiComponentsList () {
-            if (this.lazyQuestion.direct_indicator?.[0]?.datatype) {
-                const acceptedUIComponents = this.uiComponents.reduce((result, option) => option.possibleDataTypes.includes(this.lazyQuestion.direct_indicator[0].datatype) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)})
+            if (this.lazyQuestion.direct_indicator?.[0]?.datatype || this.placeholder?.datatype) {
+                const acceptedUIComponents = this.uiComponents.reduce((result, option) => option.possibleDataTypes.includes(this.lazyQuestion.direct_indicator?.[0]?.datatype || this.placeholder?.datatype) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)})
                 return acceptedUIComponents
             }
             return this.uiComponents // return Object.entries(this.uiComponents).map(([text, value]) => ({ text, value }))
@@ -105,29 +97,24 @@ export default {
         uiComponentErrors () {
             return HandleValidationErrors(this.v$.lazyQuestion.uiComponent, this.errors.uiComponent)
         },
-        cssProps () {
-            const props = { border: '1px solid lightgrey' }
-            if (this.active) {
-                props.border = '2px solid #9ecaed'
-                props['background-color'] = '#f7f7f7'
-            }
-            return props
+        valid () {
+            return (!this.v$.lazyQuestion.$invalid && (this.lazyQuestion.id > 0))
         }
     },
     watch: {
-        question (val) {
-            console.log('lllllll')
-            this.changeTimer = false
-            if (isEqual(this.lazyQuestion, val)) { return }
-            this.lazyQuestion = cloneDeep(val)
+        question: {
+            handler (val) {
+                this.changeTimer = false
+                if (isEqual(this.lazyQuestion, val)) { return }
+                this.lazyQuestion = cloneDeep(val)
+            }
         },
         lazyQuestion: {
             handler (val) {
                 setTimeout(() => {
-                    console.log('________', val)
-                    // if (this.changeTimer) {
-                    //     val.direct_indicator = []
-                    // }
+                    if (!val.direct_indicator.length) {
+                        this.placeholder = {}
+                    }
                     this.v$.lazyQuestion.$touch()
                     if (this.v$.$invalid) { return }
                     if (isEqual(this.question, val)) { return }
@@ -137,17 +124,6 @@ export default {
             deep: true
         },
         active (val) {
-            if (!val) {
-                this.v$.lazyQuestion.$touch()
-            } else {
-                this.$nextTick(() => document.getElementById('myAnchor').focus())
-            }
-        },
-        uiComponentsList (val) {
-            const a = val.filter(element => element.value === this.lazyQuestion.uiComponent)
-            if (!a.length) {
-                this.lazyQuestion.uiComponent = null
-            }
         }
     },
     setup: () => ({ v$: useVuelidate() }),
@@ -158,41 +134,36 @@ export default {
             isMandatory: { required }
         }
     },
-    mounted () {
-        // this.lazyQuestion = cloneDeep(this.question)
-        // const namefield = document.getElementById('myAnchor')
-        // console.log('ddd', namefield)
-        // namefield.focus()
-    },
-    created () {
-        console.log(this.question)
-        // this.lazyQuestion = cloneDeep(this.question) || {}
-        if (this.lazyQuestion.id) {
-            this.focusInput()
-        }
-    },
     methods: {
-        ...mapActions('directIndicator', ['fetchDirectIndicators']),
-        focusInput () {
-        },
         async onDrop (evt) {
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)
             delete parseditem.method
             delete parseditem.question
-            console.log(')))', parseditem)
             this.lazyQuestion.direct_indicator = [parseditem.id]
-            this.placeholderkey = parseditem.key
-            console.log(';;', this.lazyQuestion)
+            this.placeholder = { key: parseditem.key, datatype: parseditem.datatype }
         },
         deleteIndicator () {
             this.changeTimer = true
             this.lazyQuestion.direct_indicator = []
         },
         deleteQuestion () {
-            console.log('eeee')
             this.$emit('delete', this.question)
         }
     }
 }
+// const acceptedDataTypes = this.dataTypes.reduce((result, option) => option.possibleUI.includes(this.lazyQuestion.uiComponent) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)}))
+// return acceptedDataTypes
+// return this.dataTypes // Object.entries(this.dataTypes).map((element) => ({ text, value }))
+// mounted () {
+// this.lazyQuestion = cloneDeep(this.question)
+// const namefield = document.getElementById('myAnchor')
+// console.log('ddd', namefield)
+// namefield.focus()
+// },
+// if (!val) {
+//     this.v$.lazyQuestion.$touch()
+// } else {
+//     this.$nextTick(() => document.getElementById('myAnchor').focus())
+// }
 </script>

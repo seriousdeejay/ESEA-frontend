@@ -105,11 +105,10 @@ export default {
             const { response, error } = await SurveyService.get(payload)
             if (error) {
                 commit('setError', { error })
-                return { error }
+                return
             }
             // commit('updateList', response)
             commit('setSurvey', response)
-            return { response }
         },
         async deleteSurvey ({ commit }, payload) {
             if (payload.id > 0) {
@@ -134,9 +133,13 @@ export default {
 			state.debouncers[survey.id]({ mId, survey })
 		},
 		setSurvey ({ state, commit }, { id }) {
-			const data = state.surveys.find(surveys => surveys.id === id)
-			if (data && data.id === state.survey.id) return
-			commit('setSurvey', { data })
+            if (id) {
+                const data = state.surveys.find(surveys => surveys.id === id)
+                if (data && data.id === state.survey.id) return
+                commit('setSurvey', { data: data })
+            } else {
+                commit('setSurvey', {})
+            }
 		},
 		resetError ({ commit }) {
 			commit('setError', { error: undefined })
