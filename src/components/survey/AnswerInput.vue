@@ -5,6 +5,7 @@
 
     -->
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
+        {{lazyValue}} -- {{value}} ++ {{ checkboxvals }}
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
             <div v-if="indicator.datatype === 'text'">
@@ -17,7 +18,9 @@
                 <InputNumber class="inputnumber" v-model="lazyValue" mode="decimal" :minFractionDigits="2" :maxFractionDigits="5" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
             </div>
             <div v-if="indicator.datatype === 'date'">
-                <input type="date" v-model="lazyValue" :disabled="readonly" required />
+                <!-- <input type="date" v-model="lazyValue" :disabled="readonly" required /> -->
+                <!-- <InputMask mask="99/99/9999" v-model="lazyValue" placeholder="99/99/9999" slotChar="mm/dd/yyyy" /> -->
+                <Calendar id="dateformat" v-model="lazyValue" placeholder="Calendar" appendTo="body" dateFormat="mm-dd-yy"  />
             </div>
         </div>
 
@@ -25,7 +28,7 @@
             <input type="text" v-model="lazyValue" :disabled="readonly" required style="width: 100%;" />
         </div>
 
-        <Textarea v-if="uiComponent === 'textbox'" id="description" v-model="lazyValue" :disabled="readonly" autoResize="true" rows="3" />
+        <Textarea v-if="uiComponent === 'textbox'" id="description" v-model="lazyValue" :disabled="readonly" :autoResize="true" rows="3" />
 
         <div v-if="uiComponent === 'radiobutton'">
             <div v-for="(option, index) in indicator.options" :key="`${index}-option`" class="p-field-radiobutton">
@@ -51,7 +54,10 @@
 
 <script>
     // import { QUESTION_TYPES } from '../../utils/constants'
+    // import InputMask from 'primevue/inputmask'
+    import Calendar from 'primevue/calendar'
     import Dropdown from 'primevue/dropdown'
+    import { isEqual } from 'lodash'
 
 export default {
     model: {
@@ -59,7 +65,9 @@ export default {
         event: 'input'
     },
     components: {
-        Dropdown
+        Dropdown,
+        // InputMask
+        Calendar
     },
     props: {
         value: {
@@ -92,29 +100,36 @@ export default {
     },
     data () {
         return {
-            lazyValue: null
+            lazyValue: []
         }
     },
     watch: {
-        value () {
-            this.getValues()
+        value (val) {
+            setTimeout(() => {
+                this.getValues()
+            }, 1000)
         },
-        lazyValue (val) {
-            console.log('cheeeck', val)
-            if ((val === 'undefined') || (val === this.value)) {
-                console.log('value is undefined or same as this.value')
-                return
-            }
-            if (!Array.isArray(val)) {
-               this.$emit('input', [val])
-               return
-            }
+        lazyValue: {
+            handler (val) {
+                setTimeout(() => {
+                console.log('cheeeck', val)
+                if ((val === 'undefined') || (val === this.value)) {
+                    console.log('value is undefined or same as this.value')
+                    return
+                }
+                if (!Array.isArray(val)) {
+                    this.$emit('input', [val])
+                    return
+                }
 
-            if (typeof (val || val[0]) === 'undefined') {
-                return
-            }
-
-			this.$emit('input', val)
+                if (typeof (val || val[0]) === 'undefined') {
+                    return
+                }
+                console.log('--->', val)
+                this.$emit('input', val)
+                }, 1000)
+            },
+            deep: true
         }
     },
     created () {
@@ -138,17 +153,27 @@ export default {
 
             if (this.value) {
                 if (this.indicator.datatype === 'integer') {
+                    if (isEqual(this.lazyValue, parseInt(this.value[1]))) { return }
                     this.lazyValue = parseInt(this.value[1]) || null
                 }
                 if (this.indicator.datatype === 'double') {
+                    if (isEqual(this.lazyValue, parseFloat(this.value[1]))) { return }
                     this.lazyValue = parseFloat(this.value[1]) || null
+                }
+                if (this.indicator.datatype === 'date') {
+                    if (isEqual(this.lazyValue, this.value[1])) { return }
+                    console.log(typeof this.lazyValue, typeof this.value[1])
+                    // this.lazyValue = this.value[1] || null
                 }
                 const questionWithSingleChoices = ['singlechoice', 'boolean']
                 if (questionWithSingleChoices.includes(this.indicator.datatype)) {
+                    if (isEqual(this.lazyValue, this.value[1])) { return }
+                    console.log(this.lazyValue, this.value[1])
                     this.lazyValue = this.value[1] || null
                 }
                 if (this.indicator.datatype === 'multiplechoice') {
-                    this.lazyValue = this.value[0] || null
+                    if (isEqual(this.lazyValue, this.value[0])) { return }
+                    this.lazyValue = this.value[0] || []
                 }
             }
         }

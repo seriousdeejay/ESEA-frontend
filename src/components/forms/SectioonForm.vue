@@ -12,11 +12,6 @@
         <i class="pi pi-trash p-p-2" style="font-size: 40px; color: red;" @click="deleteSection()" />
         <!-- <div v-if="v$.lazySection.questions.$invalid" class="p-error p-text-left">Be sure to add atleast one question to keep this section!</div> -->
     </form>
-    <!-- <div class="p-grid p-m-0 p-pt-5" style="background-color: #F1F1F1; border: 1px solid #D8D8D8;"> -->
-    <!-- <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" /> -->
-    <!-- <MultiSelect v-model="selectedQuestions" :options="questions" optionLabel="name" placeholder="Select Questions" class="p-col-12 p-my-2" :class="{'p-invalid': v$.lazySection.questions.$invalid}" @blur="v$.lazySection.questions.$touch()" /> @blur="updateQuestions" :class="{'borderless': questionsErrors.length} -->
-    <!--<Button label="Delete Section" class="p-col p-button-danger p-button-text" @click="deleteSection" /><div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div> -->
-    <!-- <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div> -->
 </template>
 
 <script>
@@ -62,12 +57,10 @@ export default {
         lazySection: {
             handler (val) {
                 setTimeout(() => {
-                    this.v$.$touch()
+                    this.v$.lazySection.$touch()
                     console.log(this.lazySection, this.section)
-                    if (this.v$.$invalid) { return }
-                    if (isEqual(this.section, val)) { return }
-                // this.updateSection({ })
-                console.log('saving...')
+                    if (this.v$.lazySection.$invalid) { return }
+                    if (isEqual(this.section, this.lazySection)) { return }
                 this.$emit('input', val)
                 }, 200)
             },
@@ -100,4 +93,9 @@ export default {
         }
     }
 }
+// <!-- <div class="p-grid p-m-0 p-pt-5" style="background-color: #F1F1F1; border: 1px solid #D8D8D8;"> -->
+// <!-- <tree-select v-model="selectedQuestions" :options="goodItems" selectionMode="checkbox"  placeholder="Select Items" @blur="updateQuestions" class="p-col-12" :class="{'borderless': questionsErrors.length}" /> -->
+// <!-- <MultiSelect v-model="selectedQuestions" :options="questions" optionLabel="name" placeholder="Select Questions" class="p-col-12 p-my-2" :class="{'p-invalid': v$.lazySection.questions.$invalid}" @blur="v$.lazySection.questions.$touch()" /> @blur="updateQuestions" :class="{'borderless': questionsErrors.length} -->
+// <!--<Button label="Delete Section" class="p-col p-button-danger p-button-text" @click="deleteSection" /><div class="p-col-12 p-error p-text-italic p-pt-1" v-for="error in questionsErrors" :key="error">{{error}}</div> -->
+// <!-- <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div> -->
 </script>

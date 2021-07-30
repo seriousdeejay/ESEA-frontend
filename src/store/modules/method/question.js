@@ -73,11 +73,13 @@ export default {
 			state.debouncers[id] = debounce(
 				async ({ mId, SuId, SeId, question }) => {
 					const method = question.id > 0 ? 'put' : 'post'
+                    if (question.direct_indicator.length) {
+                        question.direct_indicator = [question.direct_indicator[0].id] || []
+                    }
 					const { response, error } = await QuestionService[method](
 						{ mId, SuId, SeId, id, data: question }
 					)
 					if (error) {
-                        console.log(error?.response?.data)
 						commit('setError', { error, id: question.id })
 						return
 					}
@@ -97,6 +99,7 @@ export default {
 			}
 		},
         setError (state, { error, id }) {
+            console.log(error?.response?.data)
 			if (id && error?.response?.data) {
 				state.errors = { ...state.errors, [id]: error?.response?.data }
 				return
@@ -136,7 +139,7 @@ export default {
 				commit('updateList', { id: question.id, data: question })
 			}
 			commit('setIsSaved', { id: question.id })
-			if (!question.name) return
+			if (!question.name) { return }
 			state.debouncers[question.id]({ mId, SuId, SeId, question })
 		},
 		setQuestion ({ state, commit }, { id } = {}) {

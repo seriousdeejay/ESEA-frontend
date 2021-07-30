@@ -3,18 +3,18 @@
         <method-tree-sidebar :topicsdisplay="true" style="height: 100%; width: 400px; flex: 0 0 400px;" />
         <div v-if="methodTopics.length" class="p-m-4" style="width: 100%; height: calc(100vh - 200px); background-color: white; overflow-y: scroll;">
             <div class="p-d-flex" style="width: 100%; height: 50px; background-color: #f6f6f6; border-bottom: 2px solid lightgrey;">
-                <div v-for="(topic, topicIndex) in methodTopics" :key="`topic_${topicIndex}`" class="topicTabs" @click="switchTopic(topic)" @dblclick="changeName(topic.edit = true)" :style="(currentTopic?.id === topic.id) ? 'border-bottom: 3px solid #00695C; color: #00695C;':''">
-                    <InputText v-if="topic.edit" v-model="topic.name" @blur="(topic.edit=false && this.saveActive('topic', topic))" /> <span v-else>{{topic.name}}</span> <icon class="topic-remove-button pi pi-times" @click="removeTopic(topic)" />
+                <div v-for="(topic, topicIndex) in methodTopics" :key="`topic_${topicIndex}`" class="topicTabs" @click="switchTopic(topic)" @dblclick="topic.edit=true" :style="(currentTopic?.id === topic.id) ? 'border-bottom: 3px solid #00695C; color: #00695C;':''">
+                    <InputText v-if="topic.edit" v-model="topic.name" @blur="saveActive('topic', topic)" /> <span v-else>{{topic.name}}</span> <icon class="topic-remove-button pi pi-times" @click="removeTopic(topic)" />
                 </div>
                 <i class="pi pi-plus topic-add-button" @click="addTopic" />
             </div>
-            <div v-if="Object.getOwnPropertyNames(currentTopic).length > 0"  style="border: 1px solid lightgrey;"> <!-- Object.getOwnPropertyNames(currentTopic).length > 0" -->
+            <div v-if="Object.getOwnPropertyNames(currentTopic).length > 0" style="border: 1px solid lightgrey;"> <!-- Object.getOwnPropertyNames(currentTopic).length > 0" -->
                 <h3 v-if="true" class="p-col p-text-center p-text-italic p-text-light p-m-5 p-p-5" style="border: 2px dashed rgba(192,192,192,0.7); background-color:rgba(192,192,192,0.25); color: grey;"  @drop='onDrop($event, currentTopic)'  @dragover.prevent @dragenter.prevent >'Add Indicator to the main topic by dragging it into the box'</h3>
                 <div v-for="(topicChild, index) in items.children" :key="`topicChild_${index}`">
                     <div :class="(topicChild?.children?.length ? 'p-pb-2': 'p-p-0')" style="background-color: #fcfcfc;">
-                        <component :is="`${topicChild.objType}-form`" :errors="errors[topicChild.objType] && errors[topicChild.objType][topicChild.id]" ref="items" :topic="topicChild" :question="topicChild" :direct-indicator="topicChild" :indirect-indicator="topicChild" :active="activeItem.objType === topicChild.objType && activeItem.id === topicChild.id" @input="saveActive(topicChild.objType, $event)" @click="toggleActive(topicChild)" @delete="deleteActive(topicChild.objType, $event)" @dragstart="startDrag($event, topicChild)" @dragover.prevent @dragenter.prevent :draggable="true" />
+                        <component :is="`${topicChild.objType}-form`" :errors="errors[topicChild.objType] && errors[topicChild.objType][topicChild.id]" :topic="topicChild" :question="topicChild" :direct-indicator="topicChild" :indirect-indicator="topicChild" :active="topicChild.objType === 'topic' && activeItem.id === topicChild.id" @input="saveActive(topicChild.objType, $event)" @click="toggleActive(topicChild)" @delete="deleteActive(topicChild.objType, $event)" @dragstart="startDrag($event, topicChild)" @dragover.prevent @dragenter.prevent :draggable="true" />
                         <div v-for="(subTopicChild, idx) in topicChild.children" :key="`subTopicChild-${idx}`">
-                            <component :is="`${subTopicChild.objType}-form`" ref="items" :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]" :topic="subTopicChild" :question="subTopicChild" :direct-indicator="subTopicChild" :indirect-indicator="subTopicChild"  :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id" @input="saveActive(subTopicChild.objType, $event)"  @click="toggleActive(subTopicChild)" @delete="deleteActive(subTopicChild.objType, $event)" @dragstart="startDrag($event, subTopicChild)" @dragover.prevent @dragenter.prevent :draggable="true" class="p-m-5" />
+                            <component :is="`${subTopicChild.objType}-form`" :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]" :topic="subTopicChild" :question="subTopicChild" :direct-indicator="subTopicChild" :indirect-indicator="subTopicChild"  :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id" @input="saveActive(subTopicChild.objType, $event)"  @click="toggleActive(subTopicChild)" @delete="deleteActive(subTopicChild.objType, $event)" @dragstart="startDrag($event, subTopicChild)" @dragover.prevent @dragenter.prevent :draggable="true" class="p-m-5" />
                         </div>
                         <h3 v-if="(topicChild.objType === 'topic')" class="p-col p-text-center p-text-italic p-text-light p-m-5 p-p-5" style="border: 2px dashed rgba(192,192,192,0.7); background-color:rgba(192,192,192,0.25);color: grey;"  @drop='onDrop($event, topicChild)'  @dragover.prevent @dragenter.prevent >'Add Indicator by dragging it into the box'</h3>
                     </div>
@@ -97,6 +97,20 @@ export default {
             }
         }
     },
+    mounted () {
+        // // const self = this
+        // console.log(this.$refs)
+        // // this.$refs.items.$el.addEventListener('click', function (event) { // self.$refs.items?.$el.contains(event.target))
+        // //     alert('.dd.')
+        // // })
+        // document.addEventListener('click', function (event) {
+        //     if (this.$refs.items === event.target) { alert('...') }
+        // })
+        // //     console.log(event.target)
+        // //     alert('..')
+        // //     if (this.$refs.items === event.target) { }
+        // // })
+    },
     created () {
         if (!this.currentTopic) {
             this.currentTopic = this.methodTopics?.[0] || {}
@@ -167,13 +181,13 @@ export default {
         },
         async saveActive (type, object) {
             if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
-            console.log('saving object...')
+            console.log('saving object...', object)
             if (type === 'topic') {
                 await this.updateTopic({
                     mId: this.method.id,
                     topic: object
                 })
-                await this.fetchTopics({ mId: this.method.id || this.$route.params.id })
+                // await this.fetchTopics({ mId: this.method.id || this.$route.params.id })
             }
             if (type === 'indicator') {
                 await this.updateDirectIndicator({

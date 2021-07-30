@@ -1,6 +1,6 @@
 <template>
     <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-5 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
-        {{lazyQuestion}}
+        {{lazyQuestion}} <hr> {{question}} {{equal}}
         <template v-if="active" class="p-grid p-col-12 p-m-0">
             <div class="p-col-8 p-m-0 p-my-1 p-field">
                 <span class="p-float-label">
@@ -11,7 +11,7 @@
             </div>
             <div class="p-col-4">
                 <span class="p-float-label">
-                    <Dropdown id="questionuicomponent" v-model="lazyQuestion.uiComponent" :options="uiComponentsList" optionLabel="text" optionValue="value" :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
+                    <Dropdown id="questionuicomponent" v-model="lazyQuestion.uiComponent" :options="uiComponentsList" :class="{'p-invalid': uiComponentErrors.length}" @change="changeUIComponent" :disabled="!active" />
                     <label v-if="active" for="questionuicomponent">Select ui Component...</label>
                 </span>
             </div>
@@ -33,7 +33,7 @@
             <Divider />
             <div class="p-col-12 p-d-flex p-ai-center p-jc-end">
                 <h3 v-if="!lazyQuestion.direct_indicator?.length" class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.7); background-color:rgba(192,192,192,0.25); height: 50px; color: grey; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent >{{ this.lazyQuestion.direct_indicator?.[0]?.key || 'Add Indicator by dragging it into the box' }}</h3>
-                <div v-else class="p-col p-d-flex p-ai-center"><h3 class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.4); background-color:rgba(192,192,192,0.1); height: 50px; color: black; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>{{ this.lazyQuestion.direct_indicator?.[0]?.key || placeholder?.key  }}</h3><i class="pi pi-trash p-p-2" style="font-size: 25px; color: red;" @click="deleteIndicator" /></div>
+                <div v-else class="p-col p-d-flex p-ai-center"><h3 class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.4); background-color:rgba(192,192,192,0.1); height: 50px; color: black; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>{{ this.lazyQuestion.direct_indicator?.[0]?.key }}</h3><i class="pi pi-trash p-p-2" style="font-size: 25px; color: red;" @click="deleteIndicator" /></div>
                 <div class="p-d-flex p-ai-center p-ml-5"><p class="p-mr-2">Required</p> <InputSwitch v-model="lazyQuestion.isMandatory" style="" /></div>
                 <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: pointer;" @click="deleteQuestion" />
                 <i class="pi pi-ellipsis-v" style="font-size: 25px; cursor: not-allowed;" />
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import { UI_COMPONENTS } from '../../utils/constants'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
@@ -79,17 +80,17 @@ export default {
             lazyQuestion: cloneDeep(this.question) || {},
             uiComponents: UI_COMPONENTS,
             requiredList: [{ name: 'Required', value: true }, { name: 'Optional', value: 'false' }],
-            changeTimer: false,
-            placeholder: {}
+            refreshSidebar: false
         }
     },
     computed: {
+        ...mapState('method', ['method']),
         uiComponentsList () {
-            if (this.lazyQuestion.direct_indicator?.[0]?.datatype || this.placeholder?.datatype) {
-                const acceptedUIComponents = this.uiComponents.reduce((result, option) => option.possibleDataTypes.includes(this.lazyQuestion.direct_indicator?.[0]?.datatype || this.placeholder?.datatype) ? result.concat({ text: option.text, value: option.value }) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)})
-                return acceptedUIComponents
+            let acceptedUIComponents = this.uiComponents.reduce((result, option) => result.concat(option.value), [])
+            if (this.lazyQuestion.direct_indicator?.[0]?.datatype) { // text: option.text, value: option.value
+                acceptedUIComponents = this.uiComponents.reduce((result, option) => option.possibleDataTypes.includes(this.lazyQuestion.direct_indicator?.[0]?.datatype) ? result.concat(option.value) : result, []) // Object.entries(this.dataTypes).reduce((result, datatype, {includes(datatype.value)})
             }
-            return this.uiComponents // return Object.entries(this.uiComponents).map(([text, value]) => ({ text, value }))
+            return acceptedUIComponents // return Object.entries(this.uiComponents).map(([text, value]) => ({ text, value }))
         },
         nameErrors () {
             return HandleValidationErrors(this.v$.lazyQuestion.name, this.errors.name)
@@ -99,27 +100,35 @@ export default {
         },
         valid () {
             return (!this.v$.lazyQuestion.$invalid && (this.lazyQuestion.id > 0))
+        },
+        equal () {
+            return isEqual(this.lazyQuestion, this.question)
         }
     },
     watch: {
         question: {
             handler (val) {
-                this.changeTimer = false
-                if (isEqual(this.lazyQuestion, val)) { return }
-                this.lazyQuestion = cloneDeep(val)
-            }
+                setTimeout(() => {
+                    if (this.refreshSidebar) {
+                        this.fetchIndicators()
+                    }
+                    if (isEqual(this.lazyQuestion, val)) { return }
+                    this.lazyQuestion = cloneDeep(val)
+                }, 1000)
+            },
+            deep: true
         },
         lazyQuestion: {
             handler (val) {
                 setTimeout(() => {
-                    if (!val.direct_indicator.length) {
-                        this.placeholder = {}
+                    if (!this.uiComponentsList.includes(val.uiComponent)) {
+                        this.lazyQuestion.uiComponent = null
                     }
                     this.v$.lazyQuestion.$touch()
-                    if (this.v$.$invalid) { return }
-                    if (isEqual(this.question, val)) { return }
+                    if (this.v$.lazyQuestion.$invalid) { return }
+                    if (isEqual(this.question, this.lazyQuestion)) { return }
                     this.$emit('input', val)
-                }, 500)
+                }, 200)
             },
             deep: true
         },
@@ -135,20 +144,24 @@ export default {
         }
     },
     methods: {
+        ...mapActions('directIndicator', ['fetchDirectIndicators']),
         async onDrop (evt) {
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)
             delete parseditem.method
             delete parseditem.question
-            this.lazyQuestion.direct_indicator = [parseditem.id]
-            this.placeholder = { key: parseditem.key, datatype: parseditem.datatype }
+            this.lazyQuestion.direct_indicator = [parseditem]
+            this.refreshSidebar = true
         },
         deleteIndicator () {
-            this.changeTimer = true
             this.lazyQuestion.direct_indicator = []
         },
         deleteQuestion () {
             this.$emit('delete', this.question)
+        },
+        async fetchIndicators () {
+            this.refreshSidebar = false
+            await this.fetchDirectIndicators({ mId: this.method.id })
         }
     }
 }

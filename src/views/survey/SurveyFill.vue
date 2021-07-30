@@ -90,6 +90,7 @@ export default {
         ...mapState('survey', ['survey']),
         ...mapState('surveyResponse', ['surveyResponse', 'surveyResponses']),
         ...mapState('eseaAccount', ['eseaAccount']),
+        ...mapState('question', ['questions']),
         currentSection () {
             const section = this.survey.sections[this.sectionNumber]
             const mergedQuestionsAndTextFragments = section?.questions.concat(section.text_fragments)
@@ -138,10 +139,12 @@ export default {
     methods: {
         ...mapActions('survey', ['fetchSurvey']),
         ...mapActions('surveyResponse', ['fetchSurveyResponse', 'setSurveyResponse', 'updateSurveyResponse', 'createSurveyResponse', 'setSurveyResponse']),
+        ...mapActions('question', ['fetchQuestions']),
         async initialize () {
             await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
             console.log('++++', this.surveyResponse.question_responses)
             await this.fetchSurvey({ mId: this.surveyResponse.method, id: this.surveyResponse.survey })
+            await this.fetchQuestions({ mId: this.surveyResponse.method, SuId: this.surveyResponse.survey, SeId: 0 })
             this.loading = false
             if (this.surveyResponse.finished) {
                 this.$router.push({ name: 'survey-thank-you' })
@@ -196,8 +199,13 @@ export default {
                 questionResponse = { question: questionId, direct_indicator_id: id, values: [], value: null }
             }
             // if (!questionResponse) { return }
-
-            questionResponse.value = answer.answer[0] || ''
+            const relevantquestion = this.questions.find(q => q.id === questionId)
+            if (relevantquestion.uiComponent === 'checkbox') {
+                console.log('------->', answer.answer)
+                questionResponse.values = answer.answer
+            } else {
+                questionResponse.value = answer.answer?.[0] || ''
+            }
             this.surveyResponse.question_responses = [questionResponse]
 
             if (parseInt(this.$route.params.uniquetoken) !== this.surveyResponse.survey) {

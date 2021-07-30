@@ -1,6 +1,7 @@
 <template>
 <div>
     <form v-if="active" ref="form" class="p-grid p-m-3 p-px-5 p-pb-3 p-fluid p-text-left" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
+        {{errors}} {{valid}} {{directIndicator}}
         <div class="p-d-flex p-col-12">
             <h3 class="p-col p-text-center">Direct Indicator</h3>
             <div class="p-d-flex p-ai-center p-jc-end">
@@ -122,13 +123,13 @@ export default {
             return HandleValidationErrors(this.v$.lazyIndicator.name, this.errors.name)
         },
         valid () {
-            return (!this.v$.lazyIndicator.$invalid && (this.lazyIndicator.id > 0))
+            return ((Object.entries(this.errors).length === 0) && !this.v$.lazyIndicator.$invalid && (this.lazyIndicator.id > 0))
         }
     },
     watch: {
         directIndicator: {
             handler (val) {
-                if (isEqual(this.lazyIndicator, val)) { return }
+                if (isEqual(this.lazyIndicator, this.directIndicator)) { return }
                 this.lazyIndicator = cloneDeep(val)
             },
             deep: true
@@ -138,7 +139,7 @@ export default {
                 setTimeout(() => {
                     this.v$.lazyIndicator.$touch()
                     if (this.v$.$invalid) { return }
-                    if (isEqual(this.directIndicator, val)) { return }
+                    if (isEqual(this.directIndicator, this.lazyIndicator)) { return }
                     this.$emit('input', val)
                 }, 500)
             },

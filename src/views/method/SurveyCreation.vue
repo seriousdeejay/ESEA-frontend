@@ -97,13 +97,12 @@ export default {
                 this.setSection(section)
                 this.setQuestion()
             } else if (objType === 'question' && (item.id !== this.question.id)) {
-                console.log('aaa')
                 this.setQuestion(item)
             }
         },
         async saveActive (type, object) {
-            console.log(type, 'object', object)
             if (object.target) { return }
+            console.log(type, 'object', object)
             if (type === 'section') {
                 await this.updateSection({
                     mId: this.method.id,
@@ -112,6 +111,7 @@ export default {
                 })
             }
             if (type === 'question') {
+                if (object === this.question) return
                 await this.updateQuestion({
                     mId: this.method.id,
                     SuId: this.survey.id,
@@ -119,7 +119,6 @@ export default {
                     question: object
                 })
             }
-            await this.fetchDirectIndicators({ mId: this.method.id })
         },
         deleteActive () {
             const objType = this.activeItem.objType

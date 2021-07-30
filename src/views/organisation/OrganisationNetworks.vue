@@ -87,7 +87,7 @@ export default {
         },
         async requestNetworkParticipation () {
             this.joinableNetworksBool = false
-            await this.createMembership({ network: this.selectedNetwork.id, organisation: this.$route.params.OrganisationId, requester: 'organisation' })
+            await this.createMembership({ data: { network: this.selectedNetwork.id, organisation: this.$route.params.OrganisationId, requester: 'organisation' } })
             this.requestParticipationDialog = false
             this.refreshData()
         },

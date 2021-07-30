@@ -68,10 +68,11 @@ export default {
     },
     methods: {
         changeAnswer (answer) {
+            console.log('====', answer)
             this.$emit('input', { answer: answer })
         },
         checkRequirementStatus () {
-            console.log('check Requirements', this.item.name, this.answer)
+            // console.log('check Requirements', this.item.name, this.answer)
             if (this.focused && this.item.isMandatory) {
                 if (!this.answer?.[0].length && (!this.answer?.[1]?.length || this.answer?.[1] === null) && !this.item.text) { // === ('' || null))
                     this.requireStatus = true

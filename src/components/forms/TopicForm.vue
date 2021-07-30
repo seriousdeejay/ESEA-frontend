@@ -1,6 +1,6 @@
 <template>
     <form v-if="active" ref="form" class="p-fluid p-input-filled p-p-3 p-text-left" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);']"> <!-- @submit.prevent="!v$.$invalid" -->
-        {{lazyTopic}}
+        {{topic}} <hr> {{lazyTopic}} {{v$.$invalid}}
         <div class="p-d-flex p-col-12">
             <h3 class="p-col p-text-center">Topic</h3>
             <div class="p-d-flex p-ai-center p-jc-end">
@@ -10,7 +10,7 @@
         </div>
         <div class="p-field">
             <span class="p-float-label">
-                <InputText id="topicname" ref="input" v-model="lazyTopic.name" :placeholder="nameLabel" :class="{'borderless': nameErrors.length }" @blur="v$.lazyTopic.name.$touch()" />
+                <InputText id="topicname" ref="input" v-model.lazy="lazyTopic.name" :placeholder="nameLabel" :class="{'borderless': nameErrors.length }" @blur="v$.lazyTopic.name.$touch()" />
             </span>
             <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
         </div>
@@ -93,12 +93,15 @@ export default {
         lazyTopic: {
             handler (val) {
             setTimeout(() => {
-                if (this.v$.$invalid) { return }
-                if (isEqual(this.topic, val)) { return }
-                this.$emit('input', this.lazyTopic)
-                }, 10000)
+                console.log('cheeeck')
+                if (this.v$.lazyTopic.$invalid) { return }
+                if (isEqual(this.topic, this.lazyTopic) && this.lazyTopic.id > 0) { return }
+                 console.log('cheeeck')
+                this.$emit('input', val)
+                }, 500)
             },
-            deep: true
+            deep: true,
+            immediate: true
         },
         active (val) {
             this.v$.lazyTopic.$touch()
