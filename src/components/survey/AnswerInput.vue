@@ -5,10 +5,11 @@
 
     -->
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
-        {{lazyValue}} -- {{value}} ++ {{ checkboxvals }}
+        <!-- {{lazyValue}} -- {{value}} ++ {{ checkboxvals }} -->
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
             <div v-if="indicator.datatype === 'text'">
+                <InputText type="text" v-model="lazyValue" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
             </div>
             <div v-if="indicator.datatype === 'integer'" >
                 <InputNumber class="inputnumber" v-model="lazyValue" :disabled="readonly" required style="border: none;" @focus="focusedField()" />
@@ -20,15 +21,16 @@
             <div v-if="indicator.datatype === 'date'">
                 <!-- <input type="date" v-model="lazyValue" :disabled="readonly" required /> -->
                 <!-- <InputMask mask="99/99/9999" v-model="lazyValue" placeholder="99/99/9999" slotChar="mm/dd/yyyy" /> -->
-                <Calendar id="dateformat" v-model="lazyValue" placeholder="Calendar" appendTo="body" dateFormat="mm-dd-yy"  />
+                <Calendar id="dateformat" v-model="lazyValue" placeholder="Calendar" appendTo="body" dateFormat="mm-dd-yy" :disabled="readonly" @focus="focusedField()" />
             </div>
         </div>
 
         <div v-if="uiComponent === 'line'" style="width: 100%;">
-            <input type="text" v-model="lazyValue" :disabled="readonly" required style="width: 100%;" />
+            <!-- <input type="text" v-model="lazyValue" :disabled="readonly" required style="width: 100%;" /> -->
+            <InputText type="text" v-model="lazyValue" :disabled="readonly" required @focus="focusedField()" />
         </div>
 
-        <Textarea v-if="uiComponent === 'textbox'" id="description" v-model="lazyValue" :disabled="readonly" :autoResize="true" rows="3" />
+        <Textarea v-if="uiComponent === 'textbox'" id="description" v-model="lazyValue" :disabled="readonly" :autoResize="true" rows="3" @focus="focusedField()" />
 
         <div v-if="uiComponent === 'radiobutton'">
             <div v-for="(option, index) in indicator.options" :key="`${index}-option`" class="p-field-radiobutton">
@@ -39,13 +41,13 @@
 
         <div v-if="uiComponent === 'checkbox'">
             <div v-for="(option, index) in indicator.options" :key="`${index}-option`" class="p-field-checkbox">
-                <Checkbox :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required/>
+                <Checkbox :id="`${index}-option`" name="option" :value="option[optionValueKey]" v-model="lazyValue" :disabled="readonly" required @focus="focusedField()" />
                 <label :for="`${index}-option`" class="p-text-left">{{option[optionTextKey]}}</label>
             </div>
         </div>
 
         <div v-if="uiComponent === 'dropdown'" style="width: 100%;">
-            <Dropdown v-model="lazyValue" :options="indicator.options"  optionLabel="text" optionValue="text" placeholder="Select option"  style="width: 100%" />
+            <Dropdown v-model="lazyValue" :options="indicator.options"  optionLabel="text" optionValue="text" placeholder="Select option"  style="width: 100%" @focus="focusedField()" />
         </div>
 
         <span class="p-ml-2">{{indicator?.post_unit}}</span>
@@ -107,7 +109,7 @@ export default {
         value (val) {
             setTimeout(() => {
                 this.getValues()
-            }, 1000)
+            }, 5000)
         },
         lazyValue: {
             handler (val) {
@@ -117,12 +119,17 @@ export default {
                     console.log('value is undefined or same as this.value')
                     return
                 }
+
+                if (this.indicator.datatype === 'date') {
+                    val.setDate(val.getDate() + 1)
+                }
+                console.log('+++', val)
                 if (!Array.isArray(val)) {
                     this.$emit('input', [val])
                     return
                 }
 
-                if (typeof (val || val[0]) === 'undefined') {
+                if (typeof (val || val?.[0]) === 'undefined') {
                     return
                 }
                 console.log('--->', val)
@@ -144,36 +151,43 @@ export default {
             if (
                 !this.value ||
                 this.value[1] === null ||
-                (!this.value[0].length && this.value[1] === '') ||
-                this.value[0] === this.lazyValue ||
-                this.value[1] === this.lazyValue
+                (!this.value?.[0].length && this.value[1] === '') ||
+                this.value?.[0] === this.lazyValue ||
+                this.value?.[1] === this.lazyValue
                 ) {
                     return
                 }
 
             if (this.value) {
+                if (this.indicator.datatype === 'text') {
+                    if (isEqual(this.lazyValue, this.value?.[1])) { return true }
+                    this.lazyValue = this.value?.[1]
+                }
                 if (this.indicator.datatype === 'integer') {
-                    if (isEqual(this.lazyValue, parseInt(this.value[1]))) { return }
-                    this.lazyValue = parseInt(this.value[1]) || null
+                    if (isEqual(this.lazyValue, parseInt(this.value?.[1]))) { return }
+                    this.lazyValue = parseInt(this.value?.[1]) || null
                 }
                 if (this.indicator.datatype === 'double') {
-                    if (isEqual(this.lazyValue, parseFloat(this.value[1]))) { return }
-                    this.lazyValue = parseFloat(this.value[1]) || null
+                    if (isEqual(this.lazyValue, parseFloat(this.value?.[1]))) { return }
+                    this.lazyValue = parseFloat(this.value?.[1]) || null
                 }
                 if (this.indicator.datatype === 'date') {
-                    if (isEqual(this.lazyValue, this.value[1])) { return }
-                    console.log(typeof this.lazyValue, typeof this.value[1])
-                    // this.lazyValue = this.value[1] || null
+                    if (this.value[1].length) {
+                        var tempval = new Date(this.value?.[1])
+                        }
+                    if (isEqual(this.lazyValue, tempval)) { return }
+                    console.log(this.lazyValue, tempval)
+                    this.lazyValue = tempval || null
                 }
                 const questionWithSingleChoices = ['singlechoice', 'boolean']
                 if (questionWithSingleChoices.includes(this.indicator.datatype)) {
-                    if (isEqual(this.lazyValue, this.value[1])) { return }
-                    console.log(this.lazyValue, this.value[1])
-                    this.lazyValue = this.value[1] || null
+                    if (isEqual(this.lazyValue, this.value?.[1])) { return }
+                    console.log(this.lazyValue, this.value?.[1])
+                    this.lazyValue = this.value?.[1] || null
                 }
                 if (this.indicator.datatype === 'multiplechoice') {
                     if (isEqual(this.lazyValue, this.value[0])) { return }
-                    this.lazyValue = this.value[0] || []
+                    this.lazyValue = this.value?.[0] || []
                 }
             }
         }

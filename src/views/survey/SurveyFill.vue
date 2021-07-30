@@ -10,6 +10,7 @@
                 <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
             </div>
         </div>
+        {{ currentSection.mergedQuestionsAndTextFragments }}
         <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
             <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
             <Divider />
@@ -36,7 +37,7 @@
                     <Button label="Previous Section" class="p-button-raised" :disabled="sectionNumber === 0" @click="previousSection" />
                 </div>
                 <div class="p-col-3 p-text-right">
-                    <Button label="Save for Now" class="p-button-primary p-button-raised" @click="saveSurvey" />
+                    <Button label="Save for Now" class="p-button-primary p-button-raised" @click="saveSurvey" :disabled="true" />
                 </div>
                 <div class="p-col-3 p-text-right p-pr-0">
                     <Button v-if="sectionNumber + 1 < totalSections.length" label="Next Section" class="p-button-raised" style="width: 100%;" @click="nextSection" />
@@ -51,8 +52,8 @@
         <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
         <span class="p-text-left">You need to fill in the following answers to be able to send your survey response:</span>
         <div class="p-grid p-m-2">
-            <div v-for="question in missedQuestions" :key="question" class="p-col-4">
-                <Button :label="`Question ${question.id}`" @click="goToQuestion(question)"> </Button>
+            <div v-for="question in missedQuestions" :key="question" class="p-col-12">
+                <Button :label="`Question: '${question.name}'`" style="width: 100%;" @click="goToQuestion(question)"> </Button>
             </div>
         </div>
         <template #footer>
@@ -163,9 +164,11 @@ export default {
             }
         },
         toggleActive (question) {
-            if (question) {
-            this.activeQuestion = question
-            } else { this.activeQuestion = null }
+            if (Number.isInteger(question)) {
+                this.activeQuestion = question
+            } else {
+                this.activeQuestion = null
+                }
         },
         goToQuestion (question) {
             this.sectionNumber = this.totalSections.indexOf(question.section)
