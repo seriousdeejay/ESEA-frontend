@@ -10,25 +10,30 @@ export default {
         methods: [],
         method: { },
         error: undefined,
-        debouncers: {},
+        isSaved: undefined,
         debouncer: _.debounce(async ({ id, method, commit }) => {
             const { response, error } = await MethodService.put({ id: id, data: method })
             if (error) {
                 commit('setError', { error })
             } else {
                 console.log('debouncing', response)
+                commit('setIsSaved', { isSaved: true })
                 commit('clearError')
-                commit('setMethod', response)
+                commit('updateList', { id: method.id, data: response.data })
             }
         }, 1000)
     },
     mutations: {
         setMethods (state, { data }) {
             state.methods = data
+            state.errors = []
+            state.isSaved = true
         },
         setMethod (state, { data }) {
             console.log('oldmethod', state.method, 'newmethod', data)
             state.method = { ...data } || baseMethod
+            state.error = []
+            state.isSaved = true
         },
         addMethodToList (state, { data }) {
             state.methods.push(data)
@@ -36,6 +41,20 @@ export default {
         deleteMethod (state, { id }) {
             state.methods = state.methods.filter(m => m.id !== id)
             console.log(id, 'methods:', state.methods)
+        },
+        updateList (state, { id, data }) {
+            if (id !== data.id) {
+                // state,debouncer = ??
+                state.error = []
+                state.isSaved = false
+            }
+            state.methods = state.methods.map((item) => {
+                if (item.id !== id) { return item }
+                return Object.assign(item, data)
+            })
+        },
+        setIsSaved (state, { isSaved = false }) {
+            state.isSaved = isSaved
         },
         setError (state, { error }) {
             console.log(error?.response?.data)
@@ -87,6 +106,7 @@ export default {
         },
         async updateMethod ({ state, commit }, method) {
             if (method.id !== state.method.id) { return }
+            commit('setIsSaved', {})
             state.debouncer({ id: method.id, method, commit })
         },
         async deleteMethod ({ commit }, payload) {

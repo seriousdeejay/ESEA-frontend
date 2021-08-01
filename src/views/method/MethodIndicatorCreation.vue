@@ -2,8 +2,9 @@
     <div class="p-d-flex" style="height: calc(100vh - 145px);">
         <method-tree-sidebar style="height: 100%; flex: 0 0 400px;" />
         <div class="p-px-5" style="width: 100%; background-color: #EFEFE8FF; overflow-y: scroll;">
+            {{indicatorsSavingStatus}} {{allowRouting}} {{ errors }}
             <div v-for="indicator in items" :key="indicator.key">
-                <component :is="`${indicator.objType}-form`" :errors="errors[indicator.objType] && errors[indicator.objType][indicator.id]" ref="items"
+                <component :is="`${indicator.objType}-form`" :errors="errors[indicator.objType] && errors[indicator.objType][indicator.id]" :check-saving-status="checkSavingStatus" @savingstatus="savingStatus(indicator, $event)"
                 :direct-indicator="indicator" :indirect-indicator="indicator" :active="activeItem.objType === indicator.objType && activeItem.id === indicator.id"
                 @input="saveActive(indicator.objType, $event)" @click="toggleActive(indicator)" @delete="deleteActive(indicator.objType, $event)" />
             </div>
@@ -19,6 +20,15 @@
             </div>
         </div>
     </div>
+    <Dialog v-model:visible="unsavedChangesDialog" style="width: 600px;" header="Unsaved Changes" :modal="true" :dismissableMask="true">
+        <div class="confirmation-content">
+            This page contains unsaved changes, leaving the page now will destroy these. Do you still wish to leave the page?
+        </div>
+        <template #footer>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="unsavedChangesChoice(true)" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="unsavedChangesChoice(false)"/>
+        </template>
+    </Dialog>
 </template>
 
 <script>
@@ -35,6 +45,12 @@ export default {
     },
     data () {
         return {
+            checkSavingStatus: false,
+            indicatorsSavingStatus: {},
+            to: null,
+            allowRouting: false,
+            unsavedChangesDialog: false,
+            discardUnsavedChanges: false,
             addBar: [
                 { choice: 'indicator' },
                 { choice: 'calculation' }
@@ -68,6 +84,36 @@ export default {
                 indicator: this.directIndicatorErrors,
                 calculation: this.indirectIndicatorErrors
             }
+        }
+    },
+    watch: {
+        indicatorsSavingStatus: {
+            handler (val) {
+                console.log(this.indicatorsSavingStatus)
+                console.log(val)
+                if ((Object.keys(val).length === this.items.length) & (!Object.keys(this.directIndicatorErrors).length) & (!Object.keys(this.indirectIndicatorErrors).length)) {
+                    for (const key in val) {
+                        if (val[key]) {
+                            this.indicatorsSavingStatus = {}
+                            this.unsavedChangesDialog = true
+                            return
+                        }
+                    }
+                    this.allowRouting = true
+                    this.$router.push(this.to)
+                }
+            },
+            deep: true
+        }
+    },
+    beforeRouteLeave (to, from, next) {
+        if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
+            next(true)
+        } else {
+            this.to = to
+            this.allowRouting = false
+            this.checkSavingStatus = !this.checkSavingStatus
+            next(false)
         }
     },
     created () {
@@ -118,6 +164,19 @@ export default {
         deleteActive (objType, object) {
             if (objType === 'indicator') { this.deleteDirectIndicator({ mId: this.method.id, SuId: 0, SeId: 0, id: object.id }) }
             if (objType === 'calculation') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
+        },
+        savingStatus (indicator, status) {
+            console.log('eeeeeeeee', status)
+            const key = indicator.objType + indicator.id
+            this.indicatorsSavingStatus[key] = status
+            console.log(this.indicatorsSavingStatus)
+        },
+        unsavedChangesChoice (choice) {
+            this.unsavedChangesDialog = false
+            this.discardUnsavedChanges = choice
+            if (choice) {
+                this.$router.push(this.to)
+            }
         }
     }
 }

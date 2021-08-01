@@ -34,6 +34,7 @@ export default {
         ...mapState('method', ['method']),
 		...mapState('topic', { topicsSaved: 'isSaved' }),
 		...mapState('question', { questionsSaved: 'isSaved' }),
+        ...mapState('directIndicator', { DirectIndicatorsSaved: 'isSaved' }),
 		...mapState('indirectIndicator', { IndirectIndicatorsSaved: 'isSaved' }),
 		// ...mapState('survey', { SurveysSaved: 'isSaved' }),
         title () {
@@ -55,6 +56,7 @@ export default {
             this.$router.push({ name: 'methods' })
         },
         goToPage (page) {
+            console.log('is saved:', this.DirectIndicatorsSaved)
             page.params = { id: this.$route.params.id }
             this.$router.push(page)
         }

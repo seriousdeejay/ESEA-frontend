@@ -16,7 +16,7 @@
         </div>
     </div>
 
-     <Dialog v-model:visible="messageDialog"  modal="true" header="Send Message" dismissableMask="true" class="p-fluid">
+     <Dialog v-model:visible="messageDialog"  modal="true" header="Send Message" :dismissableMask="true" class="p-fluid">
          <div class="p-field">
             <MultiSelect id="users" v-model="usersToMessage" :options="users" optionLabel="username" placeholder="Select Users" :filter="true" class="multiselect-custom">
                 <template #value="slotProps">
@@ -31,11 +31,11 @@
                     <div>{{slotProps.option.username}}</div>
                 </template>
             </MultiSelect>
-</div>
-<div class="p-field p-grid">
-            <label for="message" class="p-col-12">Message to selected User(s)</label>
-            <Textarea id="message" v-model="something" required="true" rows="3" cols="20" />
-</div>
+        </div>
+        <div class="p-field p-grid">
+                    <label for="message" class="p-col-12">Message to selected User(s)</label>
+                    <Textarea id="message" v-model="something" required="true" rows="3" cols="20" />
+        </div>
         <template #footer>
                 <Button label="Send Message" icon="pi pi-plus" @click="SendMessage()"/>
                 <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="messageDialog = false" />

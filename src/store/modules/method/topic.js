@@ -78,6 +78,10 @@ export default {
 			state.debouncers[id] = debounce(
 				async ({ mId, topic }) => {
 					const method = topic.id > 0 ? 'put' : 'post'
+                    // topics.direct_indicators.forEach(indicator => { })
+                    // if (topic.direct_indicator.length) {
+                    //     question.direct_indicator = [question.direct_indicator[0].id] || []
+                    // }
 					const { response, error } = await TopicService[method](
 						{ mId, id, data: topic }
 					)

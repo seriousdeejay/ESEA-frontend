@@ -15,6 +15,15 @@
             <SelectButton id="ispublic" v-model="lazierMethod.ispublic"  optionLabel="display" optionValue="value" :options="ispublicbool" />
         </div>
     </form>
+    <Dialog v-model:visible="unsavedChangesDialog" header="Unsaved Changes" :modal="true" :dismissableMask="true">
+        <div class="confirmation-content">
+            This page contains unsaved changes, leaving the page now will destroy these. Do you still wish to leave the page?
+        </div>
+        <template #footer>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="unsavedChangesChoice(true)" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="unsavedChangesChoice(false)"/>
+      </template>
+    </Dialog>
 </template>
 
 <script>
@@ -25,18 +34,20 @@ import { required, minLength, maxLength } from '../../utils/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 
 export default {
-
     data () {
         return {
             lazierMethod: null,
             ispublicbool: [
                 { display: 'Public', value: true },
                 { display: 'Private', value: false }
-            ]
+            ],
+            unsavedChangesDialog: false,
+            discardUnsavedChanges: false,
+            to: null
         }
     },
     computed: {
-        ...mapState('method', ['method', 'error']),
+        ...mapState('method', ['method', 'error', 'isSaved']),
         nameErrors () {
             return HandleValidationErrors(
                 this.v$.lazierMethod.name,
@@ -74,16 +85,37 @@ export default {
             description: { required }
         }
     },
-    created () {
+    beforeRouteLeave (to, from, next) {
+        // If the form is dirty and the user did not confirm leave,
+        // prevent losing unsaved changes by canceling navigation
+        console.log('isSaved:', this.isSaved)
+        if ((this.v$.$invalid || !this.isSaved) & !this.discardUnsavedChanges) {
+            this.unsavedChangesDialog = true
+            this.to = to
+        } else {
+            // Navigate to next view
+            next(true)
+        }
+    },
+    async created () {
+        this.fetchMethod({ id: this.method?.id })
         this.lazierMethod = cloneDeep(this.method)
     },
     methods: {
-        ...mapActions('method', ['updateMethod']),
+        ...mapActions('method', ['fetchMethod', 'updateMethod']),
+
         updateName () {
             this.v$.lazierMethod.name.$touch()
         },
         updateDescription () {
             this.v$.lazierMethod.description.$touch()
+        },
+        unsavedChangesChoice (choice) {
+            this.unsavedChangesDialog = false
+            this.discardUnsavedChanges = choice
+            if (choice) {
+                this.$router.push(this.to)
+            }
         }
     }
 }

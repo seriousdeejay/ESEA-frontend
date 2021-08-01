@@ -68,6 +68,9 @@ export default {
         errors: {
             type: Object,
             default: () => ({})
+        },
+        checkSavingStatus: {
+            type: Boolean
         }
     },
     setup: () => ({ v$: useVuelidate() }),
@@ -135,6 +138,9 @@ export default {
         },
         active () {
             // this.v$.lazyIndirectIndicator.$touch()
+        },
+        checkSavingStatus (val) {
+            this.$emit('savingstatus', this.v$.lazyIndicator.$invalid)
         }
     },
     methods: {
