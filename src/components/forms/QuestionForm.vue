@@ -1,10 +1,10 @@
 <template>
-    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-5 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
-        {{lazyQuestion}} <hr> {{question}} {{equal}}
+    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-4 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
+        <!-- {{lazyQuestion}} <hr> {{question}} {{equal}} {{v$.$invalid}} -->
         <template v-if="active" class="p-grid p-col-12 p-m-0">
             <div class="p-col-8 p-m-0 p-my-1 p-field">
                 <span class="p-float-label">
-                    <InputText id="myAnchor" type="text" v-model="lazyQuestion.name"  :class="{'borderless': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" />
+                    <InputText id="myAnchor" type="text" v-model="lazyQuestion.name"  :class="{'p-invalid': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" />
                     <label for="myAnchor">Question</label>
                 </span>
                 <div class="p-error p-text-italic" v-for="error in nameErrors" :key="error"><small>{{error}}</small></div>
@@ -35,7 +35,7 @@
                 <h3 v-if="!lazyQuestion.direct_indicator?.length" class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.7); background-color:rgba(192,192,192,0.25); height: 50px; color: grey; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent >{{ this.lazyQuestion.direct_indicator?.[0]?.key || 'Add Indicator by dragging it into the box' }}</h3>
                 <div v-else class="p-col p-d-flex p-ai-center"><h3 class="p-col p-text-center p-text-italic p-text-light" style="border: 3px dashed rgba(192,192,192,0.4); background-color:rgba(192,192,192,0.1); height: 50px; color: black; padding: auto;"  @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>{{ this.lazyQuestion.direct_indicator?.[0]?.key }}</h3><i class="pi pi-trash p-p-2" style="font-size: 25px; color: red;" @click="deleteIndicator" /></div>
                 <div class="p-d-flex p-ai-center p-ml-5"><p class="p-mr-2">Required</p> <InputSwitch v-model="lazyQuestion.isMandatory" style="" /></div>
-                <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: pointer;" @click="deleteQuestion" />
+                <i class="pi pi-trash p-mx-5" style="font-size: 25px; color: red; cursor: pointer;" @click="removeQuestion()" />
                 <i class="pi pi-ellipsis-v" style="font-size: 25px; cursor: not-allowed;" />
             </div>
         </template>
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import { UI_COMPONENTS } from '../../utils/constants'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
@@ -73,6 +73,17 @@ export default {
         errors: {
             type: Object,
             default: () => ({})
+        },
+        checkSavingStatus: {
+            type: Boolean
+        }
+    },
+    setup: () => ({ v$: useVuelidate() }),
+    validations: {
+        lazyQuestion: {
+            name: { required, maxLength: maxLength(120) },
+            uiComponent: { required },
+            isMandatory: { required }
         }
     },
     data () {
@@ -80,11 +91,12 @@ export default {
             lazyQuestion: cloneDeep(this.question) || {},
             uiComponents: UI_COMPONENTS,
             requiredList: [{ name: 'Required', value: true }, { name: 'Optional', value: 'false' }],
-            refreshSidebar: false
+            refreshSidebar: false,
+            loading: false,
+            failedToUpDate: false
         }
     },
     computed: {
-        ...mapState('method', ['method']),
         uiComponentsList () {
             let acceptedUIComponents = this.uiComponents.reduce((result, option) => result.concat(option.value), [])
             if (this.lazyQuestion.direct_indicator?.[0]?.datatype) { // text: option.text, value: option.value
@@ -99,52 +111,48 @@ export default {
             return HandleValidationErrors(this.v$.lazyQuestion.uiComponent, this.errors.uiComponent)
         },
         valid () {
-            return (!this.v$.lazyQuestion.$invalid && (this.lazyQuestion.id > 0))
+            return (!this.v$.lazyQuestion.$invalid && (this.lazyQuestion.id > 0) && this.uptodate)
         },
-        equal () {
+        uptodate () {
             return isEqual(this.lazyQuestion, this.question)
         }
     },
     watch: {
         question: {
             handler (val) {
-                setTimeout(() => {
-                    if (this.refreshSidebar) {
-                        this.fetchIndicators()
-                    }
-                    if (isEqual(this.lazyQuestion, val)) { return }
-                    this.lazyQuestion = cloneDeep(val)
-                }, 1000)
+                if (this.refreshSidebar) {
+                    this.fetchIndicators()
+                }
+                if (isEqual(this.lazyQuestion, val)) { return }
+                this.lazyQuestion = cloneDeep(val)
             },
             deep: true
         },
         lazyQuestion: {
             handler (val) {
+                this.failedToUpDate = false
                 setTimeout(() => {
                     if (!this.uiComponentsList.includes(val.uiComponent)) {
                         this.lazyQuestion.uiComponent = null
                     }
+                    if (isEqual(this.question, this.lazyQuestion)) { return }
                     this.v$.lazyQuestion.$touch()
                     if (this.v$.lazyQuestion.$invalid) { return }
-                    if (isEqual(this.question, this.lazyQuestion)) { return }
-                    this.$emit('input', val)
+                    this.updateThisQuestion()
                 }, 200)
             },
             deep: true
         },
         active (val) {
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        lazyQuestion: {
-            name: { required, maxLength: maxLength(120) },
-            uiComponent: { required },
-            isMandatory: { required }
+            this.v$.lazyQuestion.$touch()
+        },
+        checkSavingStatus () {
+            this.$emit('savingstatus', this.v$.lazyQuestion.$invalid)
         }
     },
     methods: {
         ...mapActions('directIndicator', ['fetchDirectIndicators']),
+        ...mapActions('question', ['updateQuestion', 'deleteQuestion']),
         async onDrop (evt) {
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)
@@ -156,12 +164,29 @@ export default {
         deleteIndicator () {
             this.lazyQuestion.direct_indicator = []
         },
-        deleteQuestion () {
-            this.$emit('delete', this.question)
-        },
         async fetchIndicators () {
             this.refreshSidebar = false
-            await this.fetchDirectIndicators({ mId: this.method.id })
+            await this.fetchDirectIndicators({ mId: this.$route.params.id })
+        },
+        async updateThisQuestion () {
+            this.loading = true
+            this.failedToUpDate = false
+            setTimeout(() => { this.failedToUpDate = true }, 5000)
+            console.log('......')
+            await this.updateQuestion({
+                mId: this.$route.params.id,
+                SuId: this.$route.params.SurveyId,
+                SeId: this.lazyQuestion.section || 0,
+                question: this.lazyQuestion
+            })
+        },
+        async removeQuestion () {
+            await this.deleteQuestion({
+                mId: this.$route.params.id,
+                SuId: this.$route.params.SurveyId,
+                SeId: this.lazyQuestion.section || 0,
+                id: this.question.id
+            })
         }
     }
 }

@@ -1,30 +1,39 @@
 <template>
     <form ref="form" class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg" style="width: 1000px; height: 70vh">
+        {{unsavedChangesDialog}}
         <div class="p-field p-m-3">
-            <label for="description">Survey Name</label>
-            <InputText ref="surveyname" id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="updateName" :class="{'borderless': nameErrors.length}" lazy />
+            <label for="surveyname">Survey Name</label>
+            <InputText ref="surveyname" id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="v$.lazySurvey.name.$touch()" :class="{'borderless': nameErrors.length}" lazy />
             <div class="p-error p-text-italic p-pt-1" v-for="error in nameErrors" :key="error">{{error}}</div>
         </div>
         <div class="p-field p-m-3">
-            <label for="description">Response Type</label>
-            <Dropdown v-model="lazySurvey.response_type" :options="responseTypeList"  optionLabel="value" optionValue="value" placeholder="Select response type" :class="{'p-invalid': v$.lazySurvey.response_type.$invalid}"/>
+            <label for="surveyresponsetype">Response Type</label>
+            <Dropdown id="surveyresponsetype" v-model="lazySurvey.response_type" :options="responseTypeList"  optionLabel="value" optionValue="value" placeholder="Select response type"  @blur="v$.lazySurvey.response_type.$touch()" :class="{'p-invalid': v$.lazySurvey.response_type.$invalid}"/>
         </div>
         <div class="p-field p-m-3">
-            <label for="description">Minimal Response Threshold</label>
-            <InputNumber id="surveyminthreshold" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.min_threshold" lazy :class="{'borderless': v$.lazySurvey.min_threshold.$error}" />
+            <label for="surveyminthreshold">Minimal Response Threshold</label>
+            <InputNumber id="surveyminthreshold" suffix="%" :min="0" :max="100" v-model.lazy="lazySurvey.min_threshold" lazy  @blur="v$.lazySurvey.min_threshold.$touch()" :class="{'borderless': v$.lazySurvey.min_threshold.$invalid}" />
         </div>
         <div class="p-field p-m-3">
-            <label for="description">Welcoming Text</label>
-            <Textarea id="description" v-model="lazySurvey.welcome_text" :autoResize="true" />
+            <label for="welcomingtext">Welcoming Text</label>
+            <Textarea id="welcomingtext" v-model="lazySurvey.welcome_text" :autoResize="true" />
             <!-- <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div> -->
         </div>
         <div class="p-field p-m-3">
-            <label for="description">Closing Text</label>
-            <Textarea id="description" v-model="lazySurvey.closing_text" :autoResize="true" />
+            <label for="closingtext">Closing Text</label>
+            <Textarea id="closingtext" v-model="lazySurvey.closing_text" :autoResize="true" />
             <!-- <div class="p-error p-text-italic" v-for="error in descriptionErrors" :key="error">{{ error }}</div> -->
         </div>
     </form>
-
+    <Dialog v-model:visible="unsavedChangesDialog" header="Unsaved Changes" :modal="true" :dismissableMask="true">
+        <div class="confirmation-content">
+            This page contains unsaved changes, leaving the page now will destroy these. Do you still wish to leave the page?
+        </div>
+        <template #footer>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="unsavedChangesChoice(true)" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="unsavedChangesChoice(false)"/>
+      </template>
+    </Dialog>
 </template>
 
 <script>
@@ -40,14 +49,25 @@ import useVuelidate from '@vuelidate/core'
         components: {
             Dropdown
         },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            lazySurvey: {
+                name: { required, maxLength: maxLength(120) },
+                min_threshold: { required, between: between(0, 100) },
+                response_type: { required }
+            }
+        },
         data () {
             return {
                 lazySurvey: cloneDeep(this.survey) || {},
-                response_type: RESPONSE_TYPE
+                response_type: RESPONSE_TYPE,
+                unsavedChangesDialog: false,
+                discardUnsavedChanges: false,
+                to: null
             }
         },
         computed: {
-            ...mapState('survey', ['survey', 'errors']),
+            ...mapState('survey', ['survey', 'errors', 'isSaved']),
             responseTypeList () {
                 return Object.entries(this.response_type).map(([text, value]) => ({ text, value }))
             },
@@ -74,14 +94,14 @@ import useVuelidate from '@vuelidate/core'
                 deep: true
             }
         },
-        setup: () => ({ v$: useVuelidate() }),
-        validations: {
-            lazySurvey: {
-                name: { required, maxLength: maxLength(120) },
-                min_threshold: { required, between: between(0, 100) },
-                response_type: { required }
-            }
-        },
+        beforeRouteLeave (to, from, next) {
+        if ((this.v$.$invalid || !this.isSaved) & !this.discardUnsavedChanges) {
+            this.unsavedChangesDialog = true
+            this.to = to
+        } else {
+            next(true)
+        }
+    },
         mounted () {
             this.lazySurvey = cloneDeep(this.survey)
             if (!this.lazySurvey.name.length) {
@@ -90,8 +110,12 @@ import useVuelidate from '@vuelidate/core'
         },
         methods: {
             ...mapActions('survey', ['updateSurvey']),
-            updateName () {
-                this.v$.lazySurvey.name.$touch()
+            unsavedChangesChoice (choice) {
+                this.unsavedChangesDialog = false
+                this.discardUnsavedChanges = choice
+                if (choice) {
+                    this.$router.push(this.to)
+                }
             }
         }
     }

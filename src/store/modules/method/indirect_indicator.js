@@ -32,7 +32,7 @@ export default {
     mutations: {
         setIndirectIndicators (state, { data }) {
             if (data.length) {
-                data.forEach(indicator => { indicator.objType = 'direct_indicator' })
+                data.forEach(indicator => { indicator.objType = 'indirect-indicator' })
             }
             state.indirectIndicators = data || {}
             state.debouncers = {}

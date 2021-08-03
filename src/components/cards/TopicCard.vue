@@ -1,10 +1,10 @@
 <template>
-    <div class="p-px-5 p-py-1 p-shadow-2"> <!-- #dcdcdc"> -->
+    <div class="p-text-left p-px-5 p-shadow-2"> <!-- #dcdcdc"> -->
         <h3 v-if="isSubTopic">
-            <span class="p-text-light p-text-italic">{{ name }}</span>
+            <span class="p-text-light p-text-italic">{{ name || 'No name'}}</span>
         </h3>
         <h2 v-else>
-            <span class="p-text-light p-text-italic">{{ name }}</span>
+            <span class="p-text-light p-text-italic">{{ name || 'No name' }}</span>
         </h2>
         <p v-if="description">
             Description: {{ description }}

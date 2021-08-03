@@ -28,7 +28,7 @@ export default {
     mutations: {
         setDirectIndicators (state, { data }) {
             if (data.length) {
-                data.forEach(indicator => { indicator.objType = 'direct_indicator' })
+                data.forEach(indicator => { indicator.objType = 'direct-indicator' })
             }
             state.directIndicators = data || {}
             state.debouncers = {}

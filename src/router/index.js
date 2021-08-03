@@ -525,14 +525,14 @@ const routes = [
                 requiresLogin: true
                 }
             },
-            {
-                path: '/methods/:id/method-design',
-                name: 'method-create',
-                component: () => import('../views/method/MethodCreate'),
-                meta: {
-                requiresLogin: true
-                }
-            },
+            // {
+            //     path: '/methods/:id/method-design',
+            //     name: 'method-create',
+            //     component: () => import('../views/method/MethodCreate'),
+            //     meta: {
+            //     requiresLogin: true
+            //     }
+            // },
             // {
             //     path: '/method-wizard/:id/survey-creation',
             //     name: 'survey-create',
@@ -573,8 +573,16 @@ const routes = [
                             requiresLogin: true
                         }
                     }
-            ]
-        }
+                ]
+            },
+            {
+                path: '/method-wizard/:id/finish',
+                name: 'method-wizard-finish',
+                component: () => import('@/views/method/MethodFinish'),
+                meta: {
+                    requiresLogin: true
+                    }
+            }
             //     ]
             // }
         ]

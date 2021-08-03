@@ -3,12 +3,27 @@
         <div class="p-d-flex p-flex-column p-jc-between" style="height: calc(100vh - 190px;); width: 300px; border: 1px solid lightgrey;">
             <survey-tree-side-bar style="height: 100%;" />
         </div>
-        <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; text-align: center; overflow-y: scroll;">
-            <div class="p-m-5 p-text-left p-fluid" style="width: 1200px;">
-                <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #fcfcfc; border: 1px solid lightgrey;">
-                    <sectioon-form :section="section" :active="activeItem.objType === section.objType && activeItem.id === section.id" @input="saveActive('section', $event)" @click="toggleActive(section)" @delete="removeSection" />
-                    <div v-for="(sectionChild, index) in section.children" :key="index" class="p-m-5">
-                        <question-form ref="items" :question="sectionChild" :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id" @input="saveActive(sectionChild.objType, $event)" @click="toggleActive(sectionChild)" @delete="removeQuestion(section, question)" />
+        <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; background-color: white; text-align: center; overflow-y: scroll;">
+            <div class="p-text-left p-fluid" style="width: 1200px;">
+                <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #f8f9fe; border: 1px solid lightgrey;">
+                    <sectioon-form
+                        :section="section"
+                        :active="activeItem.objType === section.objType && activeItem.id === section.id"
+                        :errors="errors[section.id]"
+                        :check-saving-status="checkSavingStatus"
+                        @savingstatus="savingStatus(section, $event)"
+                        @input="saveActive('section', $event)"
+                        @click="toggleActive(section)" @delete="removeSection"
+                    />
+                    <div v-for="(sectionChild, index) in section.children" :key="index" class="p-my-1 p-ml-5">
+                        <question-form ref="items"
+                        :question="sectionChild"
+                        :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id"
+                        :check-saving-status="checkSavingStatus"
+                        @savingstatus="savingStatus(sectionChild, $event)"
+                        @input="saveActive(sectionChild.objType, $event)"
+                        @click="toggleActive(sectionChild)"
+                        @delete="removeQuestion(section, question)" />
                     </div>
                     <div class="addQuestion" @click="addQuestion(section)"><i class="pi pi-plus" /> Add Question</div>
                 </div>
@@ -16,6 +31,16 @@
             </div>
         </div>
     </div>
+
+    <Dialog v-model:visible="unsavedChangesDialog" style="width: 600px;" header="Unsaved Changes" :modal="true" :dismissableMask="true">
+        <div class="confirmation-content">
+            This page contains unsaved changes, leaving the page now will destroy these. Do you still wish to leave the page?
+        </div>
+        <template #footer>
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="unsavedChangesChoice(true)" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="unsavedChangesChoice(false)"/>
+        </template>
+    </Dialog>
 </template>
 
 <script>
@@ -33,12 +58,18 @@ export default {
     },
     data () {
         return {
+            checkSavingStatus: false,
+            SectionAndQuestionSavingStatus: {},
+            to: null,
+            allowRouting: false,
+            unsavedChangesDialog: false,
+            discardUnsavedChanges: false
         }
     },
     computed: {
         ...mapState('method', ['method']),
         ...mapState('survey', ['survey']),
-        ...mapState('section', ['sections', 'section']),
+        ...mapState('section', ['sections', 'section', 'errors']),
         ...mapState('question', ['questions', 'question']),
         ...mapGetters('question', ['sectionQuestions']),
         items () {
@@ -62,6 +93,35 @@ export default {
                 section: this.sectionErrors,
                 question: this.questionErrors
             }
+        }
+    },
+        beforeRouteLeave (to, from, next) {
+        if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
+            next(true)
+        } else {
+            this.to = to
+            this.allowRouting = false
+            this.checkSavingStatus = !this.checkSavingStatus
+            next(false)
+        }
+    },
+    watch: {
+        SectionAndQuestionSavingStatus: {
+            handler (val) {
+                if ((Object.keys(val).length === (this.questions.length + this.sections.length))) {
+                    for (const key in val) {
+                        if (val[key]) {
+                            this.SectionAndQuestionSavingStatus = {}
+                            console.log('...')
+                            this.unsavedChangesDialog = true
+                            return
+                        }
+                    }
+                    this.allowRouting = true
+                    this.$router.push(this.to)
+                }
+            },
+            deep: true
         }
     },
     created () {
@@ -100,46 +160,58 @@ export default {
                 this.setQuestion(item)
             }
         },
-        async saveActive (type, object) {
-            if (object.target) { return }
-            console.log(type, 'object', object)
-            if (type === 'section') {
-                await this.updateSection({
-                    mId: this.method.id,
-                    sId: this.survey.id,
-                    section: object
-                })
-            }
-            if (type === 'question') {
-                if (object === this.question) return
-                await this.updateQuestion({
-                    mId: this.method.id,
-                    SuId: this.survey.id,
-                    SeId: this.section.id,
-                    question: object
-                })
-            }
-        },
-        deleteActive () {
-            const objType = this.activeItem.objType
-            const id = this.activeItem.id
+        // async saveActive (type, object) {
+        //     if (object.target) { return }
+        //     console.log(type, 'object', object)
+        //     if (type === 'section') {
+        //         await this.updateSection({
+        //             mId: this.method.id,
+        //             sId: this.survey.id,
+        //             section: object
+        //         })
+        //     }
+        //     if (type === 'question') {
+        //         if (object === this.question) return
+        //         await this.updateQuestion({
+        //             mId: this.method.id,
+        //             SuId: this.survey.id,
+        //             SeId: this.section.id,
+        //             question: object
+        //         })
+        //     }
+        // },
+        // deleteActive () {
+        //     const objType = this.activeItem.objType
+        //     const id = this.activeItem.id
 
-            if (objType === 'section') {
-                this.deleteSection({ mId: this.method.id, sId: this.survey.id, id: id })
-            }
-            if (objType === 'question') {
-                this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: 0, id: id })
-            }
+        //     if (objType === 'section') {
+        //         this.deleteSection({ mId: this.method.id, sId: this.survey.id, id: id })
+        //     }
+        //     if (objType === 'question') {
+        //         this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: 0, id: id })
+        //     }
+        // },
+        // removeSection (section) {
+        //     this.deleteSection({ mId: this.method.id, sId: this.survey.id, id: section.id })
+        //     this.initialize()
+        // },
+        // async removeQuestion (...args) {
+        //     const [section, question] = [...args]
+        //     console.log('event:', section, 'question:', question)
+        //     if (section?.id && question?.id) {
+        //         await this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: section.id, id: question.id })
+        //     }
+        // },
+        savingStatus (object, status) {
+            console.log('eeeeeeeee', status)
+            const key = object.objType + object.id
+            this.SectionAndQuestionSavingStatus[key] = status
         },
-        removeSection (section) {
-            this.deleteSection({ mId: this.method.id, sId: this.survey.id, id: section.id })
-            this.initialize()
-        },
-        async removeQuestion (...args) {
-            const [section, question] = [...args]
-            console.log('event:', section, 'question:', question)
-            if (section?.id && question?.id) {
-                await this.deleteQuestion({ mId: this.method.id, SuId: this.survey.id, SeId: section.id, id: question.id })
+        unsavedChangesChoice (choice) {
+            this.unsavedChangesDialog = false
+            this.discardUnsavedChanges = choice
+            if (choice) {
+                this.$router.push(this.to)
             }
         }
     }

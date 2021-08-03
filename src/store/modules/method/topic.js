@@ -1,7 +1,7 @@
 import { debounce, random } from 'lodash'
 import TopicService from '../../../services/TopicService'
 
-const baseTopic = { name: 'topic', description: '', questions: [] }
+const baseTopic = { name: 'untitled topic', description: '', questions: [] }
 
 export default {
     namespaced: true,
@@ -56,8 +56,8 @@ export default {
         },
         setError (state, { error, id }) {
             console.log(error?.response?.data)
-            if (id && error?.response?.data) {
-                state.errors = { ...state.errors, [id]: error?.response?.data }
+            if (id) {
+                state.errors = { ...state.errors, [id]: error?.response?.data || {} }
                 return
             }
             state.error = error
@@ -89,7 +89,7 @@ export default {
 						commit('setError', { error, id: topic.id })
 						return
 					}
-					commit('setError', { error: {}, id: topic.id })
+					commit('setError', { errors: {}, id: topic.id })
 					commit('setIsSaved', { id: topic.id, isSaved: true })
 					commit('updateList', { id: topic.id, data: response.data })
 				},
@@ -120,8 +120,9 @@ export default {
         addNewTopic ({ commit }, payload) {
             commit('addNewTopic', payload)
         },
-        async createTopic ({ commit, dispatch }, { mId }) {
-            const { response, error } = await TopicService.post({ mId, data: baseTopic })
+        async createTopic ({ commit, dispatch }, { mId, parent = null }) {
+            const data = { ...baseTopic, parent_topic: parent }
+            const { response, error } = await TopicService.post({ mId, data: data })
             if (error) {
                 commit('setError', { error })
                 return
@@ -129,14 +130,13 @@ export default {
             await dispatch('fetchTopics', { mId: mId })
             await commit('setTopic', response)
         },
-        updateTopic ({ state, commit }, { mId, topic }) {
+        async updateTopic ({ state, commit }, { mId, topic }) {
             if (!topic || !mId) { return }
             if (!state.debouncers[topic.id]) {
                 commit('setDebouncer', { id: topic.id, commit })
             }
             commit('setIsSaved', { id: topic.id })
-            if (!topic.name) { return }
-            state.debouncers[topic.id]({ mId, topic })
+            await state.debouncers[topic.id]({ mId, topic })
         },
         async patchTopic ({ commit }, { mId, id, data }) {
             const { response, error } = await TopicService.patch({ mId: mId, id: id, data: data, headers: { 'Content-Type': 'application/json' } })

@@ -1,11 +1,11 @@
-const getChildren = (topic, topicQuestions, topicIndirectIndicators) => {
+const getChildren = (topic, topicDirectIndicators, topicIndirectIndicators) => {
     let children = []
-    if (topicQuestions[topic.id]) {
-        children = topicQuestions[topic.id].map(question => ({
-            ...question,
-            objType: 'question',
-            showName: question.name,
-            uniqueId: `question_${question.id}`
+    if (topicDirectIndicators[topic.id]) {
+        children = topicDirectIndicators[topic.id].map(directIndicator => ({
+            ...directIndicator,
+            objType: 'direct-indicator',
+            showName: directIndicator.name,
+            uniqueId: `indicator${directIndicator.id}`
         }))
     }
     if (topicIndirectIndicators[topic.id]) {
@@ -13,7 +13,7 @@ const getChildren = (topic, topicQuestions, topicIndirectIndicators) => {
             ...children,
             ...topicIndirectIndicators[topic.id].map(indirectIndicator => ({
                 ...indirectIndicator,
-                objType: 'calculation',
+                objType: 'indirect-indicator',
                 showName: indirectIndicator.name,
                 uniqueId: `calculation_${indirectIndicator.id}`
             }))
@@ -23,20 +23,20 @@ const getChildren = (topic, topicQuestions, topicIndirectIndicators) => {
 }
 
 export default (
-    methodTopics, subTopics, topicQuestions, topicIndirectIndicators
+    methodTopics, subTopics, topicDirectIndicators, topicIndirectIndicators
 ) => {
     if (!methodTopics.length) return []
     return methodTopics.map((topic) => {
         let children = getChildren(
             topic,
-            topicQuestions,
+            topicDirectIndicators,
             topicIndirectIndicators
         )
         if (subTopics[topic.id]) {
             const subTopicItems = subTopics[topic.id].map(subTopic => {
                 const subChildren = getChildren(
                     subTopic,
-                    topicQuestions,
+                    topicDirectIndicators,
                     topicIndirectIndicators
                 )
                 return {

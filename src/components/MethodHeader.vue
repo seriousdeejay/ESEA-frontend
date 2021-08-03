@@ -25,7 +25,7 @@ export default {
             { text: 'Create Topics', to: { name: 'method-topic-creation' } },
             // { text: 'Set Indicators 2', to: { name: 'method-create' } },
             { text: 'Create Surveys', to: { name: 'method-wizard-surveys' } },
-            { text: 'Finish method', to: { name: 'finish-method' } }
+            { text: 'Finish method', to: { name: 'method-wizard-finish' } }
             ],
         styleObject: { 'background-color': '#00695C', color: 'white' }
         }

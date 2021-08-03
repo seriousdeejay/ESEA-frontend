@@ -1,6 +1,7 @@
 <template>
     <div>
         <form v-if="active" ref="form" class="p-grid p-fluid p-input-filled p-m-3 p-px-5 p-pb-3 p-text-center" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '':'border: 2px solid rgba(255, 0, 0, 0.3)', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
+            {{errors}}
             <div class="p-d-flex p-col-12">
                 <h3 class="p-col p-text-cente">Indirect Indicator</h3>
                 <div class="p-d-flex p-ai-center p-jc-end">
@@ -35,7 +36,7 @@
                 <p class="p-mr-3">Formula</p>
                 <Divider />
                 <formula-form-correct :formula="lazyIndirectIndicator.formula" :keyy="lazyIndirectIndicator.key" @output="updateFormula" />
-                <div class="p-error p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
+                <div class="p-error p-text-left p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
             </div>
         </form>
         <calculation-card v-if="!active" :keyy="indirectIndicator.key" :name="indirectIndicator.name" :formula="indirectIndicator.formula" :valid="valid" :hover="hover" @mouseover="hover=true" @mouseleave="hover=false" />
@@ -140,7 +141,7 @@ export default {
             // this.v$.lazyIndirectIndicator.$touch()
         },
         checkSavingStatus (val) {
-            this.$emit('savingstatus', this.v$.lazyIndicator.$invalid)
+            this.$emit('savingstatus', this.v$.lazyIndirectIndicator.$invalid)
         }
     },
     methods: {

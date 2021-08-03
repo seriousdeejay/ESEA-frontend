@@ -121,6 +121,7 @@ export default {
             commit('setQuestions', response)
         },
         async deleteQuestion ({ commit }, payload) {
+            console.log('||||||||', payload)
 			if (payload.id > 0) {
 				const { error } = await QuestionService.delete(payload)
 				if (error) {
@@ -131,6 +132,7 @@ export default {
 			commit('deleteQuestion', payload)
         },
         updateQuestion ({ state, commit }, { mId, SuId, SeId, question }) {
+            console.log('____')
 			if (!question || !mId) return
 			if (!state.debouncers[question.id]) {
 				commit('setDebouncer', { id: question.id, commit })

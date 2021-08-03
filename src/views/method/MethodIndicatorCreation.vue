@@ -4,7 +4,7 @@
         <div class="p-px-5" style="width: 100%; background-color: #EFEFE8FF; overflow-y: scroll;">
             {{indicatorsSavingStatus}} {{allowRouting}} {{ errors }}
             <div v-for="indicator in items" :key="indicator.key">
-                <component :is="`${indicator.objType}-form`" :errors="errors[indicator.objType] && errors[indicator.objType][indicator.id]" :check-saving-status="checkSavingStatus" @savingstatus="savingStatus(indicator, $event)"
+                <component :is="`${indicator.objType}-edit-form`" :errors="errors[indicator.objType] && errors[indicator.objType][indicator.id]" :check-saving-status="checkSavingStatus" @savingstatus="savingStatus(indicator, $event)"
                 :direct-indicator="indicator" :indirect-indicator="indicator" :active="activeItem.objType === indicator.objType && activeItem.id === indicator.id"
                 @input="saveActive(indicator.objType, $event)" @click="toggleActive(indicator)" @delete="deleteActive(indicator.objType, $event)" />
             </div>
@@ -34,14 +34,14 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import MethodTreeSidebar from '@/components/MethodTreeSideBar'
-import CalculationForm from '@/components/forms/CalculationForm'
-import IndicatorForm from '@/components/forms/IndicatorForm'
+import IndirectIndicatorEditForm from '@/components/forms/IndirectIndicatorEditForm'
+import DirectIndicatorEditForm from '@/components/forms/DirectIndicatorEditForm'
 
 export default {
     components: {
         MethodTreeSidebar,
-        CalculationForm,
-        IndicatorForm
+        IndirectIndicatorEditForm,
+        DirectIndicatorEditForm
     },
     data () {
         return {
@@ -62,27 +62,27 @@ export default {
          ...mapState('directIndicator', { activeDirectIndicator: 'directIndicator', directIndicators: 'directIndicators', directIndicatorErrors: 'errors' }),
         ...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicators: 'indirectIndicators', indirectIndicatorErrors: 'errors' }),
         items () {
-            this.directIndicators.forEach(direct => { direct.objType = 'indicator' })
-             this.indirectIndicators.forEach(indirect => { indirect.objType = 'calculation' })
+            this.directIndicators.forEach(direct => { direct.objType = 'direct-indicator' })
+             this.indirectIndicators.forEach(indirect => { indirect.objType = 'indirect-indicator' })
             return this.directIndicators.concat(this.indirectIndicators)
         },
         activeItem () {
             let objType = null
             let id = null
             if (this.activeDirectIndicator.id) {
-                objType = 'indicator'
+                objType = 'direct-indicator'
                 id = this.activeDirectIndicator.id
             }
             if (this.activeIndirectIndicator.id) {
-                objType = 'calculation'
+                objType = 'indirect-indicator'
                 id = this.activeIndirectIndicator.id
             }
             return { objType, id }
         },
         errors () {
             return {
-                indicator: this.directIndicatorErrors,
-                calculation: this.indirectIndicatorErrors
+                'direct-indicator': this.directIndicatorErrors,
+                'indirect-indicator': this.indirectIndicatorErrors
             }
         }
     },
@@ -148,22 +148,22 @@ export default {
         },
         toggleActive (item) {
             const { objType } = item
-            if (objType === 'indicator' && item.id !== this.activeDirectIndicator.id) {
+            if (objType === 'direct-indicator' && item.id !== this.activeDirectIndicator.id) {
                 this.setDirectIndicator(item)
                 this.setIndirectIndicator()
-            } else if (objType === 'calculation' && item.id !== this.activeIndirectIndicator.id) {
+            } else if (objType === 'indirect-indicator' && item.id !== this.activeIndirectIndicator.id) {
                 this.setIndirectIndicator(item)
                 this.setDirectIndicator()
             }
         },
         saveActive (type, object) {
             if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
-            if (type === 'indicator') { this.updateDirectIndicator({ mId: this.method.id, directIndicator: object }) }
-            if (type === 'calculation') { this.updateIndirectIndicator({ mId: this.method.id, indirectIndicator: object }) }
+            if (type === 'direct-indicator') { this.updateDirectIndicator({ mId: this.method.id, directIndicator: object }) }
+            if (type === 'indirect-indicator') { this.updateIndirectIndicator({ mId: this.method.id, indirectIndicator: object }) }
         },
         deleteActive (objType, object) {
-            if (objType === 'indicator') { this.deleteDirectIndicator({ mId: this.method.id, SuId: 0, SeId: 0, id: object.id }) }
-            if (objType === 'calculation') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
+            if (objType === 'direct-indicator') { this.deleteDirectIndicator({ mId: this.method.id, SuId: 0, SeId: 0, id: object.id }) }
+            if (objType === 'indirect-indicator') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
         },
         savingStatus (indicator, status) {
             console.log('eeeeeeeee', status)
