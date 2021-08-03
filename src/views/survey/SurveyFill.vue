@@ -1,65 +1,64 @@
 <template>
-<div class="width: 80%;">
-    <ProgressSpinner v-if="loading && !failedLoad" />
-    <div v-else-if="loading && failedLoad" class="p-text-italic">THe Survey could not be loaded!</div>
-    <div v-else-if="!surveyResponse.finished" class="p-d-flex p-grid p-jc-center p-m-0">
-        <div class="p-col-12 p-grid p-jc-center p-p-3" style="background-color: #ddedc8;">
-            <h1 class="p-col-12 p-m-0">{{survey.name}}</h1>
-            <h3 class="p-col-12 p-m-0">{{survey.description}}</h3>
-            <div class="p-col-4 p-text-left">
-                <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
-            </div>
-        </div>
-        {{ currentSection.mergedQuestionsAndTextFragments }}
-        <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
-            <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
-            <Divider />
-            <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections.length }}</div>
-            <div class="p-col-6 p-text-right">
-                <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
-            <div class="p-col-12 p-text-left"><h3>Section: '{{currentSection.title}}'</h3></div>
-            <section-component class="p-col-12 p-my-2"
-                v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
-                tabindex="0"
-                :key="item.id"
-                :item="item"
-                :answer="answers[item.id]"
-                :active="activeQuestion === (index)"
-                :refresh="refresh"
-                @input="updateAnswer(item.direct_indicator[0].id, item.id, $event)"
-                @focus="toggleActive(index)"
-                @focuschecking="toggleActive(index)"
-                @blur="toggleActive"
-            />
-            <div v-if="(sectionNumber + 1) === totalSections.length" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.closing_text}}</h3></div>
-            <div class="p-grid p-col-12 p-m-0 p-px-0">
-                <div class="p-col-6 p-text-left p-pl-0">
-                    <Button label="Previous Section" class="p-button-raised" :disabled="sectionNumber === 0" @click="previousSection" />
-                </div>
-                <div class="p-col-3 p-text-right">
-                    <Button label="Save for Now" class="p-button-primary p-button-raised" @click="saveSurvey" :disabled="true" />
-                </div>
-                <div class="p-col-3 p-text-right p-pr-0">
-                    <Button v-if="sectionNumber + 1 < totalSections.length" label="Next Section" class="p-button-raised" style="width: 100%;" @click="nextSection" />
-                    <Button v-else label="Finish Survey" class="p-col p-button-success p-button-raised p-button-sm" style="width: 100%;" @click="finishSurvey" />
+    <div style="width: 10%;">
+        <ProgressSpinner v-if="loading && !failedLoad" />
+        <div v-else-if="loading && failedLoad" class="p-text-italic">THe Survey could not be loaded!</div> <!-- style="background-color: #ddedc8;" -->
+        <div v-else-if="!surveyResponse.finished" class="p-d-flex p-grid p-jc-center p-m-0" >
+            <div class="p-col-12 p-grid p-jc-center p-p-3">
+                <h1 class="p-col-12 p-m-0">{{survey.name}}</h1>
+                <h3 class="p-col-12 p-m-0">{{survey.description}}</h3>
+                <div class="p-col-4 p-text-left">
+                    <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
                 </div>
             </div>
+            <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
+                <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
+                <Divider />
+                <div class="p-col-6 p-text-left p-text-bold">Section {{ sectionNumber + 1 }} of {{ totalSections.length }}</div>
+                <div class="p-col-6 p-text-right">
+                    <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
+                <div class="p-col-12 p-text-left"><h3>Section: '{{currentSection.title}}'</h3></div>
+                <section-component class="p-col-12 p-my-2"
+                    v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
+                    tabindex="0"
+                    :key="item.id"
+                    :item="item"
+                    :answer="answers[item.id]"
+                    :active="activeQuestion === (index)"
+                    :refresh="refresh"
+                    @input="updateAnswer(item.direct_indicator[0].id, item.id, $event)"
+                    @focus="toggleActive(index)"
+                    @focuschecking="toggleActive(index)"
+                    @blur="toggleActive"
+                />
+                <div v-if="(sectionNumber + 1) === totalSections.length" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.closing_text}}</h3></div>
+                <div class="p-grid p-col-12 p-m-0 p-px-0">
+                    <div class="p-col-6 p-text-left p-pl-0">
+                        <Button label="Previous Section" class="p-button-raised" :disabled="sectionNumber === 0" @click="previousSection" />
+                    </div>
+                    <div class="p-col-3 p-text-right">
+                        <Button label="Save for Now" class="p-button-primary p-button-raised" @click="saveSurvey" :disabled="true" />
+                    </div>
+                    <div class="p-col-3 p-text-right p-pr-0">
+                        <Button v-if="sectionNumber + 1 < totalSections.length" label="Next Section" class="p-button-raised" style="width: 100%;" @click="nextSection" />
+                        <Button v-else label="Finish Survey" class="p-col p-button-success p-button-raised p-button-sm" style="width: 100%;" @click="finishSurvey" />
+                    </div>
+                </div>
+            </div>
+            <h1 v-else>This survey has no sections to display!</h1>
         </div>
-         <h1 v-else>This survey has no sections to display!</h1>
-     </div>
 
-    <Dialog v-model:visible="missedQuestionsDialog" :style="{width: '450px'}" header="Missing Answers" :modal="true">
-        <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
-        <span class="p-text-left">You need to fill in the following answers to be able to send your survey response:</span>
-        <div class="p-grid p-m-2">
-            <div v-for="question in missedQuestions" :key="question" class="p-col-12">
-                <Button :label="`Question: '${question.name}'`" style="width: 100%;" @click="goToQuestion(question)"> </Button>
+        <Dialog v-model:visible="missedQuestionsDialog" :style="{width: '450px'}" header="Missing Answers" :modal="true">
+            <i class="pi pi-star p-mr-3" style="font-size: 1.5rem" />
+            <span class="p-text-left">You need to fill in the following answers to be able to send your survey response:</span>
+            <div class="p-grid p-m-2">
+                <div v-for="question in missedQuestions" :key="question" class="p-col-12">
+                    <Button :label="`Question: '${question.name}'`" style="width: 100%;" @click="goToQuestion(question)"> </Button>
+                </div>
             </div>
-        </div>
-        <template #footer>
-            <Button label="Ok" class="p-button-text" @click="missedQuestionsDialog = false"/>
-        </template>
-    </Dialog>
+            <template #footer>
+                <Button label="Ok" class="p-button-text" @click="missedQuestionsDialog = false"/>
+            </template>
+        </Dialog>
     </div>
 </template>
 <script>
@@ -134,6 +133,7 @@ export default {
         }
     },
     created () {
+        console.log('eee')
         setTimeout(() => { this.failedLoad = true }, 10000)
         this.initialize()
     },

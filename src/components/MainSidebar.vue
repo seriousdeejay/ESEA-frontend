@@ -1,6 +1,6 @@
 <template>
-    <div :style="(sidebar ? 'width: 350px':'width: 55px')" style="min-height: 100%" class="sidebar">
-        <div>
+    <div :style="(sidebar ? 'width: 350px':'width: 55px')" class="sidebar">
+        <div style="height: 100%;">
             <div v-for="(item, index) in navElements" :key="item" > <!-- a href="#" -->
                 <div class="sidebar-element p-d-flex p-ai-center" :style="(($route.name?.startsWith(item.path.slice(0, -1))) ? 'background-color: #00453D;':'')">
                     <a class="sidebar-icon" :class="(item.icon)" style="width: 50px" @click="goToPage(item.path)" v-tooltip.right="item.name" />
@@ -78,6 +78,7 @@ export default {
                 path = this.navElements[path].path
             }
             if (path) {
+                console.log(path)
                 this.$router.push({ name: path })
             }
         }
@@ -90,7 +91,8 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: stretch;
-        position: relative;
+        position: fixed;
+        height: calc(100vh - 70px);
         flex-direction: column;
         padding-top: 50px;
         margin-top: 1px;
@@ -99,8 +101,7 @@ export default {
         //     linear-gradient(
         //     #00695C, #00695C
         //     );
-        box-shadow: 3px 0px 0px 0px rgba(0, 0, 0, 0.3);
-        min-height: 100%;
+        box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
 
     .sidebar-element {
         width: 100%;

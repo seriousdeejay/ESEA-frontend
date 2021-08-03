@@ -1,7 +1,7 @@
 <template>
-    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-4 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? 'border: 1px solid #00695C;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
+    <form ref="form" class="p-shadow-1 p-grid p-m-0 p-p-4 p-fluid p-input-filled" style="border-radius: 5px;" :style="[(active) ? 'border: 1px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '': 'border: 1px solid rgba(255, 0, 0, 0.3);']" >
         <!-- {{lazyQuestion}} <hr> {{question}} {{equal}} {{v$.$invalid}} -->
-        <template v-if="active" class="p-grid p-col-12 p-m-0">
+        <template v-if="active" class="p-grid p-col-12 p-py-5">
             <div class="p-col-8 p-m-0 p-my-1 p-field">
                 <span class="p-float-label">
                     <InputText id="myAnchor" type="text" v-model="lazyQuestion.name"  :class="{'p-invalid': nameErrors.length }"  @blur="v$.lazyQuestion.name.$touch()" :disabled="!active" />
@@ -81,7 +81,7 @@ export default {
     setup: () => ({ v$: useVuelidate() }),
     validations: {
         lazyQuestion: {
-            name: { required, maxLength: maxLength(120) },
+            name: { required, maxLength: maxLength(511) },
             uiComponent: { required },
             isMandatory: { required }
         }
@@ -160,13 +160,13 @@ export default {
             delete parseditem.question
             this.lazyQuestion.direct_indicator = [parseditem]
             this.refreshSidebar = true
+            await this.fetchDirectIndicators({ mId: this.$route.params.id })
         },
         deleteIndicator () {
             this.lazyQuestion.direct_indicator = []
         },
         async fetchIndicators () {
             this.refreshSidebar = false
-            await this.fetchDirectIndicators({ mId: this.$route.params.id })
         },
         async updateThisQuestion () {
             this.loading = true

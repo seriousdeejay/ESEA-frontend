@@ -1,8 +1,7 @@
 <template>
     <div class="p-d-flex" style="height: calc(100vh - 145px);">
         <method-tree-sidebar style="height: 100%; flex: 0 0 400px;" />
-        <div class="p-px-5" style="width: 100%; background-color: #EFEFE8FF; overflow-y: scroll;">
-            {{indicatorsSavingStatus}} {{allowRouting}} {{ errors }}
+        <div class="p-px-5" style="width: 100%; overflow-y: auto;">
             <div v-for="indicator in items" :key="indicator.key">
                 <component :is="`${indicator.objType}-edit-form`" :errors="errors[indicator.objType] && errors[indicator.objType][indicator.id]" :check-saving-status="checkSavingStatus" @savingstatus="savingStatus(indicator, $event)"
                 :direct-indicator="indicator" :indirect-indicator="indicator" :active="activeItem.objType === indicator.objType && activeItem.id === indicator.id"

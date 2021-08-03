@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex" style="height: calc(100vh - 145px); width: 100%; border-top: solid lightgrey; display: flex;">
         <method-tree-sidebar :topicsdisplay="true" style="height: 100%; width: 400px; flex: 0 0 400px;" />
-        <div v-if="methodTopics.length" class="" style="width: 100%; height: calc(100vh - 200px); background-color: white; overflow-y: scroll;">
+        <div v-if="methodTopics.length" class="" style="width: 100%; height: calc(100vh - 145px); background-color: white; overflow-y: auto;">
             <div class="p-m-5">
                  <div v-for="(topic, topicIndex) in items2" :key="`topic-${topicIndex}`" class="p-my-5 p-shadow-5" style="width: 100%; background-color: #f8f9fe; border: 1px solid lightgrey;"> <!-- #f7f7f7 #e6f3ff-->
                     <topic-form
@@ -21,9 +21,7 @@
                         'Add Indicator to the main topic by dragging it into the box'
                     </h3>
                     <div v-for="(topicChild, index) in topic.children" :key="`topicChild-${index}`" >
-                        <div
-                            class="p-ml-5" :class="(topicChild?.children?.length ? 'p-p-0': 'p-p-0')"
-                            style="background-color: white; border: 1px solid lightgrey;">
+                        <div class="p-ml-5">
                                 <component
                                     :is="`${topicChild.objType}-form`"
                                     :topic="topicChild"
@@ -38,7 +36,7 @@
                                     @dragstart="startDrag($event, topicChild)"
                                     @dragover.prevent @dragenter.prevent :draggable="true"
                                 />
-                                <div v-for="(subTopicChild, index) in topicChild.children" :key="`subTopicChild-${index}`">
+                                <div v-for="(subTopicChild, index) in topicChild.children" :key="`subTopicChild-${index}`" class="p-ml-5">
                                     <component
                                         :is="`${subTopicChild.objType}-form`"
                                         :direct-indicator="subTopicChild"
@@ -46,7 +44,7 @@
                                         :errors="errors[subTopicChild.objType] && errors[subTopicChild.objType][subTopicChild.id]"
                                         :active="activeItem.objType === subTopicChild.objType && activeItem.id === subTopicChild.id"
                                         @input="saveActive(subTopicChild.objType, $event)"
-                                        @click="toggleActive(subTopicChild)" class="p-ml-5"
+                                        @click="toggleActive(subTopicChild)"
                                         @dragstart="startDrag($event, subTopicChild)"
                                         @dragover.prevent @dragenter.prevent :draggable="true"
                                     />
@@ -58,7 +56,7 @@
                                     @drop='onDrop($event, topicChild)'  @dragover.prevent @dragenter.prevent>
                                     'Add Indicator by dragging it into the box'
                                 </h3>
-                            <!-- <Button label="Add Question" icon="pi pi-plus" class="p-button-text p-text-left p-p-5" @click="addQuestion()" /> -->
+                            <!-- <Button label="Add Question" icon="pi pi-plus" class="p-button-text p-text-left p-p-5" @click="addQuestion()" /> :class="(topicChild?.children?.length ? 'p-p-0': 'p-p-0')" -->
                         </div>
                     </div>
                 </div>

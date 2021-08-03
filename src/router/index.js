@@ -1,9 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../views/user/Login'
-import Register from '../views/user/Register'
-import AccountRecovery from '@/views/user/AccountRecovery'
-import SurveyFill from '../views/survey/SurveyFill'
-import SurveyThankYou from '../views/survey/SurveyThankYou'
 
 const routes = [
     {
@@ -18,27 +13,21 @@ const routes = [
         path: '/survey-fill/:uniquetoken',
         name: 'survey-fill-page',
         components: {
-        anonymousview: SurveyFill
-        },
-        meta: {
-        requiresLogin: false
+        surveyview: () => import('@/views/survey/SurveyFill')
         }
     },
     {
         path: '/survey-thank-you/',
         name: 'survey-thank-you',
         components: {
-        anonymousview: SurveyThankYou
-        },
-        meta: {
-        requiresLogin: false
+        surveyview: () => import('@/views/survey/SurveyThankYou')
         }
     },
     {
         path: '/register',
         name: 'register',
         components: {
-        loginview: Register
+        anonymousview: () => import('../views/user/Register.vue')
         }
         // {
         // a: () => import('../views/user/Register.vue')
@@ -48,19 +37,22 @@ const routes = [
         path: '/login',
         name: 'login',
         components: {
-        loginview: Login
-    }
+        anonymousview: () => import('../views/user/Login')
+        }
     },
     {
         path: '/logout',
         name: 'logout',
-        component: () => import('../views/user/Logout.vue')
+        components: {
+            anonymousview: () => import('../views/user/Logout.vue')
+        }
+        // anonymousview: Logout
     },
     {
         path: '/account-recovery',
         name: 'accountrecovery',
         components: {
-        loginview: AccountRecovery
+        anonymousview: () => import('@/views/user/AccountRecovery')
         }
     },
     {

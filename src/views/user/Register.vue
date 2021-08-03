@@ -1,4 +1,5 @@
 <template>
+    <unauthenticated-base>
         <form @submit.prevent="register" class="p-grid p-fluid p-shadow-10 p-px-5 p-pb-5" style="background-color: white; border-radius: 3px;">
             <h1 class="p-col-12" style="border-bottom: 1px solid #00695C;">Create Account</h1>
             <div class="p-col-12 p-field">
@@ -37,6 +38,7 @@
         <div class="p-m-5">
             <router-link to="/login" class="link">Already have an Account? Log in.</router-link>
         </div>
+    </unauthenticated-base>
 </template>
 
 <script>
@@ -44,8 +46,12 @@ import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from 'vuelidate/lib/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { mapActions, mapState } from 'vuex'
+import UnauthenticatedBase from '@/views/unauthenticated/UnauthenticatedBase'
 
 export default {
+    components: {
+        UnauthenticatedBase
+    },
     data () {
         return {
             customuser: {

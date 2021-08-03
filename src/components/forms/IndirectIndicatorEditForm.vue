@@ -1,7 +1,6 @@
 <template>
     <div>
         <form v-if="active" ref="form" class="p-grid p-fluid p-input-filled p-m-3 p-px-5 p-pb-3 p-text-center" :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '':'border: 2px solid rgba(255, 0, 0, 0.3)', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
-            {{errors}}
             <div class="p-d-flex p-col-12">
                 <h3 class="p-col p-text-cente">Indirect Indicator</h3>
                 <div class="p-d-flex p-ai-center p-jc-end">

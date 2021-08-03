@@ -12,7 +12,6 @@
                         :errors="errors[section.id]"
                         :check-saving-status="checkSavingStatus"
                         @savingstatus="savingStatus(section, $event)"
-                        @input="saveActive('section', $event)"
                         @click="toggleActive(section)" @delete="removeSection"
                     />
                     <div v-for="(sectionChild, index) in section.children" :key="index" class="p-my-1 p-ml-5">
@@ -21,7 +20,6 @@
                         :active="activeItem.objType === sectionChild.objType && activeItem.id === sectionChild.id"
                         :check-saving-status="checkSavingStatus"
                         @savingstatus="savingStatus(sectionChild, $event)"
-                        @input="saveActive(sectionChild.objType, $event)"
                         @click="toggleActive(sectionChild)"
                         @delete="removeQuestion(section, question)" />
                     </div>
@@ -96,7 +94,7 @@ export default {
         }
     },
         beforeRouteLeave (to, from, next) {
-        if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
+        if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges @input="saveActive('section', $event)"  @input="saveActive(sectionChild.objType, $event)"
             next(true)
         } else {
             this.to = to

@@ -1,37 +1,37 @@
 <template>
-  <div class="myapp" v-if="accessToken!=null" style="position: relative; height: 100%; min-width: 1400px; background-color: #F5F7F6;"> <!--style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
-    <main-topbar @sidebar="changeSidebar" />
-    <div class="p-d-flex" style="position: relative; min-height: 100vh; padding-top: 70px; width: 100%;">
-         <main-sidebar :sidebar="expandedSidebar" />
-         <!-- <sub-sidebar /> -->
-        <div style="width: 100%;">
-        <router-view />
-        <router-view class="anonymous view" name="anonymousview"/>
+    <div class="myapp" v-if="accessToken !== null" style="position: relative; height: 100%; min-width: 1400px; overflow: auto;"> <!--F5F7F6 -style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
+        <main-topbar @sidebar="changeSidebar" style="position: fixed;" />
+        <div class="p-d-flex" style="height: 100%; width: 100%; padding-top: 70px;">
+            <main-sidebar :sidebar="expandedSidebar" />
+            <!-- <div style="height: 100%; position: relative; background-color: blue;" :style="(expandedSidebar) ? 'width: 350px;': 'width: 55px;'"></div> -->
+            <!-- <sub-sidebar /> -->
+            <div :style="(expandedSidebar) ? 'margin-left: 350px': 'margin-left: 55px;'" style="width: 100%;">
+                <router-view />
+                <router-view name="surveyview" style="width: 100%;"/>
+            </div>
         </div>
     </div>
-  </div>
-  <div v-else style="position: absolute; height: 100%; width: 100%;background-color: #00695C;">
-        <div class="centered">
-            <h3 style="color: white; font-size: 60px;">Open ESEA</h3>
-            <router-view name="loginview" />
-        </div>
-        <div class="p-d-flex p-text-center" style="position: absolute; bottom: 0px; left: 0; right: 0; margin-left: auto; margin-right: auto; width: 580px; color: lightgrey;">
-            <div>
-                <router-link to="/login" class="link">Terms of Service</router-link>
-                <span> | </span>
-                <router-link to="/login" class="link">Privacy Policy</router-link>
-                <span> | </span>
-                <span style="color: lightgrey; font-size: 14px;">Copyright 2021 ESEA Team. All rights reserved.</span>
+    <router-view v-if="accesToken === null" name="surveyview"/>
+    <router-view name="anonymousview"/>
+    <!-- <div v-if="accessToken === null" style="position: absolute; height: 100%; width: 100%;background-color: #00695C;"> calc(100vh - 70px)
+            <div class="centered">
+                <h3 style="color: white; font-size: 60px;">Open ESEA</h3> style="position: fixed; height: 100%; z-index: 1;"
+                <router-view name="loginview" />
+            </div>
+            <div class="p-d-flex p-text-center" style="position: absolute; bottom: 0px; left: 0; right: 0; margin-left: auto; margin-right: auto; width: 580px; color: lightgrey;">
+                <div>
+                    <router-link to="/login" class="link">Terms of Service</router-link>
+                    <span> | </span>
+                    <router-link to="/login" class="link">Privacy Policy</router-link>
+                    <span> | </span>
+                    <span style="color: lightgrey; font-size: 14px;">Copyright 2021 ESEA Team. All rights reserved.</span>
                 </div>
             </div>
-  </div>
-    <div v-if="accesToken === null">
-    <router-view class="anonymous view" name="anonymousview"/>
-    </div>
+    </div> -->
 </template>
 <script>
 import { mapState } from 'vuex'
-// import MyBreadCrumb from './components/MyBreadCrumb'
+// import MyBreadCrumb from './components/MyBreadCrumb' v-if="accesToken === null"
 import MainSidebar from './components/MainSidebar'
 import MainTopbar from './components/MainTopbar.vue'
 // import SubSidebar from './components/SubSidebar'
@@ -77,6 +77,7 @@ html, body, #app {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #F7F7F7;
 }
 
 #nav {
