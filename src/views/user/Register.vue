@@ -46,7 +46,7 @@ import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from 'vuelidate/lib/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import { mapActions, mapState } from 'vuex'
-import UnauthenticatedBase from '@/views/unauthenticated/UnauthenticatedBase'
+import UnauthenticatedBase from '@/components/UnauthenticatedBase'
 
 export default {
     components: {

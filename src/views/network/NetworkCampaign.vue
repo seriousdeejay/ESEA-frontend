@@ -32,7 +32,7 @@
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Tool Menu" @click="toggle" />    <!-- aria-haspopup="true" aria-controls="overlay_menu" -->
+                            <Button label="Tool Menu" @click="toggle" :disabled="true" />    <!-- aria-haspopup="true" aria-controls="overlay_menu" -->
                             <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
                         </div>
                     </div>

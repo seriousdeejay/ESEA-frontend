@@ -1,5 +1,6 @@
 <template>
     <form ref="form"  class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg"> <!-- @submit.prevent="!v$.$invalid" -->
+    {{isSaved}} {{lazier}}
         <div class="p-field p-m-5">
             <h3>Method Name</h3>
                 <InputText id="methodname" type="text" v-model="lazierMethod.name"  :class="{'borderless': nameErrors.length}" @blur="v$.lazierMethod.name.$touch()"  />

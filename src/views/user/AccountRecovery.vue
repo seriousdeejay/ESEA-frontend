@@ -24,7 +24,7 @@
 <script>
 import useVuelidate from '@vuelidate/core'
 import { required, email } from 'vuelidate/lib/validators'
-import UnauthenticatedBase from '@/views/unauthenticated/UnauthenticatedBase'
+import UnauthenticatedBase from '@/components/UnauthenticatedBase'
 
 export default {
     components: {

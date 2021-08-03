@@ -38,7 +38,7 @@ import { required } from 'vuelidate/lib/validators'
 import useVuelidate from '@vuelidate/core'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import Message from 'primevue/message'
-import UnauthenticatedBase from '@/views/unauthenticated/UnauthenticatedBase'
+import UnauthenticatedBase from '@/components/UnauthenticatedBase'
 
 export default {
     name: 'login',

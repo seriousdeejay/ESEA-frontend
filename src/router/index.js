@@ -317,30 +317,30 @@ const routes = [
             ]
         }
         },
-        {
-        path: 'surveys',
-        name: 'organisationsurveys',
-        component: () => import('../views/organisation/OrganisationSurveys'),
-        meta: {
-            breadcrumb: [
-            { label: 'Organisations', to: '/organisations' },
-            { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-            { label: 'Surveys', to: { name: 'organisationsurveys' } }
-            ]
-        }
-        },
-        {
-            path: 'stakeholders',
-            name: 'organisationstakeholders',
-            component: () => import('../views/organisation/OrganisationStakeholders'),
-            meta: {
-            breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Stakeholders', to: { name: 'organisationstakeholders' } }
-            ]
-            }
-        },
+        // {
+        // path: 'surveys',
+        // name: 'organisationsurveys',
+        // component: () => import('../views/organisation/OrganisationSurveys'),
+        // meta: {
+        //     breadcrumb: [
+        //     { label: 'Organisations', to: '/organisations' },
+        //     { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+        //     { label: 'Surveys', to: { name: 'organisationsurveys' } }
+        //     ]
+        // }
+        // },
+        // {
+        //     path: 'stakeholders',
+        //     name: 'organisationstakeholders',
+        //     component: () => import('../views/organisation/OrganisationStakeholders'),
+        //     meta: {
+        //     breadcrumb: [
+        //         { label: 'Organisations', to: '/organisations' },
+        //         { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+        //         { label: 'Stakeholders', to: { name: 'organisationstakeholders' } }
+        //     ]
+        //     }
+        // },
         {
             path: 'networks',
             name: 'organisationnetworks',
@@ -587,14 +587,14 @@ const routes = [
             requiresLogin: true
         }
     },
-    {
-        path: '/method-details/:id',
-        name: 'methoddetails',
-        component: () => import('../views/method/MethodDetails.vue'),
-        meta: {
-        requiresLogin: true
-        }
-    },
+    // {
+    //     path: '/method-details/:id',
+    //     name: 'methoddetails',
+    //     component: () => import('../views/files_unused/MethodDetails.vue'),
+    //     meta: {
+    //     requiresLogin: true
+    //     }
+    // },
     {
         path: '/newmethods/:id',
         name: 'newmethoddetails',

@@ -68,7 +68,7 @@ export default {
         }
     },
     async created () {
-        await this.fetchMethods()
+        await this.fetchMethods({})
     },
     methods: {
         ...mapActions('method', ['fetchMethods']),

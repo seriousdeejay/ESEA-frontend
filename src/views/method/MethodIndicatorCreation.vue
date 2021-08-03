@@ -106,6 +106,7 @@ export default {
         }
     },
     beforeRouteLeave (to, from, next) {
+        if (!this.items.length) { this.allowRouting = true }
         if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
             next(true)
         } else {

@@ -49,7 +49,7 @@ export default {
     methods: {
         ...mapActions('surveyResults', ['fetchSurveyResults']),
         async initialize () {
-            await this.fetchSurveyResults({ eaId: this.$route.params.EseaAccountId })
+            await this.fetchSurveyResults({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
         },
         decimalrounder (number) {
             if (number === null) { return }

@@ -59,6 +59,11 @@
                     <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
                 </template>
             </Column>
+            <Column header="Report" headerStyle="width: 6rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="data">
+                    <Button @click="goToReport(data)" icon="pi pi-file-pdf" :class="data.sufficient_responses? 'p-button-success' : 'p-button-danger'"></Button>
+                </template>
+            </Column>
             </DataTable>
         </TabPanel>
         <TabPanel header="Report">
@@ -223,6 +228,13 @@
             },
             goToResults (data) {
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
+            },
+            async goToReport (event) {
+                // await this.setEseaAccount(event.data)
+                // await this.setOrganisation({ id: event.data.organisation })
+                console.log(event)
+                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.$route.params.EseaAccountId } })
+                console.log(event.data)
             },
             async removeEseaAccount () {
                 this.deleteEseaAccountDialog = false

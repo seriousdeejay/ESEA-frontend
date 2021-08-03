@@ -11,7 +11,7 @@
             </div>
             <div class="p-col-12 p-d-flex p-jc-between p-p-5">
                 <SelectButton v-model="MethodDisplayToggleValue" :options="MethodDisplayToggleOptions" optionLabel="name" />
-                <Button icon="pi pi-external-link" label="Download as PDF" class="p-button-info" @click="exportMethod($event)" />
+                <Button icon="pi pi-external-link" label="Download as PDF" class="p-button-info" @click="exportMethod($event)" :disabled="true" />
             </div>
         </div>
         <TabView v-if="MethodDisplayToggleValue.value === 1" class="p-col-12 p-m-0">
