@@ -57,6 +57,7 @@ export default {
 				if (item.id !== id) return item
 				return Object.assign(item, data)
 			})
+            console.log('surveys', state.surveys)
 		},
 		addNewSurvey (state, { method }) {
 			const survey = { ...baseSurvey, id: random(-1000000, -1), method: method }
@@ -84,8 +85,10 @@ export default {
 						commit('setError', { error, id: survey.id })
 						return
 					}
+                    console.log('------>', response.data)
 					commit('setError', { error: {}, id: survey.id })
 					commit('setIsSaved', { id: survey.id, isSaved: true })
+                    commit('setSurvey', response)
 					commit('updateList', { id: survey.id, data: response.data })
 				},
 				500
@@ -120,7 +123,7 @@ export default {
             }
             commit('deleteSurvey', payload)
         },
-        updateSurvey ({ state, commit }, { mId, survey }) {
+        async updateSurvey ({ state, commit }, { mId, survey }) {
 			if (!survey || !mId) return
 			if (!state.debouncers[survey.id]) {
 				commit('setDebouncer', { id: survey.id, commit })
@@ -130,7 +133,7 @@ export default {
             }
 			commit('setIsSaved', { id: survey.id })
 			if (!survey.name && state.isSaved[survey.id]) { return }
-			state.debouncers[survey.id]({ mId, survey })
+			await state.debouncers[survey.id]({ mId, survey })
 		},
 		setSurvey ({ state, commit }, { id }) {
             if (id) {

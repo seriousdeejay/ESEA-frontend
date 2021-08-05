@@ -1,7 +1,7 @@
 <template>
     <div style="width: 400px; border-right: 1px solid lightgrey;" @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>
         <div class="p-d-flex p-mt-2">
-            <div v-for="item in libraryComponents" :key="item" class="p-col-4" style="font-size: 20px;" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':'border-bottom: 3px solid lightgrey;'" @click="activeComponentType = item">
+            <div v-for="item in libraryComponents" :key="item" class="p-col-6" style="font-size: 20px;" :style="(item === activeComponentType) ? 'border-bottom: 3px solid  #00695C; font-weight: bold;':'border-bottom: 3px solid lightgrey;'" @click="activeComponentType = item">
                 {{item}}
             </div>
         </div>
@@ -27,7 +27,7 @@ export default {
     },
     data () {
         return {
-            libraryComponents: ['Indicators', 'Calculations', 'Topics'],
+            libraryComponents: ['Indicators', 'Calculations'], // , 'Topics'
             activeComponentType: 'Indicators',
             searchbar: ''
         }

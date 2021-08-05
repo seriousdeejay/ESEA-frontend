@@ -137,7 +137,7 @@ export default {
             deep: true
         },
         active () {
-            // this.v$.lazyIndirectIndicator.$touch()
+            this.v$.lazyIndirectIndicator.$touch()
         },
         checkSavingStatus (val) {
             this.$emit('savingstatus', this.v$.lazyIndirectIndicator.$invalid)

@@ -1,7 +1,7 @@
 <template>
 <div>
     <form v-if="active" ref="form" class="p-grid p-m-3 p-px-5 p-pb-3 p-fluid p-text-left" :style="[(active) ? 'border: 2px solid #9ecaed;': 'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" @mouseover="hover=true" @mouseleave="hover=false">
-        {{errors}} {{valid}} {{directIndicator}} {{v$.$invalid}}
+        <!-- {{errors}} {{valid}} {{directIndicator}} {{v$.$invalid}} -->
         <div class="p-d-flex p-col-12">
             <h3 class="p-col p-text-center">Direct Indicator</h3>
             <div class="p-d-flex p-ai-center p-jc-end">
@@ -140,7 +140,7 @@ export default {
         lazyIndicator: {
             handler (val) {
                 setTimeout(() => {
-                    this.v$.lazyIndicator.$touch()
+                    this.v$.$touch()
                     if (this.v$.$invalid) { return }
                     if (isEqual(this.directIndicator, this.lazyIndicator)) { return }
                     this.$emit('input', val)
@@ -149,7 +149,7 @@ export default {
             deep: true
         },
         active () {
-            // this.v$.$touch()
+            this.v$.$touch()
         },
         checkSavingStatus (val) {
             this.$emit('savingstatus', this.v$.lazyIndicator.$invalid)

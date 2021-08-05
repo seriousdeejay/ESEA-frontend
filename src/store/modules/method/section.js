@@ -129,6 +129,7 @@ export default {
             commit('setSection', response)
         },
         async deleteSection ({ commit }, payload) {
+            console.log('payload', payload)
             if (payload.id > 0) {
                 const { error } = await SectionService.delete(payload)
                 if (error) {

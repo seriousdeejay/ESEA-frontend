@@ -231,7 +231,11 @@ export default {
             this.setIndirectIndicator()
         },
         async addSubTopic () {
-            await this.createTopic({ mId: this.method.id, parent: this.activeTopic.id })
+            let parentTopic = this.activeTopic.id
+            if (this.activeTopic.parent_topic) {
+                parentTopic = this.activeTopic.parent_topic
+            }
+            await this.createTopic({ mId: this.method.id, parent: parentTopic })
             // this.addNewTopic({ parent: this.currentTopic.id || this.activeTopic.parent_topic }) // this.activeTopic.parent_topic || this.activeTopic.id
             this.setDirectIndicator()
             this.setIndirectIndicator()

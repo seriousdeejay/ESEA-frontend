@@ -57,6 +57,10 @@ export default {
         },
         goToPage (page) {
             console.log('is saved:', this.DirectIndicatorsSaved)
+            if (page.name === 'method-wizard-finish') {
+                this.goToMethods()
+                return
+            }
             page.params = { id: this.$route.params.id }
             this.$router.push(page)
         }

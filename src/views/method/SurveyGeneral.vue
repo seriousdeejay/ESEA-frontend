@@ -1,6 +1,6 @@
 <template>
     <form ref="form" class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg" style="width: 1000px; height: 70vh">
-        {{unsavedChangesDialog}}
+        <!-- {{unsavedChangesDialog}}{{lazySurvey}} <hr> {{survey}} -->
         <div class="p-field p-m-3">
             <label for="surveyname">Survey Name</label>
             <InputText ref="surveyname" id="surveyname" type="text" v-model.lazy="lazySurvey.name" @blur="v$.lazySurvey.name.$touch()" :class="{'borderless': nameErrors.length}" lazy />

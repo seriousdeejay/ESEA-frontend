@@ -3,7 +3,7 @@
         <div class="p-d-flex p-flex-column p-jc-between" style="height: calc(100vh - 190px;); width: 300px; border: 1px solid lightgrey;">
             <survey-tree-side-bar style="height: 100%;" />
         </div>
-        <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; background-color: white; text-align: center; overflow-y: scroll;">
+        <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; background-color: white; text-align: center; overflow-y: auto;">
             <div class="p-text-left p-fluid" style="width: 1200px;">
                 <div v-for="(section, sectionIndex) in items" :key="sectionIndex" class="p-my-5" style="background-color: #f8f9fe; border: 1px solid lightgrey;">
                     <sectioon-form

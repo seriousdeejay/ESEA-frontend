@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <i class="pi pi-trash p-d-flex p-jc-center p-ai-center p-pr-5" style="width: 40px; font-size: 30px; color: #ff6666; cursor: pointer;" @click="deleteSection()" />
+            <i class="pi pi-trash p-d-flex p-jc-center p-ai-center p-pr-5" style="width: 40px; font-size: 30px; color: #ff6666; cursor: pointer;" @click="removeSection()" />
         </div>
     </form>
     <sectioon-card v-else :title="lazySection.title" :style="[(valid) ? 'border: 1px solid green;': 'border: 1px solid rgba(255, 0, 0, 0.3);']" />
@@ -122,7 +122,7 @@ export default {
             })
         },
         async removeSection () {
-            await this.deleteSection({ mId: this.$route.params.id, sId: this.$route.params.SurveyId, id: this.lazyTopic.id })
+            await this.deleteSection({ mId: this.$route.params.id, sId: this.$route.params.SurveyId, id: this.lazySection.id })
         }
     }
 }
