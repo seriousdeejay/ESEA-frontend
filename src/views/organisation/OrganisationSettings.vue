@@ -86,7 +86,7 @@ export default {
         }
     },
     created () {
-        if (this.organisation.accesLevel !== 'admin' && this.accesLevel !== 'organisation admin') {
+        if (this.organisation.accesLevel !== 'admin' && this.organisation.accesLevel !== 'organisation admin') {
             console.log('You may not change settings!')
             this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
         }

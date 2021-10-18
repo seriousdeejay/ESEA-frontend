@@ -3,7 +3,7 @@
     <div class="p-col-12 p-m-0 p-p-0">
         <div class="p-p-3 p-shadow-2" style="border: 1px solid lightgray; background-color: white;">
             <div class="p-text-justify"><p class="p-text-bold">Organisation Manager</p>
-                <router-link :to="{name: 'userdetails', params: { id: organisation.created_by_id } }" style="text-decoration: none; color: blue;">{{organisation.created_by}}</router-link>
+                <router-link :to="{name: 'userdetails', params: { id: organisation.owner_id } }" style="text-decoration: none; color: blue;">{{organisation.owner}}</router-link>
             </div>
             <div class="p-text-justify"><p class="p-text-bold">Description</p>
                     {{organisation.description}}

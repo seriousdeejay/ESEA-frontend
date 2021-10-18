@@ -12,8 +12,8 @@
         </div>
         <div class="p-field">
             <label for="networkadmin">Network Admin<span style="color:red">*</span></label>
-            <Dropdown id="name" v-model="networkForm.networkadmin" :options="users" optionLabel="username" optionValue="id" :class="{'p-invalid': v$.networkForm.networkadmin.$error}" />
-            <div class="p-error p-text-italic" v-if="v$.networkForm.networkadmin.$error">Network requires a network admin.</div>
+            <Dropdown id="name" v-model="networkForm.owner" :options="users" optionLabel="username" optionValue="username" :class="{'p-invalid': v$.networkForm.owner.$error}" />
+            <div class="p-error p-text-italic" v-if="v$.networkForm.owner.$error">Network requires a network admin.</div>
         </div>
         <div class="p-field">
             <label for="ispublic">Should this network be public? </label>
@@ -47,7 +47,8 @@ export default {
             networkForm: {
                 name: null,
                 description: '',
-                ispublic: true
+                ispublic: true,
+                owner: null
             }
         }
     },
@@ -56,7 +57,7 @@ export default {
             name: { required, maxLength: maxLength(255) },
             description: { maxLength: maxLength(1000) },
             ispublic: { required },
-            networkadmin: { required }
+            owner: { required }
         }
     },
     computed: {
@@ -76,7 +77,7 @@ export default {
         async initialize () {
             await this.setNetwork({})
             await this.fetchUsers({})
-            this.networkForm.networkadmin = this.authenticatedUser.id
+            // this.networkForm.owner = this.authenticatedUser.id
         },
         async createNewNetwork () {
             this.v$.networkForm.$touch()

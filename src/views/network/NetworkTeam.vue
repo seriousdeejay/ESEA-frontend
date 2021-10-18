@@ -23,6 +23,7 @@
             </template>
         </Column>
     </Datatable>
+    <Button v-if="currentuser" label="leave this network" class="p-button-danger p-button-sm p-mt-5" @click="Nowhere" disabled="true" />
 
     <Dialog v-model:visible="changeDialog" style="width: 500px" :header="`Change ${member?.user_name}'s role`" :modal="true"  :dismissableMask="true">
         <div class="p-d-flex p-jc-between">
@@ -75,8 +76,8 @@ export default {
             search: '',
             columns: [
                 { field: 'user_name', header: 'User' },
-                { field: 'role_name', header: 'Role' },
-                { field: 'invitation', header: 'Invitation' }
+                { field: 'role_name', header: 'Role' }
+                // { field: 'invitation', header: 'Invitation' }
             ],
             roles: [
                 { role_name: 'network admin', role: 2 },
@@ -85,6 +86,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('authentication', ['currentuser']),
         ...mapState('networkTeam', ['networkmembers']),
         ...mapState('network', ['network']),
         ...mapState('user', ['users']),
@@ -116,6 +118,7 @@ export default {
         ...mapActions('network', ['fetchNetwork']),
         async getData () {
             await this.fetchNetworkMembers({ nId: this.$route.params.NetworkId })
+            await this.fetchNetwork({ id: this.$route.params.NetworkId })
         },
         async openInviteDialog () {
             await this.fetchUsers({ query: `?excludenetwork=${this.$route.params.NetworkId}` })

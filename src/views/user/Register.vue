@@ -7,28 +7,28 @@
                         <InputText type="text" id="username" v-model="customuser.username" :class="{'borderless': usernameErrors.length}" @change="v$.customuser.username.$touch()" />
                         <label for="username">Username</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in usernameErrors" :key="error"><small v-if="error === 'This field must be unique.'">Username is already taken.</small><small v-else>{{ error }}</small></div>
+                    <div class="p-error p-text-italic p-text-left" v-for="error in usernameErrors" :key="error"><small v-if="error === 'This field must be unique.'">Username is already taken.</small><small v-else>{{ error }}</small></div>
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="text" id="email" v-model="customuser.email" :class="{'borderless': emailErrors.length}" @change="v$.customuser.email.$touch()" />
                         <label for="email">Email</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in emailErrors" :key="error"><small>{{error}}</small></div>
+                    <div class="p-error p-text-italic p-text-left" v-for="error in emailErrors" :key="error"><small>{{error}}</small></div>
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="password" id="password" v-model="customuser.password" :class="{'borderless': passwordErrors.length}" @change="v$.customuser.password.$touch()" />
                         <label for="password">Password</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in passwordErrors" :key="error"><small>{{error}}</small></div>
+                    <div class="p-error p-text-italic p-text-left" v-for="error in passwordErrors" :key="error"><small>{{error}}</small></div>
             </div>
             <div class="p-col-12 p-field">
                 <span class="p-float-label">
                         <InputText type="password" id="password2" v-model="customuser.password2" :class="{'borderless': password2Errors.length}" @change="v$.customuser.password2.$touch()"/>
                         <label for="password2">Confirm Password</label>
                     </span>
-                    <div class="p-error p-text-italic" v-for="error in password2Errors" :key="error"><small>{{error}}</small></div>
+                    <div class="p-error p-text-italic p-text-left" v-for="error in password2Errors" :key="error"><small>{{error}}</small></div>
             </div>
             <div class="p-text-left p-p-3" style="color: grey;">
                 <small>By signing up, you agree to the <span style="text-decoration: underline;">Terms of Use</span> and <span style="text-decoration: underline;">Privacy Policy</span></small>
@@ -72,7 +72,7 @@ export default {
             return HandleValidationErrors(this.v$.customuser.username, this.errors.username)
         },
         emailErrors () {
-            return HandleValidationErrors(this.v$.customuser.email)
+            return HandleValidationErrors(this.v$.customuser.email, this.errors.email)
         },
         passwordErrors () {
             return HandleValidationErrors(this.v$.customuser.password, this.errors.password)
@@ -93,7 +93,7 @@ export default {
     watch: {
         customuser: {
             handler (val) {
-                console.log('change!')
+                this.initialize()
             },
             deep: true
         }

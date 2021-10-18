@@ -18,7 +18,12 @@
                 </div>
             </div>
         </div>
-        <h3 v-else class="p-text-italic p-text-light"> You have no {{name}}, <router-link v-if="itemslink" :to="{name: itemslink, params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">create or invite {{name}}!</router-link></h3>
+        <h3 v-else-if="permission" class="p-text-italic p-text-light">
+            <slot></slot>
+        </h3>
+        <h3 v-else>
+            None to show
+        </h3>
         <div style="width: 50px;">
             <div v-if="currentPage !== itemPages" class="scrollIcon p-d-flex" @click="itemsScroll('right')"> <i class="pi pi-angle-right p-as-center" style="font-size: 3rem;" /> </div>
         </div>
@@ -40,8 +45,8 @@ export default {
             type: String,
             required: true
         },
-        itemslink: {
-            type: String,
+        permission: {
+            type: Boolean,
             required: false
         }
     },

@@ -25,6 +25,7 @@
             </template>
         </Column>
     </Datatable>
+    <Button v-if="currentuser" label="leave this organisation" class="p-button-danger p-button-sm p-mt-5" @click="Nowhere" disabled="true" />
 
     <Dialog v-model:visible="inviteDialog" style="width: 1000px" header="Invite Users" :modal="true" :dismissableMask="true">
         <invite-users :users="users" @inviteduser="inviteUser" />
@@ -66,8 +67,8 @@ export default {
             member: null,
             columns: [
                 { field: 'user_name', header: 'User' },
-                { field: 'role_name', header: 'role' },
-                { field: 'invitation', header: 'Invitation' }
+                { field: 'role_name', header: 'role' }
+                // { field: 'invitation', header: 'Invitation' }
             ],
             roles: [
                 { role_name: 'organisation admin', role: 3 },
@@ -77,6 +78,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('authentication', ['currentuser']),
         ...mapState('organisationTeam', ['organisationmembers']),
         ...mapState('organisation', ['organisation']),
         ...mapState('user', ['users']),
@@ -99,6 +101,7 @@ export default {
         ...mapActions('organisation', ['fetchOrganisation']),
         async getData () {
             await this.fetchOrganisationMembers({ oId: this.$route.params.OrganisationId })
+            await this.fetchOrganisation({ id: this.$rotue.params.OrganisationId })
         },
         async openInviteDialog () {
             console.log('check')

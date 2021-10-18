@@ -3,7 +3,7 @@
     <div class="p-col-12 p-m-0 p-p-0">
         <div class="p-p-3 p-shadow-2" style="border: 1px solid lightgray; background-color: white;">
             <div class="p-text-justify"><p class="p-text-bold">Network Manager</p>
-                <router-link :to="{name: 'userdetails', params: { id: network.created_by_id } }" style="text-decoration: none; color: blue;">{{network.created_by}}</router-link>
+                <router-link :to="{name: 'userdetails', params: { id: network.owner_id } }" style="text-decoration: none; color: blue;">{{network.owner}}</router-link>
             </div>
             <div class="p-text-justify"><p class="p-text-bold">Description</p>
                     {{network.description}}
@@ -31,9 +31,21 @@
             </div>
         </div> -->
         <div class="p-m-5">
-        <horizontal-scroll-bar :items="methods" name="Methods" itemslink="networkmethods"  @clicked-item="goToItem" />
-        <horizontal-scroll-bar :items="organisations" name="Organisations" itemslink="networkorganisations"  @clicked-item="goToItem" />
-        <horizontal-scroll-bar :items="campaigns" name="Campaigns" itemslink="networkcampaigns"  @clicked-item="goToItem" />
+            <horizontal-scroll-bar :items="methods" name="Methods" :permission="permission" @clicked-item="goToItem">
+                <slot>
+                    There are no Methods, <router-link :to="{name: 'networkmethods', params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">create or import Methods!</router-link>
+                </slot>
+            </horizontal-scroll-bar>
+            <horizontal-scroll-bar :items="organisations" name="Organisations" :permission="permission"  @clicked-item="goToItem">
+                <slot>
+                    There are no connected organisations, <router-link :to="{name: 'networkorganisations', params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">invite organisations!</router-link>
+                </slot>
+            </horizontal-scroll-bar>
+            <horizontal-scroll-bar :items="campaigns" name="Campaigns" :permission="permission"  @clicked-item="goToItem">
+                <slot>
+                    <slot>There are no campaigns, <router-link :to="{name: 'networkcampaigns', params: { NetworkId: $route.params.NetworkId } }" style="text-decoration: none; color: blue;">create a new campaign!</router-link></slot>
+                </slot>
+            </horizontal-scroll-bar>
         </div>
     </div>
 
@@ -65,6 +77,15 @@ export default {
         organisationPages () {
             const page = Math.ceil(this.organisations.length / this.numberOfItems)
             return page
+        },
+        permission () {
+            if (this.network.accesLevel) {
+                const accesLevel = this.network.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                    return true
+                }
+            }
+            return false
         }
 
     },

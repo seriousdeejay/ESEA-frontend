@@ -18,6 +18,11 @@
         :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
             <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" />
+            <Column header="Full Name" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="{data}">
+                        {{data.first_name}} {{data.last_name_prefix}} {{data.last_name}}
+                </template>
+            </Column>
         </Datatable>
     </div>
 </template>
@@ -51,8 +56,7 @@
                 styleObject: { backgroundColor: '#EFEEEE', cursor: 'pointer' },
                 columns: [
                     { field: 'username', header: 'Username' },
-                    { field: 'email', header: 'E-mail' },
-                    { field: 'first_name', header: 'First Name' }
+                    { field: 'email', header: 'E-mail' }
                 ]
             }
         },
