@@ -67,7 +67,7 @@
         <TabPanel header="Validation">
             <!-- Validation Closing Date: {{ dateFixer(campaign.close_validation_date, 'MMMM Do YYYY') }} -->
         </TabPanel>
-        <TabPanel header="Settings">
+        <TabPanel header="Settings" :disabled="!permission">
             <div class="p-grid">
                 <div class="p-col-6" style="min-width: 600px; border-right: 1px solid lightgrey;">
                 <campaign-update-form />
@@ -204,6 +204,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('network', ['network']),
         ...mapState('campaign', ['campaign']),
         ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
         ...mapState('method', ['methods', 'method']),
@@ -228,6 +229,15 @@ export default {
             var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
             var daysleft = (discharge.diff(currentdate, 'days'))
             return daysleft
+        },
+         permission () {
+            if (this.network.accesLevel) {
+                const accesLevel = this.network.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                    return true
+                }
+            }
+            return false
         }
     },
     created () {

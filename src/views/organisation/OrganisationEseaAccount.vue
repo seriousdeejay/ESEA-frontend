@@ -1,4 +1,5 @@
 <template>
+{{organisation.accesLevel}}
     <div v-if="eseaAccount.campaign" class="card p-mx-5 p-mb-5">
         <div class="p-d-flex p-jc-between p-m-2">
             <div>
@@ -20,8 +21,13 @@
             '{{survey.name}}' - Response Rate: {{survey.current_response_rate }}%
         </ProgressBar>
     </div>
-    <TabView>
+    <TabView :activeIndex="1">
+        <TabPanel header="Method">
+            <h4>Method: <span class="p-text-light p-text-italic">'{{eseaAccount.method_name}}'</span></h4>
+            <h4>Description: <span class="p-text-light p-text-italic">''</span></h4>
+            <Button label="Go to Method" @click="goToMethod" />
 
+        </TabPanel>
         <TabPanel header="Surveys">
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="gotoSurvey"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
@@ -53,10 +59,13 @@
                     {{data.required_response_rate}}%
                 </template>
             </Column>
-            <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+            <Column header="Actions" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
                 <template #body="{data}">
-                    <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
-                    <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
+                    <div v-if="permission">
+                        <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
+                        <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
+                    </div>
+                    <div v-else></div>
                 </template>
             </Column>
             <Column header="Report" headerStyle="width: 6rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -69,7 +78,7 @@
         <TabPanel header="Report">
             d
         </TabPanel>
-        <TabPanel header="Settings">
+        <TabPanel header="Settings" :disabled="!permission">
             <div class="p-col-8 p-fluid p-text-left p-p-5" style="width: 600px">
                     <div class="p-d-flex p-jc-between">
                         <Button label="Save ESEA Account Details" class="p-button-primary p-button-sm p-mr-5" @click="editEseaAccount" :disabled="false"/>
@@ -165,6 +174,7 @@
         },
         computed: {
             ...mapState('eseaAccount', ['eseaAccount']),
+            ...mapState('organisation', ['organisation']),
             ...mapState('survey', ['surveys']),
             ...mapState('campaign', ['campaign']),
             timeline () {
@@ -181,7 +191,16 @@
                 var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
                 var daysleft = (discharge.diff(currentdate, 'days'))
                 return daysleft
+            },
+            permission () {
+            if (this.organisation.accesLevel) {
+                const accesLevel = this.organisation.accesLevel
+                if (accesLevel === 'admin' || accesLevel === 'organisation admin' || accesLevel === 'esea accountant') {
+                    return true
+                }
             }
+            return false
+        }
         },
         created () {
             this.initialize()
@@ -241,6 +260,10 @@
                 await this.deleteEseaAccount({ oId: this.$route.params.OrganisationId, id: this.eseaAccount?.id || 0 })
                 this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Esea Account Deleted', life: 3000 })
                 this.$router.push({ name: 'organisationeseaaccounts' })
+            },
+            async goToMethod () {
+                this.$router.push({ name: 'newmethoddetails', params: { id: this.eseaAccount.method } })
+            // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
             }
         }
     }
