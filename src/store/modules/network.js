@@ -78,7 +78,7 @@ export default {
             commit('updateNetwork', { ...response, id })
             commit('setNetwork', response)
         },
-        async deleteNetwork ({ commit, dispatch }, payload) {
+        async deleteNetwork ({ commit }, payload) {
             const { error } = await NetworkService.delete(payload)
             if (error) {
                 commit('setError', { error })

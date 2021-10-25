@@ -99,7 +99,7 @@
     <Dialog v-model:visible="removeOrganisationsDialog" style="width: 500px" header="Removal confirmation" :modal="true" dismissableMask="true">
         <div v-if="selectedOrganisations.length">
             <span>Are you sure you want to <b>remove</b> these from your campaign?</span>
-            <div v-for="item in selectedOrganisations" :key=item.name class="p-shadow-2 p-mt-5 p-p-3">{{item.organisation}}</div>
+            <div v-for="item in selectedOrganisations" :key=item.name class="p-shadow-2 p-mt-5 p-p-3">{{item.organisation_name}}</div>
         </div>
         <div v-else>
             You haven't selected any organisations.
@@ -117,12 +117,12 @@
 
     <Dialog v-model:visible="addOrganisationsDialog" style="width: 800px" contentStyle="height: 300px" :modal="true" dismissableMask="true">
         <div class="p-grid">
-            <MultiSelect id="organisations" v-model="chosenOrganisations" :options="organisations" optionLabel="name" optionValue="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom p-col-12 p-mt-2">
+            <MultiSelect id="organisations" v-model="chosenOrganisations" :options="organisations" optionLabel="name" placeholder="Select Organisations" :filter="true" class="multiselect-custom p-col-12 p-mt-2">
                 <template #value="slotProps">
                     <div v-for="option in slotProps.value" :key="option.id">
-                        <div>{{option}}</div>
+                        <div>{{option.name}}</div>
                     </div>
-                    <template v-if="!slotProps.value || slotProps.value.length === 0">
+                    <template v-if="!slotProps.value || slotProps.value.length === 0"> <!-- v-if="!slotProps.value || slotProps.value.length === 0" -->
                         Select Organisations
                     </template>
                 </template>
@@ -254,17 +254,17 @@ export default {
         async addOrganisations () {
             if (this.chosenOrganisations.length) {
                 for (var organisation of this.chosenOrganisations) {
-                    var newEseaAccount = { organisation: organisation, method: this.campaign.method, campaign: this.campaign.id }
-                    console.log('new account', newEseaAccount)
-                    await this.createEseaAccount({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId, data: newEseaAccount })
+                    var newEseaAccount = { organisation: organisation.id, method: this.campaign.method, campaign: this.campaign.id }
+                    await this.createEseaAccount({ oId: organisation.id, data: newEseaAccount })
                 }
             }
             this.addOrganisationsDialog = false
+            this.initialize()
         },
         async removeOrganisations () {
-            console.log('LLL', this.selectedOrganisations)
             for (var eseaAccount of this.selectedOrganisations) {
-                await this.deleteEseaAccount({ nId: this.$route.params.NetworkId, cId: this.$route.params.CampaignId, id: eseaAccount.id })
+                console.log(eseaAccount)
+                await this.deleteEseaAccount({ oId: eseaAccount.organisation, id: eseaAccount.id })
             }
             this.removeOrganisationsDialog = false
             this.initialize()
