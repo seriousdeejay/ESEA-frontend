@@ -32,19 +32,23 @@
             </div>
             <div v-else class="p-col-12">
                 <h4 class="p-mb-0">The following tasks require your attention.</h4>
-                <h4>Deployment Task</h4>
-                 <div v-for="eseaAccount in eseaAccounts" :key="eseaAccount.id" class="p-m-3 p-shadow-5">
-                    <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id">
-                        <div v-if="survey.type === 'multi' && !survey.respondees.length">
-                            <Button :label="`Deploy survey: '${survey.name}' belonging to '${eseaAccount.campaign_name}' by '${eseaAccount.network_name}'.`" class="p-button-text p-col-12 p-shadow-1 p-p-4" @click="goToEseaAccount(eseaAccount)"/>
+                <div class="p-shadow-5 p-p-3 p-m-3">
+                    <h4>Deployment Tasks</h4>
+                    <div v-for="eseaAccount in eseaAccounts" :key="eseaAccount.id" class="p-m-3 p-shadow-1">
+                        <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id">
+                            <div v-if="survey.type === 'multi' && !survey.respondees.length">
+                                <Button :label="`Deploy survey: '${survey.name}' belonging to '${eseaAccount.campaign_name}' by '${eseaAccount.network_name}'.`" class="p-button-text p-col-12 p-shadow-1 p-p-4" @click="goToEseaAccount(eseaAccount)"/>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <h4>Responding Task</h4>
-                <div v-for="eseaAccount in eseaAccounts" :key="eseaAccount.id" class="p-m-3 p-shadow-5">
-                    <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id">
-                        <div v-if="survey.type === 'single' && survey.sufficient_responses === false">
-                            <Button :label="`Fill in Survey '${survey.name}' belonging to '${eseaAccount.campaign_name}' by '${eseaAccount.network_name}'.`" class="p-button-text p-col-12 p-shadow-1 p-p-4" @click="goToEseaAccount(eseaAccount)"/>
+                <div class="p-shadow-5 p-p-3 p-m-3">
+                    <h4>Responding Tasks</h4>
+                    <div v-for="eseaAccount in eseaAccounts" :key="eseaAccount.id" class="p-m-3 p-shadow-1">
+                        <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id">
+                            <div v-if="survey.type === 'single' && survey.sufficient_responses === false">
+                                <Button :label="`Fill in Survey '${survey.name}' belonging to '${eseaAccount.campaign_name}' by '${eseaAccount.network_name}'.`" class="p-button-text p-col-12 p-shadow-1 p-p-4" @click="goToEseaAccount(eseaAccount)"/>
+                            </div>
                         </div>
                     </div>
                 </div>

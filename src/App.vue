@@ -11,7 +11,7 @@
             </div>
         </div>
     </div>
-    <router-view v-if="accesToken === null" name="surveyview"/>
+    <router-view v-if="accessToken === null" name="surveyview"/>
     <router-view name="anonymousview"/>
     <!-- <div v-if="accessToken === null" style="position: absolute; height: 100%; width: 100%;background-color: #00695C;"> calc(100vh - 70px)
             <div class="centered">

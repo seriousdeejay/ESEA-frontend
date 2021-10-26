@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 10%;">
+    <div style="width: 100%;">
         <ProgressSpinner v-if="loading && !failedLoad" />
         <div v-else-if="loading && failedLoad" class="p-text-italic">THe Survey could not be loaded!</div> <!-- style="background-color: #ddedc8;" -->
         <div v-else-if="!surveyResponse.finished" class="p-d-flex p-grid p-jc-center p-m-0" >

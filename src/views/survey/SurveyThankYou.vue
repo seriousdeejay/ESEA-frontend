@@ -7,7 +7,7 @@
                 This survey response, among others, will be used to examine how well your organisation is doing in the environmental, social and ethical fields.
                 Once enough stakeholders filled in the survey a report will be created, which will be made publicly available after its validation.
             </div>
-            <Button label="Learn more about ESEA" class="p-button-success" @click="informationAboutESEA()"></Button>
+            <Button label="Learn more about ESEA" class="p-button-success" disabled="true" @click="informationAboutESEA()"></Button>
         </div>
     </div>
 </template>

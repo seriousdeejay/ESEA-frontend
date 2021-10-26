@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     data () {
@@ -52,13 +52,18 @@ export default {
         }
     },
     methods: {
+        ...mapActions('method', ['setMethod']),
         goToMethods () {
             this.$router.push({ name: 'methods' })
         },
-        goToPage (page) {
+        async goToPage (page) {
             console.log('is saved:', this.DirectIndicatorsSaved)
             if (page.name === 'method-wizard-finish') {
-                this.goToMethods()
+                if (this.method.id) {
+                    await this.setMethod({ id: this.method.id })
+                    this.$router.push({ name: 'newmethoddetails', params: { id: this.method.id } })
+                }
+                // this.goToMethods()
                 return
             }
             page.params = { id: this.$route.params.id }

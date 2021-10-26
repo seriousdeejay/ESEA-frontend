@@ -100,9 +100,9 @@ export default {
         this.initialize()
     },
     methods: {
-        ...mapActions('organisation', ['fetchOrganisations']),
-        ...mapActions('method', ['fetchMethods']),
-        ...mapActions('campaign', ['fetchCampaigns']),
+        ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
+        ...mapActions('method', ['fetchMethods', 'setMethod']),
+        ...mapActions('campaign', ['fetchCampaigns', 'setCampaign']),
         ...mapActions('survey', ['fetchSurveys']),
         async initialize () {
             // this.checkWindowSize()
@@ -117,12 +117,15 @@ export default {
         async goToItem (item, name) {
             if (!item.id) { return }
             if (name === 'organisations') {
+                await this.setOrganisation({ id: item.id })
                 this.$router.push({ name: 'organisationoverview', params: { OrganisationId: item.id } })
             }
             if (name === 'methods') {
+                await this.setMethod({ id: item.id })
                 this.$router.push({ name: 'newmethoddetails', params: { id: item.id } })
             }
             if (name === 'campaigns') {
+                await this.setCampaign({ id: item.id })
                 this.$router.push({ name: 'networkcampaign', params: { NetworkId: this.$route.params.NetworkId, CampaignId: item.id } })
             }
             console.log(name, item)
